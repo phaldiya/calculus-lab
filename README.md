@@ -74,6 +74,14 @@ bun dev
 
 The app runs at **http://localhost:5000**. Documentation is at **/docs**.
 
+### Setup Git Hooks
+
+```bash
+bun run setup-hooks
+```
+
+This installs **pre-commit** (lint + smoke tests) and **pre-push** (full test suite + E2E) hooks.
+
 ### Build for Production
 
 ```bash

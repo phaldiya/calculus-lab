@@ -1,0 +1,7 @@
+#!/bin/sh
+set -e
+
+echo "==> pre-push: running full verify"
+bun run verify
+
+echo "==> pre-push: all checks passed"

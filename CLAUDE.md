@@ -16,6 +16,12 @@ Calculus Lab is a client-side scientific graphing calculator built with React 19
 | Lint & fix | `bun run lint` |
 | Lint check | `bun run lint:check` |
 | Format | `bun run format` |
+| Test (all) | `bun run test` |
+| Test (smoke) | `bun run test:smoke` |
+| Test (deep) | `bun run test:deep` |
+| Test (coverage) | `bun run test:coverage` |
+| Verify (tests + E2E) | `bun run verify` |
+| Setup git hooks | `bun run setup-hooks` |
 | Screenshots | `bun run scripts/take-screenshots.ts` |
 
 ## Tech Stack
@@ -28,7 +34,7 @@ Calculus Lab is a client-side scientific graphing calculator built with React 19
 - **Linting**: Biome 2 (no ESLint/Prettier)
 - **Math**: mathjs, KaTeX for rendering
 - **Charts**: Plotly.js (via react-plotly.js)
-- **Testing**: None configured
+- **Testing**: Vitest (unit), Playwright (E2E)
 
 ## Project Structure
 
@@ -53,6 +59,11 @@ src/
 ### Git
 - **Conventional commits**: `feat:`, `fix:`, `ci:`, `docs:`, `refactor:`
 - No `Co-Authored-By` trailer
+
+### Git Hooks
+- Run `bun run setup-hooks` to install hooks from `git-hooks/` into `.git/hooks/`
+- **pre-commit**: `bun install --frozen-lockfile` → `lint:check` → `test:smoke`
+- **pre-push**: `verify` (full test suite + Playwright E2E)
 
 ### Formatting (Biome)
 - 2 spaces, single quotes, trailing commas, semicolons

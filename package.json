@@ -25,7 +25,8 @@
     "e2e:docker": "docker compose -f docker-compose.playwright.yml run --rm e2e",
     "e2e:docker:update-snapshots": "docker compose -f docker-compose.playwright.yml run --rm e2e-update-snapshots",
     "extension:icons": "bun run scripts/generate-icons.ts",
-    "extension:zip": "bun run scripts/package-extension.ts"
+    "extension:zip": "bun run scripts/package-extension.ts",
+    "setup-hooks": "sh ./scripts/setup-hooks.sh all"
   },
   "dependencies": {
     "dompurify": "^3.3.1",
