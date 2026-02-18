@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/phaldiya/calculus-lab/compare/v1.2.0...v1.3.0) (2026-02-18)
+
+
+### Features
+
+* add 3D graphing tab, color-coded calculus sections, and limit graph visualization ([4061715](https://github.com/phaldiya/calculus-lab/commit/406171573b71c7d3f884354f63e0af76d08aa488))
+* add toggleable right panel with responsive defaults ([cb77f4c](https://github.com/phaldiya/calculus-lab/commit/cb77f4c79af57124ed27399e68745df09410e60b))
+
 # [1.2.0](https://github.com/phaldiya/calculus-lab/compare/v1.1.0...v1.2.0) (2026-02-18)
 
 
