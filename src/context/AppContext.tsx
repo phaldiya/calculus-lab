@@ -1,7 +1,7 @@
 import { createContext, type ReactNode, useContext, useEffect, useReducer } from 'react';
 
 import { loadState, saveState } from '../lib/storage';
-import type { AppAction, AppState, CalculusState, MatrixState, StatisticsState } from '../types';
+import type { AppAction, AppState, CalculusState, MatrixState, StatisticsState, ThreeDGraphingState } from '../types';
 
 const initialCalculus: CalculusState = {
   derivativeExpr: '',
@@ -39,6 +39,13 @@ const initialStatistics: StatisticsState = {
   xyData: [],
 };
 
+const initialThreeDGraphing: ThreeDGraphingState = {
+  equations: [],
+  xRange: [-5, 5],
+  yRange: [-5, 5],
+  gridResolution: 50,
+};
+
 const initialState: AppState = {
   activeTab: 'scientific',
   equations: [],
@@ -46,6 +53,7 @@ const initialState: AppState = {
   calculus: initialCalculus,
   matrix: initialMatrix,
   statistics: initialStatistics,
+  threeDGraphing: initialThreeDGraphing,
   history: [],
   variables: [],
   darkMode: false,
@@ -133,6 +141,49 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ...state,
         variables: state.variables.filter((v) => v.name !== action.name),
       };
+
+    case 'ADD_3D_EQUATION':
+      return {
+        ...state,
+        threeDGraphing: { ...state.threeDGraphing, equations: [...state.threeDGraphing.equations, action.equation] },
+      };
+
+    case 'UPDATE_3D_EQUATION':
+      return {
+        ...state,
+        threeDGraphing: {
+          ...state.threeDGraphing,
+          equations: state.threeDGraphing.equations.map((eq) =>
+            eq.id === action.id ? { ...eq, ...action.updates } : eq,
+          ),
+        },
+      };
+
+    case 'TOGGLE_3D_EQUATION':
+      return {
+        ...state,
+        threeDGraphing: {
+          ...state.threeDGraphing,
+          equations: state.threeDGraphing.equations.map((eq) =>
+            eq.id === action.id ? { ...eq, visible: !eq.visible } : eq,
+          ),
+        },
+      };
+
+    case 'REMOVE_3D_EQUATION':
+      return {
+        ...state,
+        threeDGraphing: {
+          ...state.threeDGraphing,
+          equations: state.threeDGraphing.equations.filter((eq) => eq.id !== action.id),
+        },
+      };
+
+    case 'SET_3D_GRAPHING':
+      return { ...state, threeDGraphing: { ...state.threeDGraphing, ...action.updates } };
+
+    case 'CLEAR_3D_GRAPHING':
+      return { ...state, threeDGraphing: initialThreeDGraphing };
 
     case 'TOGGLE_DARK_MODE':
       return { ...state, darkMode: !state.darkMode };

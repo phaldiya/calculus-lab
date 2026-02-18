@@ -1,10 +1,27 @@
-export type TabId = 'scientific' | 'graphing' | 'calculus' | 'matrix' | 'statistics';
+export type TabId = 'scientific' | 'graphing' | '3d-graphing' | 'calculus' | 'matrix' | 'statistics';
+
+export type EquationMode = 'standard' | 'implicit';
 
 export interface Equation {
   id: string;
   expression: string;
   color: string;
   visible: boolean;
+  mode?: EquationMode;
+}
+
+export interface Equation3D {
+  id: string;
+  expression: string;
+  color: string;
+  visible: boolean;
+}
+
+export interface ThreeDGraphingState {
+  equations: Equation3D[];
+  xRange: [number, number];
+  yRange: [number, number];
+  gridResolution: number;
 }
 
 export interface PointData {
@@ -100,6 +117,7 @@ export interface AppState {
   calculus: CalculusState;
   matrix: MatrixState;
   statistics: StatisticsState;
+  threeDGraphing: ThreeDGraphingState;
   history: HistoryEntry[];
   variables: Variable[];
   darkMode: boolean;
@@ -126,5 +144,11 @@ export type AppAction =
   | { type: 'ADD_VARIABLE'; variable: Variable }
   | { type: 'UPDATE_VARIABLE'; name: string; value: number }
   | { type: 'REMOVE_VARIABLE'; name: string }
+  | { type: 'ADD_3D_EQUATION'; equation: Equation3D }
+  | { type: 'UPDATE_3D_EQUATION'; id: string; updates: Partial<Equation3D> }
+  | { type: 'TOGGLE_3D_EQUATION'; id: string }
+  | { type: 'REMOVE_3D_EQUATION'; id: string }
+  | { type: 'SET_3D_GRAPHING'; updates: Partial<ThreeDGraphingState> }
+  | { type: 'CLEAR_3D_GRAPHING' }
   | { type: 'TOGGLE_DARK_MODE' }
   | { type: 'LOAD_STATE'; state: Partial<AppState> };

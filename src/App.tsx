@@ -13,12 +13,14 @@ import ExpressionHistory from './components/shared/ExpressionHistory';
 import { CloseIcon } from './components/shared/Icons';
 import VariablePanel from './components/shared/VariablePanel';
 import StatisticsPanel from './components/statistics/StatisticsPanel';
+import ThreeDGraphingPanel from './components/threeDGraphing/ThreeDGraphingPanel';
 import { AppProvider, useAppContext } from './context/AppContext';
 import type { TabId } from './types';
 
 const pathToTab: Record<string, TabId> = {
   '/scientific': 'scientific',
   '/graphing': 'graphing',
+  '/3d-graphing': '3d-graphing',
   '/calculus': 'calculus',
   '/matrix': 'matrix',
   '/statistics': 'statistics',
@@ -146,6 +148,7 @@ export default function App() {
           <Route index element={<Navigate to="/scientific" replace />} />
           <Route path="/scientific" element={<ScientificPanel />} />
           <Route path="/graphing" element={<GraphPanel />} />
+          <Route path="/3d-graphing" element={<ThreeDGraphingPanel />} />
           <Route path="/calculus" element={<CalculusPanel />} />
           <Route path="/matrix" element={<MatrixPanel />} />
           <Route path="/statistics" element={<StatisticsPanel />} />

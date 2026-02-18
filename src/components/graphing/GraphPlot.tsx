@@ -2,7 +2,7 @@ import type { Data, Layout, PlotMouseEvent } from 'plotly.js-dist-min';
 import { useCallback, useMemo, useState } from 'react';
 
 import { useAppContext } from '../../context/AppContext';
-import { evaluateOverRange } from '../../lib/expressionParser';
+import { evaluateOverGrid, evaluateOverRange, parseImplicitEquation } from '../../lib/expressionParser';
 import PlotlyWrapper from '../../lib/PlotlyWrapper';
 import CoordinateDisplay from './CoordinateDisplay';
 
@@ -17,16 +17,34 @@ export default function GraphPlot() {
     for (const eq of state.equations) {
       if (!eq.visible) continue;
       try {
-        const result = evaluateOverRange(eq.expression, -10, 10, 500, state.variables);
-        traces.push({
-          x: result.x,
-          y: result.y,
-          type: 'scatter',
-          mode: 'lines',
-          name: eq.expression,
-          line: { color: eq.color, width: 2 },
-          hoverinfo: 'x+y',
-        });
+        if (eq.mode === 'implicit') {
+          const rearranged = parseImplicitEquation(eq.expression);
+          if (!rearranged) continue;
+          const grid = evaluateOverGrid(rearranged, -10, 10, -10, 10, 200, 200, state.variables);
+          traces.push({
+            x: grid.x,
+            y: grid.y,
+            z: grid.z,
+            type: 'contour',
+            name: eq.expression,
+            showlegend: true,
+            contours: { type: 'constraint', operation: '=', value: 0 },
+            line: { color: eq.color, width: 2 },
+            showscale: false,
+            hoverinfo: 'x+y',
+          });
+        } else {
+          const result = evaluateOverRange(eq.expression, -10, 10, 500, state.variables);
+          traces.push({
+            x: result.x,
+            y: result.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: eq.expression,
+            line: { color: eq.color, width: 2 },
+            hoverinfo: 'x+y',
+          });
+        }
       } catch {
         // Skip invalid equations
       }

@@ -1,6 +1,6 @@
 import { test as base, expect, type Page } from '@playwright/test';
 
-type Tab = 'scientific' | 'graphing' | 'calculus' | 'matrix' | 'statistics';
+type Tab = 'scientific' | 'graphing' | '3d-graphing' | 'calculus' | 'matrix' | 'statistics';
 
 export class CalcPage {
   private page: Page;

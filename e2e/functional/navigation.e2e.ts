@@ -12,6 +12,7 @@ test.describe('Navigation', () => {
 
     const tabs = [
       { label: 'Graph', path: '/graphing', heading: 'Equations' },
+      { label: '3D', path: '/3d-graphing', heading: '3D Surfaces' },
       { label: 'Calculus', path: '/calculus', heading: 'Derivative' },
       { label: 'Matrix', path: '/matrix', heading: 'Matrix Calculator' },
       { label: 'Stats', path: '/statistics', heading: 'Data Input' },

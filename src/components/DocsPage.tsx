@@ -1,7 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import { CalculatorIcon, CalculusLabIcon, GraphIcon, IntegralIcon, MatrixIcon, StatsIcon } from './shared/Icons';
+import {
+  CalculatorIcon,
+  CalculusLabIcon,
+  CubeIcon,
+  GraphIcon,
+  IntegralIcon,
+  MatrixIcon,
+  StatsIcon,
+} from './shared/Icons';
 
 const base = import.meta.env.BASE_URL;
 
@@ -9,6 +17,7 @@ const sections = [
   { id: 'overview', label: 'Overview', tooltip: 'Features, capabilities, and quick stats' },
   { id: 'scientific', label: 'Calculator', tooltip: 'Arithmetic, trig, logs, memory, and angle modes' },
   { id: 'graphing', label: 'Graphing', tooltip: 'Plot functions, custom points, zoom and pan' },
+  { id: '3d-graphing', label: '3D Graphing', tooltip: '3D surface plots of z = f(x, y)' },
   { id: 'calculus', label: 'Calculus', tooltip: 'Derivatives, integrals, and limits' },
   { id: 'matrix', label: 'Matrix', tooltip: 'Add, multiply, invert, and transpose matrices' },
   { id: 'statistics', label: 'Statistics', tooltip: 'Descriptive stats, histograms, and regression' },
@@ -62,7 +71,7 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode; titl
   );
 }
 
-const calculatorTabs = ['scientific', 'graphing', 'calculus', 'matrix', 'statistics'];
+const calculatorTabs = ['scientific', 'graphing', '3d-graphing', 'calculus', 'matrix', 'statistics'];
 
 export default function DocsPage() {
   const navigate = useNavigate();
@@ -210,6 +219,11 @@ export default function DocsPage() {
                 description="Plot multiple functions with auto-coloring, zoom, pan, and hover coordinates."
               />
               <FeatureCard
+                icon={<CubeIcon className="h-5 w-5" />}
+                title="3D Surface Plots"
+                description="Visualize z = f(x, y) as interactive 3D surfaces with auto-assigned colors."
+              />
+              <FeatureCard
                 icon={<IntegralIcon className="h-5 w-5" />}
                 title="Calculus Operations"
                 description="Symbolic derivatives, numerical integrals (Simpson's rule), and limit computation."
@@ -228,7 +242,7 @@ export default function DocsPage() {
 
             <div className="grid grid-cols-1 gap-4 rounded-xl bg-slate-50 p-5 sm:grid-cols-3 dark:bg-slate-900">
               <div className="text-center">
-                <div className="font-bold text-2xl text-indigo-600 dark:text-indigo-400">5</div>
+                <div className="font-bold text-2xl text-indigo-600 dark:text-indigo-400">6</div>
                 <div className="mt-1 text-slate-500 text-xs dark:text-slate-400">Calculator Modes</div>
               </div>
               <div className="text-center">
@@ -327,7 +341,7 @@ export default function DocsPage() {
 
             <img
               src={`${base}docs/graph-tab.png`}
-              alt="Graphing tab showing sin(x), x^2, and cos(x) plotted"
+              alt="Graphing tab showing multiple plotted equations"
               className="mb-6 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
             />
 
@@ -351,6 +365,56 @@ export default function DocsPage() {
             <div className="rounded-xl bg-indigo-50 p-4 text-indigo-700 text-sm dark:bg-indigo-950 dark:text-indigo-300">
               <strong>Tip:</strong> Use scroll to zoom, drag to pan. Hover over any curve to see exact (x, y)
               coordinates displayed in the top-right corner.
+            </div>
+          </section>
+
+          {/* 3D Graphing */}
+          <section id="3d-graphing" className="mb-16">
+            <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">3D Graphing</h2>
+            <p className="mb-6 text-slate-500 dark:text-slate-400">
+              Plot 3D surfaces from <CodeBlock>z = f(x, y)</CodeBlock> expressions. Enter a two-variable function and
+              explore the surface interactively with orbit, zoom, and pan controls. Each surface gets a unique color
+              automatically, just like 2D graphing.
+            </p>
+
+            <img
+              src={`${base}docs/3d-tab.png`}
+              alt="3D graphing tab showing multiple surface plots"
+              className="mb-6 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+            />
+
+            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Supported Expressions</h3>
+            <p className="mb-3 text-slate-500 dark:text-slate-400">
+              Any expression using <CodeBlock>x</CodeBlock> and <CodeBlock>y</CodeBlock> as variables. Standard math
+              functions work the same as in 2D graphing.
+            </p>
+            <div className="mb-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <ExampleCard title="Trigonometric" input="sin(x) * cos(y)" output="Ripple surface" />
+              <ExampleCard title="Gaussian" input="exp(-(x^2 + y^2))" output="Bell-shaped peak" />
+              <ExampleCard title="Saddle" input="x^2 - y^2" output="Hyperbolic paraboloid" />
+              <ExampleCard title="Radial" input="sin(sqrt(x^2 + y^2))" output="Concentric rings" />
+            </div>
+
+            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Controls</h3>
+            <div className="mb-6 space-y-3">
+              <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+                <h4 className="mb-1 font-medium text-slate-800 text-sm dark:text-slate-200">X/Y Range</h4>
+                <p className="text-slate-500 text-sm dark:text-slate-400">
+                  Set the minimum and maximum values for both X and Y axes. Default range is &minus;5 to 5 for both.
+                </p>
+              </div>
+              <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+                <h4 className="mb-1 font-medium text-slate-800 text-sm dark:text-slate-200">Grid Resolution</h4>
+                <p className="text-slate-500 text-sm dark:text-slate-400">
+                  Control the mesh density from 10 to 100 points per axis. Higher values produce smoother surfaces but
+                  may be slower to render.
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-indigo-50 p-4 text-indigo-700 text-sm dark:bg-indigo-950 dark:text-indigo-300">
+              <strong>Tip:</strong> Click and drag to orbit the 3D view. Scroll to zoom. You can plot multiple surfaces
+              simultaneously and toggle their visibility individually.
             </div>
           </section>
 
@@ -587,6 +651,7 @@ export default function DocsPage() {
                   {[
                     ['/scientific', 'Calculator'],
                     ['/graphing', 'Graphing'],
+                    ['/3d-graphing', '3D Graphing'],
                     ['/calculus', 'Calculus'],
                     ['/matrix', 'Matrix'],
                     ['/statistics', 'Statistics'],
@@ -618,7 +683,7 @@ export default function DocsPage() {
                   (variables &amp; history) is hidden and accessible via a slide-over drawer triggered by the panel icon
                   in the header. Inner panels stack vertically — inputs on top, plots below.
                 </p>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-6">
                   <img
                     src={`${base}docs/mobile-scientific.png`}
                     alt="Mobile scientific calculator with bottom tab bar"
@@ -627,6 +692,11 @@ export default function DocsPage() {
                   <img
                     src={`${base}docs/mobile-graphing.png`}
                     alt="Mobile graphing view with stacked layout"
+                    className="rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+                  />
+                  <img
+                    src={`${base}docs/mobile-3d.png`}
+                    alt="Mobile 3D graphing view with stacked layout"
                     className="rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
                   />
                   <img
@@ -646,7 +716,7 @@ export default function DocsPage() {
                   />
                 </div>
                 <p className="mt-2 text-slate-400 text-xs">
-                  Left to right: Calculator, Graphing, Calculus, Statistics, Variables drawer
+                  Left to right: Calculator, Graphing, 3D, Calculus, Statistics, Variables drawer
                 </p>
               </div>
 

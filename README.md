@@ -23,11 +23,18 @@ A full-featured scientific graphing calculator built with React, TypeScript, and
 - Plot custom (x, y) coordinate pairs as scatter, line, or both
 - Custom variables usable in expressions
 
+### 3D Graphing
+- Plot 3D surface equations as interactive surfaces (e.g., `sin(x) * cos(y)`)
+- Multiple surfaces with automatic color assignment and toggle visibility
+- Adjustable X/Y range and grid resolution controls
+- Interactive rotate, zoom, and pan via Plotly 3D scene
+
 ### Calculus
 - **Derivatives:** Symbolic differentiation via math.js (e.g., `x^3` → `3 * x ^ 2`)
 - **Definite Integrals:** Numerical integration using Simpson's rule
 - **Limits:** Numerical limit computation with indeterminate form handling
-- Visual overlay of original function, derivative, and integral area
+- Color-coded sections: indigo (derivatives), emerald (integrals), amber (limits)
+- Visual overlay of original function, derivative, integral area, and limit point — each trace color-matched to its section
 
 ### Matrix Calculator
 - Matrix operations: add, subtract, multiply, determinant, inverse, transpose
@@ -40,7 +47,7 @@ A full-featured scientific graphing calculator built with React, TypeScript, and
 - **Linear & polynomial regression** with R² and fitted curve overlay
 
 ### Cross-Cutting
-- URL-based routing per tab (`/scientific`, `/graphing`, `/calculus`, `/matrix`, `/statistics`) — survives page reload
+- URL-based routing per tab (`/scientific`, `/graphing`, `/3d-graphing`, `/calculus`, `/matrix`, `/statistics`) — survives page reload
 - Dark mode with persistent preference
 - Custom variables panel
 - Expression history across all tabs
@@ -101,6 +108,7 @@ src/
     ├── layout/                 # Header, Sidebar, TabPanel
     ├── scientific/             # Scientific calculator
     ├── graphing/               # Function plotting
+    ├── threeDGraphing/         # 3D surface plotting
     ├── calculus/               # Derivatives, integrals, limits
     ├── matrix/                 # Matrix operations
     ├── statistics/             # Stats & regression
@@ -135,6 +143,7 @@ bun run extension:zip       # produces calculus-lab-extension.zip
 | Calculator | `sin(π)` | `0` |
 | Calculator | `2^10` | `1024` |
 | Graph | Plot `sin(x)` | Sine wave |
+| 3D Graph | Plot `sin(x) * cos(y)` | 3D surface |
 | Calculus | d/dx `x^3` | `3 * x ^ 2` |
 | Calculus | ∫ `x^2` from 0 to 1 | `0.333333` |
 | Calculus | lim `sin(x)/x` at 0 | `1.000000` |

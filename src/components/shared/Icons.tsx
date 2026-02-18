@@ -108,6 +108,25 @@ export function MoonIcon(props: IconProps) {
   );
 }
 
+export function CubeIcon(props: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M12 2l9 5v10l-9 5-9-5V7l9-5z" />
+      <path d="M12 22V12" />
+      <path d="M21 7l-9 5" />
+      <path d="M3 7l9 5" />
+    </svg>
+  );
+}
+
 export function PanelIcon(props: IconProps) {
   return (
     <svg

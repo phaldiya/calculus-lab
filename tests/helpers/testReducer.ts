@@ -39,6 +39,12 @@ export function createTestState(overrides: Partial<AppState> = {}): AppState {
       regressionResult: null,
       xyData: [],
     },
+    threeDGraphing: {
+      equations: [],
+      xRange: [-5, 5],
+      yRange: [-5, 5],
+      gridResolution: 50,
+    },
     history: [],
     variables: [],
     darkMode: false,

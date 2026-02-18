@@ -73,7 +73,7 @@ export default function LimitInput() {
     <div
       role="group"
       aria-labelledby="limit-heading"
-      className="flex flex-col gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+      className="flex flex-col gap-2 rounded-lg border border-[var(--color-border)] border-l-3 border-l-[#f59e0b] bg-[var(--color-surface)] p-4"
     >
       <h3 id="limit-heading" className="font-semibold text-[var(--color-text)] text-sm">
         Limit
@@ -85,7 +85,7 @@ export default function LimitInput() {
           onChange={(e) => dispatch({ type: 'SET_CALCULUS', updates: { limitExpr: e.target.value } })}
           placeholder="e.g. sin(x)/x"
           aria-label="Limit expression"
-          className="min-w-0 w-1/2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+          className="min-w-0 w-1/2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[#f59e0b]"
         />
         <input
           type="text"
@@ -93,13 +93,13 @@ export default function LimitInput() {
           onChange={(e) => dispatch({ type: 'SET_CALCULUS', updates: { limitPoint: e.target.value } })}
           placeholder="x ->"
           aria-label="Limit point"
-          className="min-w-0 w-1/2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+          className="min-w-0 w-1/2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[#f59e0b]"
         />
       </div>
       <button
         type="button"
         onClick={handleCompute}
-        className="self-end rounded-lg bg-[var(--color-primary)] px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-[var(--color-primary-hover)]"
+        className="self-end rounded-lg bg-[#f59e0b] px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-[#d97706]"
       >
         Compute
       </button>
@@ -127,7 +127,7 @@ export default function LimitInput() {
           type="button"
           onClick={() => setShowSteps((v) => !v)}
           aria-expanded={showSteps}
-          className="self-end rounded px-3 py-1 font-medium text-[var(--color-primary)] text-xs transition-colors hover:bg-[var(--color-surface-alt)]"
+          className="self-end rounded px-3 py-1 font-medium text-[#f59e0b] text-xs transition-colors hover:bg-[var(--color-surface-alt)]"
         >
           {showSteps ? 'Hide Steps' : 'Show Steps'}
         </button>

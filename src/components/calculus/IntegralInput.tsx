@@ -74,7 +74,7 @@ export default function IntegralInput() {
     <div
       role="group"
       aria-labelledby="integral-heading"
-      className="flex flex-col gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+      className="flex flex-col gap-2 rounded-lg border border-[var(--color-border)] border-l-3 border-l-[#10b981] bg-[var(--color-surface)] p-4"
     >
       <h3 id="integral-heading" className="font-semibold text-[var(--color-text)] text-sm">
         Definite Integral
@@ -85,7 +85,7 @@ export default function IntegralInput() {
         onChange={(e) => dispatch({ type: 'SET_CALCULUS', updates: { integralExpr: e.target.value } })}
         placeholder="e.g. x^2"
         aria-label="Integral expression"
-        className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+        className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[#10b981]"
       />
       <div className="flex gap-2">
         <input
@@ -94,7 +94,7 @@ export default function IntegralInput() {
           onChange={(e) => dispatch({ type: 'SET_CALCULUS', updates: { integralLower: e.target.value } })}
           placeholder="Lower"
           aria-label="Lower bound"
-          className="min-w-0 w-1/2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+          className="min-w-0 w-1/2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[#10b981]"
         />
         <input
           type="text"
@@ -102,13 +102,13 @@ export default function IntegralInput() {
           onChange={(e) => dispatch({ type: 'SET_CALCULUS', updates: { integralUpper: e.target.value } })}
           placeholder="Upper"
           aria-label="Upper bound"
-          className="min-w-0 w-1/2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+          className="min-w-0 w-1/2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[#10b981]"
         />
       </div>
       <button
         type="button"
         onClick={handleCompute}
-        className="self-end rounded-lg bg-[var(--color-primary)] px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-[var(--color-primary-hover)]"
+        className="self-end rounded-lg bg-[#10b981] px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-[#059669]"
       >
         Compute
       </button>
@@ -136,7 +136,7 @@ export default function IntegralInput() {
           type="button"
           onClick={() => setShowSteps((v) => !v)}
           aria-expanded={showSteps}
-          className="self-end rounded px-3 py-1 font-medium text-[var(--color-primary)] text-xs transition-colors hover:bg-[var(--color-surface-alt)]"
+          className="self-end rounded px-3 py-1 font-medium text-[#10b981] text-xs transition-colors hover:bg-[var(--color-surface-alt)]"
         >
           {showSteps ? 'Hide Steps' : 'Show Steps'}
         </button>

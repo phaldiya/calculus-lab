@@ -7,12 +7,21 @@ import PlotlyWrapper from '../../lib/PlotlyWrapper';
 
 export default function CalculusPlot() {
   const { state } = useAppContext();
-  const { derivativeExpr, derivativeResult, integralExpr, integralLower, integralUpper } = state.calculus;
+  const {
+    derivativeExpr,
+    derivativeResult,
+    integralExpr,
+    integralLower,
+    integralUpper,
+    limitExpr,
+    limitPoint,
+    limitResult,
+  } = state.calculus;
 
   const data = useMemo(() => {
     const traces: Data[] = [];
 
-    // Plot original function if derivative was computed
+    // Plot original function if derivative was computed (indigo)
     if (derivativeExpr) {
       try {
         const result = evaluateOverRange(derivativeExpr, -10, 10);
@@ -29,7 +38,7 @@ export default function CalculusPlot() {
       }
     }
 
-    // Plot derivative
+    // Plot derivative (indigo dashed)
     if (derivativeResult) {
       try {
         const result = evaluateOverRange(derivativeResult, -10, 10);
@@ -39,14 +48,14 @@ export default function CalculusPlot() {
           type: 'scatter',
           mode: 'lines',
           name: `f'(x) = ${derivativeResult}`,
-          line: { color: '#ef4444', width: 2, dash: 'dash' },
+          line: { color: '#6366f1', width: 2, dash: 'dash' },
         });
       } catch {
         /* skip */
       }
     }
 
-    // Plot integral area
+    // Plot integral area (emerald)
     if (integralExpr && integralLower && integralUpper) {
       try {
         const lower = parseFloat(integralLower);
@@ -58,10 +67,10 @@ export default function CalculusPlot() {
             y: [0, ...result.y, 0],
             type: 'scatter',
             mode: 'lines',
-            name: `Area`,
+            name: 'Area',
             fill: 'tozeroy',
-            fillcolor: 'rgba(99, 102, 241, 0.2)',
-            line: { color: '#6366f1', width: 1 },
+            fillcolor: 'rgba(16, 185, 129, 0.2)',
+            line: { color: '#10b981', width: 1 },
           });
 
           // Also plot the full function
@@ -72,7 +81,37 @@ export default function CalculusPlot() {
             type: 'scatter',
             mode: 'lines',
             name: `f(x) = ${integralExpr}`,
-            line: { color: '#22c55e', width: 2 },
+            line: { color: '#10b981', width: 2 },
+          });
+        }
+      } catch {
+        /* skip */
+      }
+    }
+
+    // Plot limit function and marker (amber)
+    if (limitExpr && limitPoint && limitResult) {
+      try {
+        const point = parseFloat(limitPoint);
+        const result = parseFloat(limitResult);
+        if (Number.isFinite(point) && Number.isFinite(result)) {
+          const evalResult = evaluateOverRange(limitExpr, point - 5, point + 5);
+          traces.push({
+            x: evalResult.x,
+            y: evalResult.y,
+            type: 'scatter',
+            mode: 'lines',
+            name: `f(x) = ${limitExpr}`,
+            line: { color: '#f59e0b', width: 2 },
+          });
+
+          traces.push({
+            x: [point],
+            y: [result],
+            type: 'scatter',
+            mode: 'markers',
+            name: `limit = ${limitResult}`,
+            marker: { color: '#f59e0b', size: 10, symbol: 'circle' },
           });
         }
       } catch {
@@ -81,7 +120,16 @@ export default function CalculusPlot() {
     }
 
     return traces;
-  }, [derivativeExpr, derivativeResult, integralExpr, integralLower, integralUpper]);
+  }, [
+    derivativeExpr,
+    derivativeResult,
+    integralExpr,
+    integralLower,
+    integralUpper,
+    limitExpr,
+    limitPoint,
+    limitResult,
+  ]);
 
   const layout = useMemo<Partial<Layout>>(
     () => ({
@@ -119,7 +167,7 @@ export default function CalculusPlot() {
         <PlotlyWrapper data={[]} layout={layout} style={{ width: '100%', height: '100%' }} />
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <span className="rounded-lg bg-[var(--color-surface)] px-4 py-2 text-[var(--color-text-secondary)] text-sm opacity-60">
-            Compute a derivative or integral to see the graph
+            Compute a derivative, integral, or limit to see the graph
           </span>
         </div>
       </div>

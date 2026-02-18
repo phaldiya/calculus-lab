@@ -36,6 +36,11 @@ export default function EquationList() {
           >
             {eq.expression}
           </span>
+          {eq.mode === 'implicit' && (
+            <span className="shrink-0 rounded bg-indigo-100 px-1.5 py-0.5 font-medium text-[10px] text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300">
+              implicit
+            </span>
+          )}
           <button
             type="button"
             aria-label={`Remove ${eq.expression}`}

@@ -13,6 +13,13 @@ async function main() {
   const page = await browser.newPage();
   await page.setViewport({ width: 1400, height: 900 });
 
+  const freshPage = async (route: string) => {
+    await page.evaluate(() => window.localStorage.removeItem('calculus-lab-state'));
+    await page.goto(`${BASE}/${route}`, { waitUntil: 'networkidle0' });
+    await page.reload({ waitUntil: 'networkidle0' });
+    await new Promise((r) => setTimeout(r, 500));
+  };
+
   const clickBtn = async (text: string) => {
     const btns = await page.$$('button');
     for (const btn of btns) {
@@ -39,24 +46,52 @@ async function main() {
   await page.screenshot({ path: 'public/docs/scientific-tab.png' });
   console.log('Captured scientific tab');
 
-  // Graph tab - with equations plotted
+  // Graph tab - plot all 6 documented expressions
   await page.goto(`${BASE}/graphing`, { waitUntil: 'networkidle0' });
   await page.waitForSelector('input[placeholder*="sin"]');
 
-  await page.type('input[placeholder*="sin"]', 'sin(x)');
-  await page.click('button[type="submit"]');
-  await new Promise((r) => setTimeout(r, 500));
+  const graphExpressions = ['sin(x)', 'x^3 - 2*x + 1', 'exp(-x^2)', 'log(x)', 'sqrt(x)', 'sin(x) * exp(-x/5)'];
+  for (const expr of graphExpressions) {
+    await page.type('input[placeholder*="sin"]', expr);
+    await page.click('button[type="submit"]');
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  await new Promise((r) => setTimeout(r, 1000));
 
-  await page.type('input[placeholder*="sin"]', 'x^2');
-  await page.click('button[type="submit"]');
-  await new Promise((r) => setTimeout(r, 500));
-
-  await page.type('input[placeholder*="sin"]', 'cos(x)');
-  await page.click('button[type="submit"]');
+  // Zoom to a range where all 6 curves are visible (cubic dominates at default zoom)
+  // Remove scaleanchor so y-range isn't overridden by aspect-ratio constraint
+  await page.evaluate(() => {
+    const plot = document.querySelector('.js-plotly-plot');
+    // biome-ignore lint/suspicious/noExplicitAny: Plotly is loaded globally in the browser context
+    const Plotly = (window as any).Plotly;
+    if (plot && Plotly) {
+      Plotly.relayout(plot, {
+        'xaxis.autorange': false,
+        'xaxis.range': [-8, 8],
+        'yaxis.autorange': false,
+        'yaxis.range': [-4, 4],
+        'yaxis.scaleanchor': null,
+      });
+    }
+  });
   await new Promise((r) => setTimeout(r, 1500));
 
   await page.screenshot({ path: 'public/docs/graph-tab.png' });
   console.log('Captured graph tab');
+
+  // 3D Graphing tab - plot all 4 documented expressions (colors auto-assigned)
+  await freshPage('3d-graphing');
+
+  const threeDExpressions = ['sin(x) * cos(y)', 'exp(-(x^2 + y^2))', 'x^2 - y^2', 'sin(sqrt(x^2 + y^2))'];
+  for (const expr of threeDExpressions) {
+    await page.type('input[aria-label="3D surface expression"]', expr);
+    await page.click('button[type="submit"]');
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  await new Promise((r) => setTimeout(r, 2000));
+
+  await page.screenshot({ path: 'public/docs/3d-tab.png' });
+  console.log('Captured 3D graphing tab');
 
   // Calculus tab
   await page.goto(`${BASE}/calculus`, { waitUntil: 'networkidle0' });
@@ -144,8 +179,7 @@ async function main() {
   console.log('Captured stats tab');
 
   // Dark mode screenshot - go to graphing and toggle
-  await page.goto(`${BASE}/graphing`, { waitUntil: 'networkidle0' });
-  await new Promise((r) => setTimeout(r, 500));
+  await freshPage('graphing');
 
   // Toggle dark mode via header button
   const headerBtns = await page.$$('header button');
@@ -166,29 +200,63 @@ async function main() {
 
   // --- Responsive screenshots ---
 
-  // Desktop graphing (1280px) - plot some equations first
+  // Desktop graphing (1280px) - plot all 6 expressions with zoom
   await page.setViewport({ width: 1280, height: 900 });
-  await page.goto(`${BASE}/graphing`, { waitUntil: 'networkidle0' });
+  await freshPage('graphing');
   await page.waitForSelector('input[placeholder*="sin"]');
 
-  await page.type('input[placeholder*="sin"]', 'sin(x)');
-  await page.click('button[type="submit"]');
-  await new Promise((r) => setTimeout(r, 500));
+  for (const expr of graphExpressions) {
+    await page.type('input[placeholder*="sin"]', expr);
+    await page.click('button[type="submit"]');
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  await new Promise((r) => setTimeout(r, 1000));
 
-  await page.type('input[placeholder*="sin"]', 'x^2');
-  await page.click('button[type="submit"]');
+  await page.evaluate(() => {
+    const plot = document.querySelector('.js-plotly-plot');
+    // biome-ignore lint/suspicious/noExplicitAny: Plotly is loaded globally in the browser context
+    const Plotly = (window as any).Plotly;
+    if (plot && Plotly) {
+      Plotly.relayout(plot, {
+        'xaxis.autorange': false,
+        'xaxis.range': [-8, 8],
+        'yaxis.autorange': false,
+        'yaxis.range': [-4, 4],
+        'yaxis.scaleanchor': null,
+      });
+    }
+  });
   await new Promise((r) => setTimeout(r, 1500));
 
   await page.screenshot({ path: 'public/docs/desktop-graphing.png' });
   console.log('Captured desktop graphing');
 
-  // Tablet graphing (768px)
+  // Tablet graphing (768px) - plot all 6 expressions with zoom
   await page.setViewport({ width: 768, height: 1024 });
-  await page.goto(`${BASE}/graphing`, { waitUntil: 'networkidle0' });
+  await freshPage('graphing');
   await page.waitForSelector('input[placeholder*="sin"]');
 
-  await page.type('input[placeholder*="sin"]', 'sin(x)');
-  await page.click('button[type="submit"]');
+  for (const expr of graphExpressions) {
+    await page.type('input[placeholder*="sin"]', expr);
+    await page.click('button[type="submit"]');
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  await new Promise((r) => setTimeout(r, 1000));
+
+  await page.evaluate(() => {
+    const plot = document.querySelector('.js-plotly-plot');
+    // biome-ignore lint/suspicious/noExplicitAny: Plotly is loaded globally in the browser context
+    const Plotly = (window as any).Plotly;
+    if (plot && Plotly) {
+      Plotly.relayout(plot, {
+        'xaxis.autorange': false,
+        'xaxis.range': [-8, 8],
+        'yaxis.autorange': false,
+        'yaxis.range': [-4, 4],
+        'yaxis.scaleanchor': null,
+      });
+    }
+  });
   await new Promise((r) => setTimeout(r, 1500));
 
   await page.screenshot({ path: 'public/docs/tablet-graphing.png' });
@@ -197,15 +265,44 @@ async function main() {
   // Mobile screenshots (375px)
   await page.setViewport({ width: 375, height: 812 });
 
-  // Mobile scientific
+  // Clear localStorage so mobile screenshots show clean empty states
   await page.goto(`${BASE}/scientific`, { waitUntil: 'networkidle0' });
+  await page.evaluate(() => window.localStorage.removeItem('calculus-lab-state'));
+  await page.reload({ waitUntil: 'networkidle0' });
+
+  // Mobile scientific
   await new Promise((r) => setTimeout(r, 1000));
   await page.screenshot({ path: 'public/docs/mobile-scientific.png' });
   console.log('Captured mobile scientific');
 
-  // Mobile graphing
-  await page.goto(`${BASE}/graphing`, { waitUntil: 'networkidle0' });
+  // Mobile graphing - add equations so the plot isn't empty
+  await freshPage('graphing');
+  await page.waitForSelector('input[placeholder*="sin"]');
+
+  const mobileGraphExpressions = ['sin(x)', 'x^2', 'log(x)'];
+  for (const expr of mobileGraphExpressions) {
+    await page.type('input[placeholder*="sin"]', expr);
+    await page.click('button[type="submit"]');
+    await new Promise((r) => setTimeout(r, 500));
+  }
   await new Promise((r) => setTimeout(r, 1000));
+
+  await page.evaluate(() => {
+    const plot = document.querySelector('.js-plotly-plot');
+    // biome-ignore lint/suspicious/noExplicitAny: Plotly is loaded globally in the browser context
+    const Plotly = (window as any).Plotly;
+    if (plot && Plotly) {
+      Plotly.relayout(plot, {
+        'xaxis.autorange': false,
+        'xaxis.range': [-8, 8],
+        'yaxis.autorange': false,
+        'yaxis.range': [-4, 4],
+        'yaxis.scaleanchor': null,
+      });
+    }
+  });
+  await new Promise((r) => setTimeout(r, 1000));
+
   await page.screenshot({ path: 'public/docs/mobile-graphing.png' });
   console.log('Captured mobile graphing');
 
@@ -220,6 +317,20 @@ async function main() {
   await new Promise((r) => setTimeout(r, 1000));
   await page.screenshot({ path: 'public/docs/mobile-statistics.png' });
   console.log('Captured mobile statistics');
+
+  // Mobile 3D - add equations so the plot isn't empty
+  await freshPage('3d-graphing');
+
+  const mobile3DExpressions = ['sin(x) * cos(y)', 'x^2 - y^2'];
+  for (const expr of mobile3DExpressions) {
+    await page.type('input[aria-label="3D surface expression"]', expr);
+    await page.click('button[type="submit"]');
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  await new Promise((r) => setTimeout(r, 2000));
+
+  await page.screenshot({ path: 'public/docs/mobile-3d.png' });
+  console.log('Captured mobile 3D');
 
   // Mobile drawer - open the right panel drawer
   await page.goto(`${BASE}/scientific`, { waitUntil: 'networkidle0' });

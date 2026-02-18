@@ -22,6 +22,7 @@ declare module 'plotly.js-dist-min' {
   export interface Data {
     x?: number[] | string[];
     y?: number[] | string[];
+    z?: number[][] | number[];
     type?: string;
     mode?: string;
     name?: string;
@@ -48,6 +49,7 @@ declare module 'plotly.js-dist-min' {
     autosize?: boolean;
     dragmode?: string;
     hovermode?: string | boolean;
+    scene?: Record<string, unknown>;
     [key: string]: unknown;
   }
 
