@@ -54,12 +54,16 @@ export default function StatisticsPlot() {
       margin: { l: 50, r: 20, t: 20, b: 40 },
       xaxis: {
         zeroline: true,
-        gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
+        zerolinecolor: '#94a3b8',
+        showgrid: true,
+        gridcolor: state.darkMode ? '#475569' : '#e2e8f0',
         color: state.darkMode ? '#94a3b8' : '#64748b',
       },
       yaxis: {
         zeroline: true,
-        gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
+        zerolinecolor: '#94a3b8',
+        showgrid: true,
+        gridcolor: state.darkMode ? '#475569' : '#e2e8f0',
         color: state.darkMode ? '#94a3b8' : '#64748b',
       },
       paper_bgcolor: 'transparent',
@@ -77,9 +81,21 @@ export default function StatisticsPlot() {
   );
 
   if (plotData.length === 0) {
+    // Invisible anchor trace to force Plotly to render axes with visible gridlines
+    const emptyTrace: Data[] = [
+      {
+        x: [0, 10],
+        y: [0, 10],
+        type: 'scatter',
+        mode: 'markers',
+        marker: { opacity: 0 },
+        showlegend: false,
+        hoverinfo: 'skip',
+      },
+    ];
     return (
       <div className="relative h-full w-full">
-        <PlotlyWrapper data={[]} layout={layout} style={{ width: '100%', height: '100%' }} />
+        <PlotlyWrapper data={emptyTrace} layout={layout} style={{ width: '100%', height: '100%' }} />
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <span className="rounded-lg bg-[var(--color-surface)] px-4 py-2 text-[var(--color-text-secondary)] text-sm opacity-60">
             Enter data to see visualization

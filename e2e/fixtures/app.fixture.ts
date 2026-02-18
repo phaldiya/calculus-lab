@@ -9,8 +9,18 @@ export class CalcPage {
   }
 
   async goToTab(tab: Tab) {
-    await this.page.goto(`/calculus-lab/#/${tab}`);
-    await this.page.waitForLoadState('networkidle');
+    await this.page.goto(`/calculus-lab/#/${tab}`, { waitUntil: 'domcontentloaded' });
+    // Hash navigation doesn't trigger network requests, so wait for React to
+    // render tab-specific content instead of relying on networkidle.
+    const readyLocators: Record<Tab, import('@playwright/test').Locator> = {
+      scientific: this.page.getByRole('button', { name: 'AC' }),
+      graphing: this.page.getByLabel('Function expression'),
+      '3d-graphing': this.page.getByLabel('3D surface expression'),
+      calculus: this.page.getByLabel('Derivative expression'),
+      matrix: this.page.getByText('Matrix Calculator'),
+      statistics: this.page.getByText('Data Input'),
+    };
+    await readyLocators[tab].first().waitFor({ state: 'visible', timeout: 15000 });
   }
 
   async waitForPlotly() {
@@ -21,8 +31,12 @@ export class CalcPage {
     }
     // Wait for Plotly container to appear
     await this.page.locator('.js-plotly-plot .plot-container').first().waitFor({ state: 'attached', timeout: 10000 });
+    // For 2D charts, wait for gridlines to render (Plotly draws axes asynchronously)
+    // 3D charts use WebGL and don't have SVG gridlayer elements
+    const gridline = this.page.locator('.js-plotly-plot .gridlayer path').first();
+    await gridline.waitFor({ state: 'attached', timeout: 3000 }).catch(() => {});
     // Settle buffer for Plotly rendering
-    await this.page.waitForTimeout(800);
+    await this.page.waitForTimeout(1000);
   }
 
   async enableDarkMode() {
