@@ -735,10 +735,11 @@ export default function DocsPage() {
               </div>
 
               <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Desktop (1280px)</h3>
+                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Desktop (1024px+)</h3>
                 <p className="mb-4 text-slate-500 dark:text-slate-400">
-                  On desktop all panels are visible: left sidebar for navigation, right sidebar for variables and
-                  history, and inner panels in their full side-by-side layout. No toggle button is needed.
+                  On desktop both sidebars are available: left for navigation, right for variables and history. The
+                  right panel can be toggled via the panel icon in the header &mdash; it defaults to open on wide
+                  screens (1280px+) and collapsed on narrower desktops (1024&ndash;1279px).
                 </p>
                 <img
                   src={`${base}docs/desktop-graphing.png`}
@@ -770,7 +771,7 @@ export default function DocsPage() {
                         <td className="py-2 pr-4">Right panel</td>
                         <td className="py-2 pr-4">Slide-over drawer</td>
                         <td className="py-2 pr-4">Slide-over drawer</td>
-                        <td className="py-2">Always visible</td>
+                        <td className="py-2">Toggleable sidebar</td>
                       </tr>
                       <tr className="border-slate-100 border-b dark:border-slate-800">
                         <td className="py-2 pr-4">Inner panels</td>
@@ -782,7 +783,7 @@ export default function DocsPage() {
                         <td className="py-2 pr-4">Panel toggle</td>
                         <td className="py-2 pr-4">Visible</td>
                         <td className="py-2 pr-4">Visible</td>
-                        <td className="py-2">Hidden</td>
+                        <td className="py-2">Visible</td>
                       </tr>
                     </tbody>
                   </table>

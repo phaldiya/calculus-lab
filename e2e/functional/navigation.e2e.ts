@@ -42,6 +42,22 @@ test.describe('Navigation', () => {
     await expect(page.locator('html')).not.toHaveClass(/dark/);
   });
 
+  test('right panel toggle shows and hides variables sidebar', async ({ calcPage, page }) => {
+    await calcPage.goToTab('scientific');
+
+    // Panel should be visible by default on desktop (1440px >= 1280px)
+    const aside = page.getByLabel('Variables and history');
+    await expect(aside).toBeVisible();
+
+    // Click toggle to hide
+    await page.getByLabel('Hide variables panel').click();
+    await expect(aside).not.toBeVisible();
+
+    // Click toggle to show again
+    await page.getByLabel('Show variables panel').click();
+    await expect(aside).toBeVisible();
+  });
+
   test('dark mode persists across tab navigation', async ({ calcPage, page }) => {
     await calcPage.goToTab('scientific');
     await calcPage.enableDarkMode();

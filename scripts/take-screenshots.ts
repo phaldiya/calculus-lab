@@ -336,14 +336,22 @@ async function main() {
   await page.goto(`${BASE}/scientific`, { waitUntil: 'networkidle0' });
   await new Promise((r) => setTimeout(r, 500));
 
-  // Click the panel toggle button in the header to open the drawer
-  const panelToggle = await page.$(
-    'header button[aria-label*="panel"], header button[aria-label*="Panel"], header button[aria-label*="sidebar"], header button[aria-label*="Sidebar"]',
-  );
-  if (panelToggle) {
-    await panelToggle.click();
-  } else {
-    // Fallback: try the last button in header (usually the panel toggle)
+  // Click the visible panel toggle button in the header to open the drawer
+  // (Multiple toggle buttons exist — desktop and mobile — so find the visible one)
+  const panelToggles = await page.$$('header button[aria-label*="panel"], header button[aria-label*="Panel"]');
+  let clicked = false;
+  for (const toggle of panelToggles) {
+    const isVisible = await toggle.evaluate((el) => {
+      const style = window.getComputedStyle(el);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    });
+    if (isVisible) {
+      await toggle.click();
+      clicked = true;
+      break;
+    }
+  }
+  if (!clicked) {
     const allHeaderBtns = await page.$$('header button');
     if (allHeaderBtns.length > 1) {
       await allHeaderBtns[allHeaderBtns.length - 1].click();

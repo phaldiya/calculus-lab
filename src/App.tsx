@@ -57,9 +57,14 @@ function CalculatorLayout() {
   const location = useLocation();
   const tabName = pathToTab[location.pathname] || 'scientific';
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [rightPanelOpen, setRightPanelOpen] = useState(() => window.matchMedia('(min-width: 1280px)').matches);
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
+  }, []);
+
+  const toggleRightPanel = useCallback(() => {
+    setRightPanelOpen((prev) => !prev);
   }, []);
 
   // Close drawer on route change
@@ -81,7 +86,12 @@ function CalculatorLayout() {
       <a href="#main-content" id="skip-nav">
         Skip to content
       </a>
-      <Header onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+      <Header
+        onToggleSidebar={toggleSidebar}
+        sidebarOpen={sidebarOpen}
+        onToggleRightPanel={toggleRightPanel}
+        rightPanelOpen={rightPanelOpen}
+      />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
         <main id="main-content" className="flex-1 overflow-hidden pb-16 md:pb-0">
@@ -93,7 +103,7 @@ function CalculatorLayout() {
         {/* Desktop right sidebar */}
         <aside
           aria-label="Variables and history"
-          className="hidden w-56 flex-col overflow-hidden border-[var(--color-border)] border-l bg-[var(--color-surface)] lg:flex"
+          className={`hidden flex-col overflow-hidden border-[var(--color-border)] border-l bg-[var(--color-surface)] transition-[width] duration-200 ease-in-out lg:flex ${rightPanelOpen ? 'w-56' : 'w-0 border-l-0'}`}
         >
           <RightPanelContent />
         </aside>

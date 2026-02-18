@@ -6,9 +6,11 @@ import { CalculusLabIcon, CloseIcon, MoonIcon, PanelIcon, SunIcon } from '../sha
 interface HeaderProps {
   onToggleSidebar?: () => void;
   sidebarOpen?: boolean;
+  onToggleRightPanel?: () => void;
+  rightPanelOpen?: boolean;
 }
 
-export default function Header({ onToggleSidebar, sidebarOpen }: HeaderProps) {
+export default function Header({ onToggleSidebar, sidebarOpen, onToggleRightPanel, rightPanelOpen }: HeaderProps) {
   const { state, dispatch } = useAppContext();
   const location = useLocation();
   const hash = location.pathname.replace('/', '');
@@ -36,6 +38,19 @@ export default function Header({ onToggleSidebar, sidebarOpen }: HeaderProps) {
         >
           {state.darkMode ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
         </button>
+        {/* Right panel toggle — visible at lg+ */}
+        {onToggleRightPanel && (
+          <button
+            type="button"
+            onClick={onToggleRightPanel}
+            aria-label={rightPanelOpen ? 'Hide variables panel' : 'Show variables panel'}
+            aria-expanded={rightPanelOpen}
+            className="hidden rounded-lg p-2 transition-colors hover:bg-[var(--color-surface-alt)] lg:block"
+            title={rightPanelOpen ? 'Hide panel' : 'Show panel'}
+          >
+            <PanelIcon className="h-5 w-5" />
+          </button>
+        )}
         {/* Sidebar toggle — visible below lg */}
         {onToggleSidebar && (
           <button
