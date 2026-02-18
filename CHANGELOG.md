@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/phaldiya/calculus-lab/compare/v1.3.0...v1.3.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* stabilize E2E tests and ensure statistics grid visibility ([0a23e6d](https://github.com/phaldiya/calculus-lab/commit/0a23e6d090218e11e7f69c5febbc976037125348)), closes [#475569](https://github.com/phaldiya/calculus-lab/issues/475569)
+
 # [1.3.0](https://github.com/phaldiya/calculus-lab/compare/v1.2.0...v1.3.0) (2026-02-18)
 
 
