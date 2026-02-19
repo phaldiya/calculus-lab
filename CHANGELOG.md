@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/phaldiya/calculus-lab/compare/v1.3.1...v1.4.0) (2026-02-19)
+
+
+### Features
+
+* add security audit to pre-push hook and update dependencies ([7604aa5](https://github.com/phaldiya/calculus-lab/commit/7604aa52246acc650542063f79526a2dc5520eaa))
+
 ## [1.3.1](https://github.com/phaldiya/calculus-lab/compare/v1.3.0...v1.3.1) (2026-02-18)
 
 
