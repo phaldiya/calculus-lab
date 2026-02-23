@@ -7,7 +7,9 @@ import {
   CubeIcon,
   GraphIcon,
   IntegralIcon,
+  ManipulateIcon,
   MatrixIcon,
+  ParametricIcon,
   StatsIcon,
 } from './shared/Icons';
 
@@ -21,6 +23,8 @@ const sections = [
   { id: 'calculus', label: 'Calculus', tooltip: 'Derivatives, integrals, and limits' },
   { id: 'matrix', label: 'Matrix', tooltip: 'Add, multiply, invert, and transpose matrices' },
   { id: 'statistics', label: 'Statistics', tooltip: 'Descriptive stats, histograms, and regression' },
+  { id: 'parametric', label: 'Parametric', tooltip: 'Parametric curves and polar plots' },
+  { id: 'manipulate', label: 'Interact', tooltip: 'Interactive plots with parameter sliders' },
   { id: 'variables', label: 'Variables', tooltip: 'Custom variables, history, and URL navigation' },
   { id: 'responsive', label: 'Responsive', tooltip: 'Mobile, tablet, and desktop layouts' },
   { id: 'dark-mode', label: 'Dark Mode', tooltip: 'Toggle light/dark theme preference' },
@@ -71,7 +75,16 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode; titl
   );
 }
 
-const calculatorTabs = ['scientific', 'graphing', '3d-graphing', 'calculus', 'matrix', 'statistics'];
+const calculatorTabs = [
+  'scientific',
+  'graphing',
+  '3d-graphing',
+  'calculus',
+  'matrix',
+  'statistics',
+  'parametric',
+  'manipulate',
+];
 
 export default function DocsPage() {
   const navigate = useNavigate();
@@ -238,11 +251,21 @@ export default function DocsPage() {
                 title="Statistical Analysis"
                 description="Descriptive statistics, histograms, linear and polynomial regression with R²."
               />
+              <FeatureCard
+                icon={<ParametricIcon className="h-5 w-5" />}
+                title="Parametric & Polar"
+                description="2D/3D parametric curves and polar plots with configurable parameter ranges."
+              />
+              <FeatureCard
+                icon={<ManipulateIcon className="h-5 w-5" />}
+                title="Interactive Manipulate"
+                description="Dynamic plots with sliders to adjust equation parameters in real time."
+              />
             </div>
 
             <div className="grid grid-cols-1 gap-4 rounded-xl bg-slate-50 p-5 sm:grid-cols-3 dark:bg-slate-900">
               <div className="text-center">
-                <div className="font-bold text-2xl text-indigo-600 dark:text-indigo-400">6</div>
+                <div className="font-bold text-2xl text-indigo-600 dark:text-indigo-400">8</div>
                 <div className="mt-1 text-slate-500 text-xs dark:text-slate-400">Calculator Modes</div>
               </div>
               <div className="text-center">
@@ -339,13 +362,12 @@ export default function DocsPage() {
               unique color automatically.
             </p>
 
+            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Supported Expressions</h3>
             <img
               src={`${base}docs/graph-tab.png`}
               alt="Graphing tab showing multiple plotted equations"
-              className="mb-6 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+              className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
             />
-
-            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Supported Expressions</h3>
             <div className="mb-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
               <ExampleCard title="Trigonometric" input="sin(x)" output="Sine wave" />
               <ExampleCard title="Polynomial" input="x^3 - 2*x + 1" output="Cubic curve" />
@@ -353,6 +375,38 @@ export default function DocsPage() {
               <ExampleCard title="Logarithmic" input="log(x)" output="Natural log curve" />
               <ExampleCard title="Square Root" input="sqrt(x)" output="Square root curve" />
               <ExampleCard title="Composite" input="sin(x) * exp(-x/5)" output="Damped sine wave" />
+            </div>
+
+            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Implicit Equations</h3>
+            <p className="mb-3 text-slate-500 dark:text-slate-400">
+              Enter equations with <CodeBlock>=</CodeBlock> to plot implicit curves. Both sides are evaluated over a 2D
+              grid and the zero-contour is drawn. Implicit equations display a purple <CodeBlock>implicit</CodeBlock>{' '}
+              badge in the equation list.
+            </p>
+            <div className="mb-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <ExampleCard title="Circle" input="x^2 + y^2 = 25" output="Circle of radius 5" />
+              <ExampleCard title="Ellipse" input="x^2/9 + y^2/4 = 1" output="Ellipse" />
+              <ExampleCard title="Hyperbola" input="x^2 - y^2 = 1" output="Hyperbolic curves" />
+              <ExampleCard title="Lemniscate" input="(x^2+y^2)^2 = x^2-y^2" output="Figure-eight curve" />
+            </div>
+
+            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Inequality Regions</h3>
+            <p className="mb-3 text-slate-500 dark:text-slate-400">
+              Use <CodeBlock>&gt;</CodeBlock>, <CodeBlock>&lt;</CodeBlock>, <CodeBlock>&gt;=</CodeBlock>, or{' '}
+              <CodeBlock>&lt;=</CodeBlock> to plot shaded inequality regions. The expression is rearranged automatically
+              and the region satisfying the inequality is filled with a semi-transparent color. Inequality equations
+              display an amber badge showing the operator.
+            </p>
+            <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <ExampleCard title="Parabolic region" input="y > x^2" output="Shaded region above parabola" />
+              <ExampleCard title="Disk" input="x^2 + y^2 < 25" output="Filled circle of radius 5" />
+              <ExampleCard title="Half-plane" input="y >= 2*x + 1" output="Region above the line" />
+              <ExampleCard title="Band" input="y <= sin(x) + 2" output="Region below shifted sine" />
+            </div>
+            <div className="mb-6 rounded-xl bg-amber-50 p-4 text-amber-700 text-sm dark:bg-amber-950 dark:text-amber-300">
+              <strong>Note:</strong> Inequality plots use Plotly's contour constraint mode. You can overlay multiple
+              inequalities to visualize feasible regions for systems of inequalities — each gets its own color with 30%
+              opacity so overlapping areas are visible.
             </div>
 
             <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Plotting Custom Points</h3>
@@ -377,13 +431,12 @@ export default function DocsPage() {
               automatically, just like 2D graphing.
             </p>
 
+            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Supported Expressions</h3>
             <img
               src={`${base}docs/3d-tab.png`}
               alt="3D graphing tab showing multiple surface plots"
-              className="mb-6 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+              className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
             />
-
-            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Supported Expressions</h3>
             <p className="mb-3 text-slate-500 dark:text-slate-400">
               Any expression using <CodeBlock>x</CodeBlock> and <CodeBlock>y</CodeBlock> as variables. Standard math
               functions work the same as in 2D graphing.
@@ -427,15 +480,14 @@ export default function DocsPage() {
               results.
             </p>
 
-            <img
-              src={`${base}docs/calculus-tab.png`}
-              alt="Calculus tab showing derivative, integral, and limit computations"
-              className="mb-6 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
-            />
-
             <div className="space-y-6">
               <div>
                 <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Derivatives</h3>
+                <img
+                  src={`${base}docs/calculus-tab.png`}
+                  alt="Calculus tab showing derivative, integral, and limit computations"
+                  className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+                />
                 <p className="mb-3 text-slate-500 dark:text-slate-400">
                   Computes symbolic derivatives using math.js. Enter any expression and click
                   <CodeBlock>d/dx</CodeBlock> to get the derivative. The original function (solid line) and its
@@ -615,6 +667,212 @@ export default function DocsPage() {
             </div>
           </section>
 
+          {/* Parametric & Polar */}
+          <section id="parametric" className="mb-16">
+            <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Parametric & Polar</h2>
+            <p className="mb-6 text-slate-500 dark:text-slate-400">
+              Plot parametric curves in 2D and 3D, or polar graphs. Switch between modes using the segmented toggle at
+              the top of the input panel. Each mode provides context-sensitive input fields for the relevant expressions
+              and parameter ranges.
+            </p>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">2D Parametric Curves</h3>
+                <img
+                  src={`${base}docs/parametric-tab.png`}
+                  alt="Parametric tab showing 2D parametric curves"
+                  className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+                />
+                <p className="mb-3 text-slate-500 dark:text-slate-400">
+                  Define curves with separate <CodeBlock>x(t)</CodeBlock> and <CodeBlock>y(t)</CodeBlock> expressions.
+                  Set the parameter range with <CodeBlock>t min</CodeBlock>, <CodeBlock>t max</CodeBlock>, and the
+                  number of sample points. The curve is drawn as a connected line in the Cartesian plane.
+                </p>
+                <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <ExampleCard title="Circle" input="x(t) = cos(t), y(t) = sin(t)" output="Unit circle" />
+                  <ExampleCard title="Lissajous" input="x(t) = sin(3t), y(t) = sin(2t)" output="Figure-eight knot" />
+                  <ExampleCard title="Spiral" input="x(t) = t*cos(t), y(t) = t*sin(t)" output="Archimedean spiral" />
+                  <ExampleCard title="Cycloid" input="x(t) = t - sin(t), y(t) = 1 - cos(t)" output="Rolling curve" />
+                </div>
+                <div className="rounded-xl bg-indigo-50 p-4 text-indigo-700 text-sm dark:bg-indigo-950 dark:text-indigo-300">
+                  <strong>Tip:</strong> The default range is <CodeBlock>t: 0 to 2π</CodeBlock> with 200 sample points.
+                  Increase the point count for smoother curves or decrease it for faster rendering.
+                </div>
+              </div>
+
+              <div>
+                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">3D Parametric Curves</h3>
+                <img
+                  src={`${base}docs/parametric-3d-tab.png`}
+                  alt="3D Parametric curves showing helix, trefoil knot, and toroidal spiral"
+                  className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+                />
+                <p className="mb-3 text-slate-500 dark:text-slate-400">
+                  Add a third expression <CodeBlock>z(t)</CodeBlock> to plot curves in 3D space. The resulting curve is
+                  rendered with Plotly's 3D scatter mode, supporting orbit, zoom, and pan interactions.
+                </p>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <ExampleCard
+                    title="Helix"
+                    input="x = cos(t), y = sin(t), z = t/5"
+                    output="Spiral rising along z-axis"
+                  />
+                  <ExampleCard
+                    title="Trefoil knot"
+                    input="x = sin(t)+2sin(2t), y = cos(t)-2cos(2t), z = -sin(3t)"
+                    output="3D knot"
+                  />
+                  <ExampleCard
+                    title="Toroidal spiral"
+                    input="x = (2+cos(5t))cos(t), y = (2+cos(5t))sin(t), z = sin(5t)"
+                    output="Spiral on torus"
+                  />
+                  <ExampleCard
+                    title="Conical helix"
+                    input="x = t*cos(t), y = t*sin(t), z = t"
+                    output="Expanding helix"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Polar Plots</h3>
+                <img
+                  src={`${base}docs/parametric-polar-tab.png`}
+                  alt="Polar plots showing cardioid, rose, spiral, and lemniscate curves"
+                  className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+                />
+                <p className="mb-3 text-slate-500 dark:text-slate-400">
+                  Enter a single <CodeBlock>r(θ)</CodeBlock> expression to plot in polar coordinates. The angle
+                  parameter is <CodeBlock>theta</CodeBlock> in radians. Curves are rendered on a polar coordinate grid
+                  with angular gridlines.
+                </p>
+                <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <ExampleCard title="Cardioid" input="r(θ) = 1 + cos(theta)" output="Heart-shaped curve" />
+                  <ExampleCard title="Rose" input="r(θ) = cos(3 * theta)" output="Three-petal rose" />
+                  <ExampleCard title="Spiral" input="r(θ) = theta / (2*pi)" output="Archimedean spiral" />
+                  <ExampleCard title="Lemniscate" input="r(θ) = sqrt(cos(2*theta))" output="Figure-eight" />
+                </div>
+                <div className="rounded-xl bg-indigo-50 p-4 text-indigo-700 text-sm dark:bg-indigo-950 dark:text-indigo-300">
+                  <strong>Tip:</strong> The default range is <CodeBlock>θ: 0 to 2π</CodeBlock>. For multi-loop curves
+                  like spirals, increase the maximum to <CodeBlock>4π</CodeBlock> or <CodeBlock>6π</CodeBlock>. Polar
+                  plots use Plotly's <CodeBlock>scatterpolar</CodeBlock> trace type with angles displayed in degrees.
+                </div>
+              </div>
+
+              <div>
+                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Equation Management</h3>
+                <p className="text-slate-500 text-sm dark:text-slate-400">
+                  Each plotted equation shows a colored badge indicating its type (2D, 3D, or Polar). Use the toggle
+                  switch to show or hide individual curves. Click the <CodeBlock>×</CodeBlock> button to remove an
+                  equation, or <CodeBlock>Clear All</CodeBlock> to reset everything. Multiple curves of the same or
+                  different types can be plotted simultaneously.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Interactive Manipulate */}
+          <section id="manipulate" className="mb-16">
+            <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Interactive Manipulate</h2>
+            <p className="mb-6 text-slate-500 dark:text-slate-400">
+              Create dynamic visualizations where equation parameters are controlled by interactive sliders. Type an
+              expression with named parameters (any letter except <CodeBlock>x</CodeBlock>, <CodeBlock>y</CodeBlock>,{' '}
+              <CodeBlock>z</CodeBlock>, <CodeBlock>t</CodeBlock>) and sliders are created automatically.
+            </p>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Auto-Parameter Detection</h3>
+                <img
+                  src={`${base}docs/manipulate-tab.png`}
+                  alt="Interactive manipulate tab with sliders controlling equation parameters"
+                  className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+                />
+                <p className="mb-3 text-slate-500 dark:text-slate-400">
+                  When you plot an expression, the app analyzes it using the math.js AST to find undefined symbols that
+                  aren't built-in variables or functions. For each detected parameter, a slider is created with sensible
+                  defaults (<CodeBlock>-5</CodeBlock> to <CodeBlock>5</CodeBlock>, step <CodeBlock>0.1</CodeBlock>).
+                </p>
+                <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <ExampleCard title="Amplitude & frequency" input="a * sin(b * x)" output="Sliders for a and b" />
+                  <ExampleCard title="Phase shift" input="sin(x + phi)" output="Slider for phi" />
+                  <ExampleCard
+                    title="Damped oscillation"
+                    input="a * exp(-k * x) * cos(w * x)"
+                    output="Sliders for a, k, w"
+                  />
+                  <ExampleCard
+                    title="Polynomial coefficients"
+                    input="a*x^3 + b*x^2 + c*x + d"
+                    output="Sliders for a, b, c, d"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Slider Controls</h3>
+                <p className="mb-3 text-slate-500 dark:text-slate-400">
+                  Sliders appear in two places: the sidebar <CodeBlock>Parameters</CodeBlock> panel (with configurable
+                  min, max, and step) and the <CodeBlock>Slider Bar</CodeBlock> below the plot (for quick adjustment).
+                  Moving a slider immediately re-renders the graph with the new parameter value.
+                </p>
+                <div className="space-y-3">
+                  <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+                    <h4 className="mb-1 font-medium text-slate-800 text-sm dark:text-slate-200">Configure Range</h4>
+                    <p className="text-slate-500 text-sm dark:text-slate-400">
+                      Each slider has editable min, max, and step fields in the sidebar. Change these to control the
+                      parameter's range and precision. For example, set step to <CodeBlock>0.01</CodeBlock> for
+                      fine-grained control.
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+                    <h4 className="mb-1 font-medium text-slate-800 text-sm dark:text-slate-200">Manual Sliders</h4>
+                    <p className="text-slate-500 text-sm dark:text-slate-400">
+                      Add sliders manually by typing a name in the <CodeBlock>Add param</CodeBlock> field and clicking{' '}
+                      <CodeBlock>Add</CodeBlock>. This is useful for pre-creating parameters before entering an
+                      expression.
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+                    <h4 className="mb-1 font-medium text-slate-800 text-sm dark:text-slate-200">Performance</h4>
+                    <p className="text-slate-500 text-sm dark:text-slate-400">
+                      Slider updates are throttled with <CodeBlock>requestAnimationFrame</CodeBlock> to ensure smooth
+                      interaction even with complex expressions. The graph re-renders at the display's refresh rate.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Axis Ranges & Grid</h3>
+                <p className="mb-3 text-slate-500 dark:text-slate-400">
+                  Customize the X and Y axis ranges and grid resolution from the sidebar. The default range is{' '}
+                  <CodeBlock>-10 to 10</CodeBlock> for both axes with a grid resolution of <CodeBlock>50</CodeBlock>{' '}
+                  points. Higher resolution produces smoother curves at the cost of computation time.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Variable Integration</h3>
+                <p className="mb-3 text-slate-500 dark:text-slate-400">
+                  Slider parameters integrate with the global Variables panel. If you define a variable{' '}
+                  <CodeBlock>a = 5</CodeBlock> in the sidebar and also have a slider for <CodeBlock>a</CodeBlock>, the
+                  slider value takes precedence. This lets you use sliders for dynamic parameters while keeping other
+                  variables fixed.
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-indigo-50 p-4 text-indigo-700 text-sm dark:bg-indigo-950 dark:text-indigo-300">
+                <strong>Example workflow:</strong> Type <CodeBlock>a * sin(b * x + c)</CodeBlock> and click Plot. Three
+                sliders appear for <CodeBlock>a</CodeBlock> (amplitude), <CodeBlock>b</CodeBlock> (frequency), and{' '}
+                <CodeBlock>c</CodeBlock> (phase). Drag each slider to explore how each parameter transforms the wave in
+                real time. Use the sidebar to widen the slider range or adjust the step size for finer control.
+              </div>
+            </div>
+          </section>
+
           {/* Variables */}
           <section id="variables" className="mb-16">
             <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Variables & History</h2>
@@ -655,6 +913,8 @@ export default function DocsPage() {
                     ['/calculus', 'Calculus'],
                     ['/matrix', 'Matrix'],
                     ['/statistics', 'Statistics'],
+                    ['/parametric', 'Parametric'],
+                    ['/manipulate', 'Interact'],
                     ['/docs', 'Documentation'],
                   ].map(([path, label]) => (
                     <div key={path} className="flex items-center gap-2">
@@ -683,7 +943,7 @@ export default function DocsPage() {
                   (variables &amp; history) is hidden and accessible via a slide-over drawer triggered by the panel icon
                   in the header. Inner panels stack vertically — inputs on top, plots below.
                 </p>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-6">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
                   <img
                     src={`${base}docs/mobile-scientific.png`}
                     alt="Mobile scientific calculator with bottom tab bar"
@@ -710,13 +970,23 @@ export default function DocsPage() {
                     className="rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
                   />
                   <img
+                    src={`${base}docs/mobile-parametric.png`}
+                    alt="Mobile parametric view with stacked layout"
+                    className="rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+                  />
+                  <img
+                    src={`${base}docs/mobile-manipulate.png`}
+                    alt="Mobile interactive manipulate view with sliders"
+                    className="rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+                  />
+                  <img
                     src={`${base}docs/mobile-drawer.png`}
                     alt="Mobile slide-over drawer with variables and history"
                     className="rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
                   />
                 </div>
                 <p className="mt-2 text-slate-400 text-xs">
-                  Left to right: Calculator, Graphing, 3D, Calculus, Statistics, Variables drawer
+                  Left to right: Calculator, Graphing, 3D, Calculus, Statistics, Parametric, Interact, Variables drawer
                 </p>
               </div>
 

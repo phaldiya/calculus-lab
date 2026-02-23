@@ -45,6 +45,17 @@ export function createTestState(overrides: Partial<AppState> = {}): AppState {
       yRange: [-5, 5],
       gridResolution: 50,
     },
+    parametric: {
+      equations: [],
+      activePlotType: 'parametric-2d',
+    },
+    manipulate: {
+      equations: [],
+      sliders: [],
+      xRange: [-10, 10],
+      yRange: [-10, 10],
+      gridResolution: 50,
+    },
     history: [],
     variables: [],
     darkMode: false,

@@ -65,10 +65,9 @@ export default function DerivativeInput() {
   }
 
   return (
-    <div
-      role="group"
+    <fieldset
       aria-labelledby="deriv-heading"
-      className="flex flex-col gap-2 rounded-lg border border-[var(--color-border)] border-l-3 border-l-[#6366f1] bg-[var(--color-surface)] p-4"
+      className="m-0 flex flex-col gap-2 rounded-lg border border-0 border-[var(--color-border)] border-l-3 border-l-[#6366f1] bg-[var(--color-surface)] p-0 p-4"
     >
       <h3 id="deriv-heading" className="font-semibold text-[var(--color-text)] text-sm">
         Derivative
@@ -94,7 +93,7 @@ export default function DerivativeInput() {
         </p>
       )}
       {state.calculus.derivativeResult && (
-        <div aria-live="polite" role="status" className="rounded-lg bg-[var(--color-surface-alt)] px-3 py-2">
+        <output aria-live="polite" className="rounded-lg bg-[var(--color-surface-alt)] px-3 py-2">
           <span className="text-[var(--color-text-secondary)] text-xs">Result: </span>
           {resultTex ? (
             <KaTeXRenderer
@@ -105,7 +104,7 @@ export default function DerivativeInput() {
           ) : (
             <span className="font-mono text-[var(--color-text)] text-sm">{state.calculus.derivativeResult}</span>
           )}
-        </div>
+        </output>
       )}
       {steps.length > 0 && (
         <button
@@ -118,6 +117,6 @@ export default function DerivativeInput() {
         </button>
       )}
       {showSteps && steps.length > 0 && <StepViewer steps={steps} onClose={() => setShowSteps(false)} />}
-    </div>
+    </fieldset>
   );
 }

@@ -41,6 +41,11 @@ export default function EquationList() {
               implicit
             </span>
           )}
+          {eq.mode === 'inequality' && (
+            <span className="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 font-medium text-[10px] text-amber-700 dark:bg-amber-900 dark:text-amber-300">
+              {eq.inequalityOp}
+            </span>
+          )}
           <button
             type="button"
             aria-label={`Remove ${eq.expression}`}

@@ -18,6 +18,8 @@ A full-featured scientific graphing calculator built with React, TypeScript, and
 ### Function Graphing
 - Plot multiple functions simultaneously with automatic color assignment
 - Standard math expressions: `sin(x)`, `x^2 + 1`, `exp(-x^2)`, etc.
+- Implicit equations: `x^2 + y^2 = 25`, `x^2/9 + y^2/4 = 1`
+- Inequality regions: `y > x^2`, `x^2 + y^2 < 25` with semi-transparent shading
 - Interactive zoom (scroll), pan (drag), and hover coordinates
 - Toggle visibility or remove individual equations
 - Plot custom (x, y) coordinate pairs as scatter, line, or both
@@ -46,8 +48,21 @@ A full-featured scientific graphing calculator built with React, TypeScript, and
 - **Histogram** visualization
 - **Linear & polynomial regression** with R² and fitted curve overlay
 
+### Parametric & Polar
+- **2D Parametric Curves:** plot x(t), y(t) with configurable parameter range and point count
+- **3D Parametric Curves:** plot x(t), y(t), z(t) in interactive 3D space (helix, trefoil knot, toroidal spiral)
+- **Polar Plots:** plot r(θ) on a polar coordinate grid (cardioid, rose, spiral, lemniscate)
+- Mode toggle to switch between 2D Parametric, 3D Parametric, and Polar
+
+### Interactive Manipulate
+- Dynamic plots with sliders to adjust equation parameters in real time
+- Auto-parameter detection: enter `a * sin(b * x)` and sliders for `a` and `b` are created automatically
+- Configurable slider range, step size, and manual slider creation
+- Supports standard 2D, implicit, and 3D surface plot types
+- Slider variables integrate with global custom variables
+
 ### Cross-Cutting
-- URL-based routing per tab (`/scientific`, `/graphing`, `/3d-graphing`, `/calculus`, `/matrix`, `/statistics`) — survives page reload
+- URL-based routing per tab (`/scientific`, `/graphing`, `/3d-graphing`, `/calculus`, `/matrix`, `/statistics`, `/parametric`, `/manipulate`) — survives page reload
 - Dark mode with persistent preference
 - Custom variables panel
 - Expression history across all tabs
@@ -112,6 +127,8 @@ src/
     ├── calculus/               # Derivatives, integrals, limits
     ├── matrix/                 # Matrix operations
     ├── statistics/             # Stats & regression
+    ├── parametric/             # Parametric & polar curves
+    ├── manipulate/             # Interactive manipulate with sliders
     └── shared/                 # History, Variables, ErrorBoundary
 ```
 
@@ -147,5 +164,9 @@ bun run extension:zip       # produces calculus-lab-extension.zip
 | Calculus | d/dx `x^3` | `3 * x ^ 2` |
 | Calculus | ∫ `x^2` from 0 to 1 | `0.333333` |
 | Calculus | lim `sin(x)/x` at 0 | `1.000000` |
+| Graph | Plot `y > x^2` | Shaded region above parabola |
+| Parametric | Plot `x=cos(t), y=sin(t)` | Unit circle |
+| Polar | Plot `r=1+cos(theta)` | Cardioid |
+| Manipulate | Plot `a*sin(b*x)` | Sliders for a and b |
 | Matrix | `det([[1,2],[3,4]])` | `-2.0000` |
 | Stats | `1,2,...,10` | Mean = 5.5 |

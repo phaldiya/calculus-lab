@@ -16,6 +16,8 @@ test.describe('Navigation', () => {
       { label: 'Calculus', path: '/calculus', heading: 'Derivative' },
       { label: 'Matrix', path: '/matrix', heading: 'Matrix Calculator' },
       { label: 'Stats', path: '/statistics', heading: 'Data Input' },
+      { label: 'Param', path: '/parametric', heading: 'Parametric & Polar' },
+      { label: 'Interact', path: '/manipulate', heading: 'Interact' },
       { label: 'Calc', path: '/scientific', button: 'AC' },
     ] as const;
 

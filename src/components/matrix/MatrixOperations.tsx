@@ -19,7 +19,7 @@ export default function MatrixOperations({ operation, onChange, onCompute }: Pro
   return (
     <div className="flex flex-col gap-2">
       <span className="font-medium text-[var(--color-text)] text-sm">Operation</span>
-      <div role="group" aria-label="Matrix operation" className="grid grid-cols-3 gap-1">
+      <fieldset aria-label="Matrix operation" className="m-0 grid grid-cols-3 gap-1 border-0 p-0">
         {operations.map((op) => (
           <button
             type="button"
@@ -35,7 +35,7 @@ export default function MatrixOperations({ operation, onChange, onCompute }: Pro
             {op.label}
           </button>
         ))}
-      </div>
+      </fieldset>
       <button
         type="button"
         onClick={onCompute}

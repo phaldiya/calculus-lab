@@ -19,25 +19,25 @@ export default function MatrixResult({ result, error }: Props) {
 
   if (typeof result === 'number') {
     return (
-      <div aria-live="polite" role="status" className="rounded-lg bg-[var(--color-surface-alt)] p-3">
+      <output aria-live="polite" className="rounded-lg bg-[var(--color-surface-alt)] p-3">
         <span className="text-[var(--color-text-secondary)] text-xs">Result: </span>
         <span className="font-mono font-semibold text-[var(--color-text)] text-lg">{result.toFixed(4)}</span>
-      </div>
+      </output>
     );
   }
 
   if (typeof result === 'string') {
     return (
-      <div aria-live="polite" role="status" className="rounded-lg bg-[var(--color-surface-alt)] p-3">
+      <output aria-live="polite" className="rounded-lg bg-[var(--color-surface-alt)] p-3">
         <span className="font-mono text-[var(--color-text)] text-sm">{result}</span>
-      </div>
+      </output>
     );
   }
 
   const tex = matrixToTex(result);
 
   return (
-    <div aria-live="polite" role="status" className="rounded-lg bg-[var(--color-surface-alt)] p-3">
+    <output aria-live="polite" className="rounded-lg bg-[var(--color-surface-alt)] p-3">
       <span className="mb-2 block text-[var(--color-text-secondary)] text-xs">Result:</span>
       <KaTeXRenderer
         tex={tex}
@@ -45,6 +45,6 @@ export default function MatrixResult({ result, error }: Props) {
         ariaLabel={`Result matrix: ${result.map((row) => row.join(', ')).join('; ')}`}
         className="text-[var(--color-text)]"
       />
-    </div>
+    </output>
   );
 }

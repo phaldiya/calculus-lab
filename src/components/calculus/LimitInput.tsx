@@ -70,10 +70,9 @@ export default function LimitInput() {
   }
 
   return (
-    <div
-      role="group"
+    <fieldset
       aria-labelledby="limit-heading"
-      className="flex flex-col gap-2 rounded-lg border border-[var(--color-border)] border-l-3 border-l-[#f59e0b] bg-[var(--color-surface)] p-4"
+      className="m-0 flex flex-col gap-2 rounded-lg border border-0 border-[var(--color-border)] border-l-3 border-l-[#f59e0b] bg-[var(--color-surface)] p-0 p-4"
     >
       <h3 id="limit-heading" className="font-semibold text-[var(--color-text)] text-sm">
         Limit
@@ -85,7 +84,7 @@ export default function LimitInput() {
           onChange={(e) => dispatch({ type: 'SET_CALCULUS', updates: { limitExpr: e.target.value } })}
           placeholder="e.g. sin(x)/x"
           aria-label="Limit expression"
-          className="min-w-0 w-1/2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[#f59e0b]"
+          className="w-1/2 min-w-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[#f59e0b]"
         />
         <input
           type="text"
@@ -93,7 +92,7 @@ export default function LimitInput() {
           onChange={(e) => dispatch({ type: 'SET_CALCULUS', updates: { limitPoint: e.target.value } })}
           placeholder="x ->"
           aria-label="Limit point"
-          className="min-w-0 w-1/2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[#f59e0b]"
+          className="w-1/2 min-w-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[#f59e0b]"
         />
       </div>
       <button
@@ -109,7 +108,7 @@ export default function LimitInput() {
         </p>
       )}
       {state.calculus.limitResult && (
-        <div aria-live="polite" role="status" className="rounded-lg bg-[var(--color-surface-alt)] px-3 py-2">
+        <output aria-live="polite" className="rounded-lg bg-[var(--color-surface-alt)] px-3 py-2">
           <span className="text-[var(--color-text-secondary)] text-xs">Result: </span>
           {resultTex ? (
             <KaTeXRenderer
@@ -120,7 +119,7 @@ export default function LimitInput() {
           ) : (
             <span className="font-mono text-[var(--color-text)] text-sm">{state.calculus.limitResult}</span>
           )}
-        </div>
+        </output>
       )}
       {steps.length > 0 && (
         <button
@@ -133,6 +132,6 @@ export default function LimitInput() {
         </button>
       )}
       {showSteps && steps.length > 0 && <StepViewer steps={steps} onClose={() => setShowSteps(false)} />}
-    </div>
+    </fieldset>
   );
 }

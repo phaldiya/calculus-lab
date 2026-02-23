@@ -374,12 +374,11 @@ export default function ScientificPanel() {
 
   return (
     <div className="flex h-full">
-      <div className="flex flex-1 items-center justify-start sm:justify-center overflow-y-auto px-3 py-6 sm:px-6">
+      <div className="flex flex-1 items-center justify-start overflow-y-auto px-3 py-6 sm:justify-center sm:px-6">
         <div ref={wrapperRef} tabIndex={-1} className="flex w-full max-w-lg flex-col gap-3 outline-none">
           {/* Display */}
-          <div
+          <output
             aria-live="polite"
-            role="status"
             className="flex min-h-[100px] flex-col justify-end rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
           >
             <div className="mb-1 min-h-[1.25rem] truncate text-right text-[var(--color-text-secondary)] text-xs">
@@ -390,7 +389,7 @@ export default function ScientificPanel() {
               )}
             </div>
             <div className="truncate text-right font-bold font-mono text-3xl text-[var(--color-text)]">{display}</div>
-          </div>
+          </output>
 
           {/* Show Steps button */}
           {steps.length > 0 && (

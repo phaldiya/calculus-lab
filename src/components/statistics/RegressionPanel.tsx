@@ -74,14 +74,10 @@ export default function RegressionPanel() {
         <p className="text-[var(--color-text-secondary)] text-xs">Enter X,Y pairs above to enable regression</p>
       )}
       {regressionResult && (
-        <div
-          aria-live="polite"
-          role="status"
-          className="flex flex-col gap-1 rounded-lg bg-[var(--color-surface-alt)] p-3"
-        >
+        <output aria-live="polite" className="flex flex-col gap-1 rounded-lg bg-[var(--color-surface-alt)] p-3">
           <p className="font-mono text-[var(--color-text)] text-sm">{regressionResult.equation}</p>
           <p className="text-[var(--color-text-secondary)] text-xs">R² = {regressionResult.rSquared.toFixed(6)}</p>
-        </div>
+        </output>
       )}
     </div>
   );

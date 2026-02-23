@@ -11,7 +11,7 @@ test.describe('Scientific Calculator', () => {
     await page.getByRole('button', { name: '3', exact: true }).click();
     await page.getByRole('button', { name: '=', exact: true }).click();
 
-    const display = page.locator('[role="status"] .text-3xl');
+    const display = page.locator('output[aria-live="polite"] .text-3xl');
     await expect(display).toHaveText('15');
   });
 
@@ -21,7 +21,7 @@ test.describe('Scientific Calculator', () => {
     await page.getByRole('button', { name: ')', exact: true }).click();
     await page.getByRole('button', { name: '=', exact: true }).click();
 
-    const display = page.locator('[role="status"] .text-3xl');
+    const display = page.locator('output[aria-live="polite"] .text-3xl');
     await expect(display).toHaveText('0');
   });
 
@@ -32,7 +32,7 @@ test.describe('Scientific Calculator', () => {
 
     await page.getByRole('button', { name: 'AC', exact: true }).click();
 
-    const display = page.locator('[role="status"] .text-3xl');
+    const display = page.locator('output[aria-live="polite"] .text-3xl');
     await expect(display).toHaveText('0');
   });
 
@@ -55,7 +55,7 @@ test.describe('Scientific Calculator', () => {
     await page.getByRole('button', { name: 'AC', exact: true }).click();
     await page.getByRole('button', { name: 'MR' }).click();
 
-    const display = page.locator('[role="status"] .text-3xl');
+    const display = page.locator('output[aria-live="polite"] .text-3xl');
     await expect(display).toHaveText('5');
   });
 

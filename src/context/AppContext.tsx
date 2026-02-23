@@ -1,7 +1,16 @@
 import { createContext, type ReactNode, useContext, useEffect, useReducer } from 'react';
 
 import { loadState, saveState } from '../lib/storage';
-import type { AppAction, AppState, CalculusState, MatrixState, StatisticsState, ThreeDGraphingState } from '../types';
+import type {
+  AppAction,
+  AppState,
+  CalculusState,
+  ManipulateState,
+  MatrixState,
+  ParametricState,
+  StatisticsState,
+  ThreeDGraphingState,
+} from '../types';
 
 const initialCalculus: CalculusState = {
   derivativeExpr: '',
@@ -46,6 +55,19 @@ const initialThreeDGraphing: ThreeDGraphingState = {
   gridResolution: 50,
 };
 
+const initialParametric: ParametricState = {
+  equations: [],
+  activePlotType: 'parametric-2d',
+};
+
+const initialManipulate: ManipulateState = {
+  equations: [],
+  sliders: [],
+  xRange: [-10, 10],
+  yRange: [-10, 10],
+  gridResolution: 50,
+};
+
 const initialState: AppState = {
   activeTab: 'scientific',
   equations: [],
@@ -54,6 +76,8 @@ const initialState: AppState = {
   matrix: initialMatrix,
   statistics: initialStatistics,
   threeDGraphing: initialThreeDGraphing,
+  parametric: initialParametric,
+  manipulate: initialManipulate,
   history: [],
   variables: [],
   darkMode: false,
@@ -184,6 +208,112 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case 'CLEAR_3D_GRAPHING':
       return { ...state, threeDGraphing: initialThreeDGraphing };
+
+    case 'ADD_PARAMETRIC_EQUATION':
+      return {
+        ...state,
+        parametric: { ...state.parametric, equations: [...state.parametric.equations, action.equation] },
+      };
+
+    case 'UPDATE_PARAMETRIC_EQUATION':
+      return {
+        ...state,
+        parametric: {
+          ...state.parametric,
+          equations: state.parametric.equations.map((eq) => (eq.id === action.id ? { ...eq, ...action.updates } : eq)),
+        },
+      };
+
+    case 'TOGGLE_PARAMETRIC_EQUATION':
+      return {
+        ...state,
+        parametric: {
+          ...state.parametric,
+          equations: state.parametric.equations.map((eq) =>
+            eq.id === action.id ? { ...eq, visible: !eq.visible } : eq,
+          ),
+        },
+      };
+
+    case 'REMOVE_PARAMETRIC_EQUATION':
+      return {
+        ...state,
+        parametric: {
+          ...state.parametric,
+          equations: state.parametric.equations.filter((eq) => eq.id !== action.id),
+        },
+      };
+
+    case 'SET_PARAMETRIC':
+      return { ...state, parametric: { ...state.parametric, ...action.updates } };
+
+    case 'CLEAR_PARAMETRIC':
+      return { ...state, parametric: initialParametric };
+
+    case 'ADD_MANIPULATE_EQUATION':
+      return {
+        ...state,
+        manipulate: { ...state.manipulate, equations: [...state.manipulate.equations, action.equation] },
+      };
+
+    case 'TOGGLE_MANIPULATE_EQUATION':
+      return {
+        ...state,
+        manipulate: {
+          ...state.manipulate,
+          equations: state.manipulate.equations.map((eq) =>
+            eq.id === action.id ? { ...eq, visible: !eq.visible } : eq,
+          ),
+        },
+      };
+
+    case 'REMOVE_MANIPULATE_EQUATION':
+      return {
+        ...state,
+        manipulate: {
+          ...state.manipulate,
+          equations: state.manipulate.equations.filter((eq) => eq.id !== action.id),
+        },
+      };
+
+    case 'ADD_SLIDER':
+      return {
+        ...state,
+        manipulate: { ...state.manipulate, sliders: [...state.manipulate.sliders, action.slider] },
+      };
+
+    case 'UPDATE_SLIDER':
+      return {
+        ...state,
+        manipulate: {
+          ...state.manipulate,
+          sliders: state.manipulate.sliders.map((s) => (s.id === action.id ? { ...s, value: action.value } : s)),
+        },
+      };
+
+    case 'UPDATE_SLIDER_CONFIG':
+      return {
+        ...state,
+        manipulate: {
+          ...state.manipulate,
+          sliders: state.manipulate.sliders.map((s) => (s.id === action.id ? { ...s, ...action.updates } : s)),
+        },
+      };
+
+    case 'REMOVE_SLIDER':
+      return {
+        ...state,
+        manipulate: {
+          ...state.manipulate,
+          sliders: state.manipulate.sliders.filter((s) => s.id !== action.id),
+        },
+      };
+
+    case 'SET_MANIPULATE':
+      return { ...state, manipulate: { ...state.manipulate, ...action.updates } };
+
+    case 'CLEAR_MANIPULATE':
+      return { ...state, manipulate: initialManipulate };
 
     case 'TOGGLE_DARK_MODE':
       return { ...state, darkMode: !state.darkMode };

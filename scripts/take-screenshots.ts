@@ -178,6 +178,176 @@ async function main() {
   await page.screenshot({ path: 'public/docs/stats-tab.png' });
   console.log('Captured stats tab');
 
+  // Parametric tab - plot 2D parametric curves
+  await freshPage('parametric');
+
+  // Plot circle: x(t) = cos(t), y(t) = sin(t)
+  const paramXInput = await page.$('input[aria-label="X expression"]');
+  const paramYInput = await page.$('input[aria-label="Y expression"]');
+  if (paramXInput && paramYInput) {
+    await paramXInput.type('cos(t)');
+    await paramYInput.type('sin(t)');
+    await page.click('button[type="submit"]');
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Plot Lissajous: x(t) = sin(3t), y(t) = sin(2t)
+    await paramXInput.click({ clickCount: 3 });
+    await paramXInput.type('sin(3*t)');
+    await paramYInput.click({ clickCount: 3 });
+    await paramYInput.type('sin(2*t)');
+    await page.click('button[type="submit"]');
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Plot spiral: x(t) = t*cos(t), y(t) = t*sin(t)
+    await paramXInput.click({ clickCount: 3 });
+    await paramXInput.type('t*cos(t)');
+    await paramYInput.click({ clickCount: 3 });
+    await paramYInput.type('t*sin(t)');
+    await page.click('button[type="submit"]');
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Plot cycloid: x(t) = t - sin(t), y(t) = 1 - cos(t)
+    await paramXInput.click({ clickCount: 3 });
+    await paramXInput.type('t - sin(t)');
+    await paramYInput.click({ clickCount: 3 });
+    await paramYInput.type('1 - cos(t)');
+    await page.click('button[type="submit"]');
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  await new Promise((r) => setTimeout(r, 1500));
+
+  await page.screenshot({ path: 'public/docs/parametric-tab.png' });
+  console.log('Captured parametric tab');
+
+  // Parametric tab - 3D parametric curves
+  await freshPage('parametric');
+
+  // Switch to 3D Param mode — click the second radio button
+  const paramRadios = await page.$$('button[role="radio"]');
+  if (paramRadios.length >= 2) {
+    await paramRadios[1].click(); // "3D Param" is the second option
+    await new Promise((r) => setTimeout(r, 500));
+
+    const param3dX = await page.$('input[aria-label="X expression"]');
+    const param3dY = await page.$('input[aria-label="Y expression"]');
+    const param3dZ = await page.$('input[aria-label="Z expression"]');
+
+    if (param3dX && param3dY && param3dZ) {
+      // Helix: x = cos(t), y = sin(t), z = t/5
+      await param3dX.type('cos(t)');
+      await param3dY.type('sin(t)');
+      await param3dZ.type('t / 5');
+      await page.click('button[type="submit"]');
+      await new Promise((r) => setTimeout(r, 500));
+
+      // Trefoil knot: x = sin(t)+2sin(2t), y = cos(t)-2cos(2t), z = -sin(3t)
+      await param3dX.click({ clickCount: 3 });
+      await param3dX.type('sin(t) + 2*sin(2*t)');
+      await param3dY.click({ clickCount: 3 });
+      await param3dY.type('cos(t) - 2*cos(2*t)');
+      await param3dZ.click({ clickCount: 3 });
+      await param3dZ.type('-sin(3*t)');
+      await page.click('button[type="submit"]');
+      await new Promise((r) => setTimeout(r, 500));
+
+      // Toroidal spiral: x = (2+cos(5t))cos(t), y = (2+cos(5t))sin(t), z = sin(5t)
+      await param3dX.click({ clickCount: 3 });
+      await param3dX.type('(2+cos(5*t))*cos(t)');
+      await param3dY.click({ clickCount: 3 });
+      await param3dY.type('(2+cos(5*t))*sin(t)');
+      await param3dZ.click({ clickCount: 3 });
+      await param3dZ.type('sin(5*t)');
+      await page.click('button[type="submit"]');
+      await new Promise((r) => setTimeout(r, 500));
+    }
+  }
+  await new Promise((r) => setTimeout(r, 2000));
+
+  await page.screenshot({ path: 'public/docs/parametric-3d-tab.png' });
+  console.log('Captured parametric 3D tab');
+
+  // Parametric tab - Polar plots
+  await freshPage('parametric');
+
+  // Switch to Polar mode (third radio button)
+  const polarRadios = await page.$$('button[role="radio"]');
+  if (polarRadios.length >= 3) {
+    await polarRadios[2].click(); // "Polar" is the third option
+    await new Promise((r) => setTimeout(r, 500));
+
+    const polarInput = await page.$('input[aria-label="Polar expression"]');
+    if (polarInput) {
+      // Cardioid: r = 1 + cos(theta)
+      await polarInput.type('1 + cos(theta)');
+      await page.click('button[type="submit"]');
+      await new Promise((r) => setTimeout(r, 500));
+
+      // Rose: r = cos(3 * theta)
+      await polarInput.click({ clickCount: 3 });
+      await polarInput.type('cos(3 * theta)');
+      await page.click('button[type="submit"]');
+      await new Promise((r) => setTimeout(r, 500));
+
+      // Spiral: r = theta / (2*pi)
+      await polarInput.click({ clickCount: 3 });
+      await polarInput.type('theta / (2*pi)');
+      await page.click('button[type="submit"]');
+      await new Promise((r) => setTimeout(r, 500));
+
+      // Lemniscate: r = sqrt(abs(cos(2*theta)))
+      await polarInput.click({ clickCount: 3 });
+      await polarInput.type('sqrt(abs(cos(2*theta)))');
+      await page.click('button[type="submit"]');
+      await new Promise((r) => setTimeout(r, 500));
+    }
+  }
+  await new Promise((r) => setTimeout(r, 1500));
+
+  await page.screenshot({ path: 'public/docs/parametric-polar-tab.png' });
+  console.log('Captured parametric polar tab');
+
+  // Manipulate tab - plot expressions with auto-sliders
+  await freshPage('manipulate');
+
+  const manipInput = await page.$('input[aria-label="Manipulate expression"]');
+  if (manipInput) {
+    // Plot a * sin(b * x) — auto-creates sliders for a and b
+    await manipInput.type('a * sin(b * x)');
+    await clickBtn('Plot');
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Adjust slider a to 3
+    const sliderA = await page.$('input[aria-label="a slider"]');
+    if (sliderA) {
+      await sliderA.evaluate((el) => {
+        (el as HTMLInputElement).value = '3';
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    }
+    await new Promise((r) => setTimeout(r, 300));
+
+    // Adjust slider b to 2
+    const sliderB = await page.$('input[aria-label="b slider"]');
+    if (sliderB) {
+      await sliderB.evaluate((el) => {
+        (el as HTMLInputElement).value = '2';
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    }
+    await new Promise((r) => setTimeout(r, 300));
+
+    // Plot a second equation: k * x^2
+    await manipInput.type('k * x^2');
+    await clickBtn('Plot');
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  await new Promise((r) => setTimeout(r, 1500));
+
+  await page.screenshot({ path: 'public/docs/manipulate-tab.png' });
+  console.log('Captured manipulate tab');
+
   // Dark mode screenshot - go to graphing and toggle
   await freshPage('graphing');
 
@@ -331,6 +501,43 @@ async function main() {
 
   await page.screenshot({ path: 'public/docs/mobile-3d.png' });
   console.log('Captured mobile 3D');
+
+  // Mobile parametric - plot a curve
+  await freshPage('parametric');
+
+  const mobileParamX = await page.$('input[aria-label="X expression"]');
+  const mobileParamY = await page.$('input[aria-label="Y expression"]');
+  if (mobileParamX && mobileParamY) {
+    await mobileParamX.type('cos(t)');
+    await mobileParamY.type('sin(t)');
+    await page.click('button[type="submit"]');
+    await new Promise((r) => setTimeout(r, 500));
+
+    await mobileParamX.click({ clickCount: 3 });
+    await mobileParamX.type('sin(3*t)');
+    await mobileParamY.click({ clickCount: 3 });
+    await mobileParamY.type('sin(2*t)');
+    await page.click('button[type="submit"]');
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  await new Promise((r) => setTimeout(r, 1500));
+
+  await page.screenshot({ path: 'public/docs/mobile-parametric.png' });
+  console.log('Captured mobile parametric');
+
+  // Mobile manipulate - plot with sliders
+  await freshPage('manipulate');
+
+  const mobileManipInput = await page.$('input[aria-label="Manipulate expression"]');
+  if (mobileManipInput) {
+    await mobileManipInput.type('a * sin(x)');
+    await clickBtn('Plot');
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  await new Promise((r) => setTimeout(r, 1500));
+
+  await page.screenshot({ path: 'public/docs/mobile-manipulate.png' });
+  console.log('Captured mobile manipulate');
 
   // Mobile drawer - open the right panel drawer
   await page.goto(`${BASE}/scientific`, { waitUntil: 'networkidle0' });

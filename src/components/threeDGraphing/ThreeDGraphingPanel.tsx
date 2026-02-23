@@ -10,8 +10,7 @@ export default function ThreeDGraphingPanel() {
 
   return (
     <div className="flex h-full flex-col md:flex-row">
-      <div
-        role="region"
+      <section
         aria-label="3D surface controls"
         className="flex max-h-[40vh] w-full flex-col gap-4 overflow-y-auto border-[var(--color-border)] border-b p-4 md:max-h-none md:w-72 md:border-r md:border-b-0"
       >
@@ -34,7 +33,7 @@ export default function ThreeDGraphingPanel() {
         <div className="border-[var(--color-border)] border-t pt-3">
           <ThreeDRangeControls />
         </div>
-      </div>
+      </section>
       <div role="img" aria-label="3D surface plot" className="min-h-[300px] flex-1">
         <ThreeDPlot />
       </div>

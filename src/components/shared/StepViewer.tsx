@@ -34,8 +34,7 @@ export default function StepViewer({ steps, onClose }: Props) {
   const step = steps[currentIndex];
 
   return (
-    <div
-      role="region"
+    <section
       aria-label="Step-by-step solution"
       className="flex flex-col gap-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
     >
@@ -108,6 +107,6 @@ export default function StepViewer({ steps, onClose }: Props) {
           </button>
         </div>
       )}
-    </div>
+    </section>
   );
 }

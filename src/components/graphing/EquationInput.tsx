@@ -2,7 +2,13 @@ import { useState } from 'react';
 
 import { useAppContext } from '../../context/AppContext';
 import { nextColor } from '../../lib/colorPalette';
-import { detectEquationMode, validateExpression, validateImplicitExpression } from '../../lib/expressionParser';
+import {
+  detectEquationMode,
+  parseInequalityExpression,
+  validateExpression,
+  validateImplicitExpression,
+  validateInequalityExpression,
+} from '../../lib/expressionParser';
 
 export default function EquationInput() {
   const { dispatch } = useAppContext();
@@ -15,11 +21,20 @@ export default function EquationInput() {
 
     const trimmed = input.trim();
     const mode = detectEquationMode(trimmed);
-    const validation = mode === 'implicit' ? validateImplicitExpression(trimmed) : validateExpression(trimmed);
+    let validation: { valid: boolean; error?: string };
+    if (mode === 'inequality') {
+      validation = validateInequalityExpression(trimmed);
+    } else if (mode === 'implicit') {
+      validation = validateImplicitExpression(trimmed);
+    } else {
+      validation = validateExpression(trimmed);
+    }
     if (!validation.valid) {
       setError(validation.error || 'Invalid expression');
       return;
     }
+
+    const inequalityOp = mode === 'inequality' ? parseInequalityExpression(trimmed)?.operator : undefined;
 
     dispatch({
       type: 'ADD_EQUATION',
@@ -29,6 +44,7 @@ export default function EquationInput() {
         color: nextColor(),
         visible: true,
         mode,
+        inequalityOp,
       },
     });
     setInput('');
@@ -45,7 +61,7 @@ export default function EquationInput() {
             setInput(e.target.value);
             setError('');
           }}
-          placeholder="e.g. sin(x), x^2 + 1, or x^2 + y^2 = 25"
+          placeholder="e.g. sin(x), x^2 + y^2 = 25, or y > x^2"
           aria-label="Function expression"
           className="flex-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-[var(--color-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
         />

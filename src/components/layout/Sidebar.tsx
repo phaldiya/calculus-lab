@@ -1,6 +1,15 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { CalculatorIcon, CubeIcon, GraphIcon, IntegralIcon, MatrixIcon, StatsIcon } from '../shared/Icons';
+import {
+  CalculatorIcon,
+  CubeIcon,
+  GraphIcon,
+  IntegralIcon,
+  ManipulateIcon,
+  MatrixIcon,
+  ParametricIcon,
+  StatsIcon,
+} from '../shared/Icons';
 
 const tabs = [
   { path: '/scientific', label: 'Calc', Icon: CalculatorIcon, tooltip: 'Arithmetic, trig, logs, and memory' },
@@ -9,6 +18,8 @@ const tabs = [
   { path: '/calculus', label: 'Calculus', Icon: IntegralIcon, tooltip: 'Derivatives, integrals, and limits' },
   { path: '/matrix', label: 'Matrix', Icon: MatrixIcon, tooltip: 'Matrix operations up to 5x5' },
   { path: '/statistics', label: 'Stats', Icon: StatsIcon, tooltip: 'Descriptive stats and regression' },
+  { path: '/parametric', label: 'Param', Icon: ParametricIcon, tooltip: 'Parametric and polar curves' },
+  { path: '/manipulate', label: 'Interact', Icon: ManipulateIcon, tooltip: 'Interactive plots with sliders' },
 ];
 
 export default function Sidebar() {

@@ -2,7 +2,12 @@ import type { Data, Layout, PlotMouseEvent } from 'plotly.js-dist-min';
 import { useCallback, useMemo, useState } from 'react';
 
 import { useAppContext } from '../../context/AppContext';
-import { evaluateOverGrid, evaluateOverRange, parseImplicitEquation } from '../../lib/expressionParser';
+import {
+  evaluateOverGrid,
+  evaluateOverRange,
+  parseImplicitEquation,
+  parseInequalityExpression,
+} from '../../lib/expressionParser';
 import PlotlyWrapper from '../../lib/PlotlyWrapper';
 import CoordinateDisplay from './CoordinateDisplay';
 
@@ -17,7 +22,28 @@ export default function GraphPlot() {
     for (const eq of state.equations) {
       if (!eq.visible) continue;
       try {
-        if (eq.mode === 'implicit') {
+        if (eq.mode === 'inequality') {
+          const parsed = parseInequalityExpression(eq.expression);
+          if (!parsed) continue;
+          const grid = evaluateOverGrid(parsed.rearranged, -10, 10, -10, 10, 200, 200, state.variables);
+          traces.push({
+            x: grid.x,
+            y: grid.y,
+            z: grid.z,
+            type: 'contour',
+            name: eq.expression,
+            showlegend: true,
+            contours: { type: 'constraint', operation: parsed.operator, value: 0 },
+            colorscale: [
+              [0, eq.color],
+              [1, eq.color],
+            ],
+            opacity: 0.3,
+            line: { color: eq.color, width: 2 },
+            showscale: false,
+            hoverinfo: 'x+y',
+          });
+        } else if (eq.mode === 'implicit') {
           const rearranged = parseImplicitEquation(eq.expression);
           if (!rearranged) continue;
           const grid = evaluateOverGrid(rearranged, -10, 10, -10, 10, 200, 200, state.variables);

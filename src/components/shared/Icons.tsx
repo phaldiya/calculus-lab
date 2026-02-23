@@ -127,6 +127,42 @@ export function CubeIcon(props: IconProps) {
   );
 }
 
+export function ParametricIcon(props: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M4 12c0-4 3-8 8-8s8 4 8 8-3 8-8 8" />
+      <circle cx="4" cy="12" r="1.5" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function ManipulateIcon(props: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <line x1="4" y1="8" x2="20" y2="8" />
+      <circle cx="10" cy="8" r="2" fill="currentColor" />
+      <line x1="4" y1="16" x2="20" y2="16" />
+      <circle cx="15" cy="16" r="2" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function PanelIcon(props: IconProps) {
   return (
     <svg

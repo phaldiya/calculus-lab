@@ -1,6 +1,6 @@
 import { evaluate, type MathNode, parse } from 'mathjs';
 
-import type { EquationMode, Variable } from '../types';
+import type { EquationMode, InequalityOperator, Variable } from '../types';
 
 export function parseExpression(expr: string): MathNode {
   return parse(expr);
@@ -122,6 +122,182 @@ export function validateImplicitExpression(expr: string): { valid: boolean; erro
   return validateExpression(rearranged);
 }
 
+export function parseInequalityExpression(expr: string): { rearranged: string; operator: InequalityOperator } | null {
+  // Check multi-char operators first
+  for (const op of ['>=', '<='] as const) {
+    const idx = expr.indexOf(op);
+    if (idx !== -1) {
+      const lhs = expr.slice(0, idx).trim();
+      const rhs = expr.slice(idx + op.length).trim();
+      if (!lhs || !rhs) return null;
+      return { rearranged: `(${lhs}) - (${rhs})`, operator: op };
+    }
+  }
+  // Then single-char operators (avoid matching inside >= or <=)
+  for (const op of ['>', '<'] as const) {
+    const idx = expr.indexOf(op);
+    if (idx !== -1) {
+      // Ensure it's not part of >= or <=
+      if (expr[idx + 1] === '=') continue;
+      const lhs = expr.slice(0, idx).trim();
+      const rhs = expr.slice(idx + 1).trim();
+      if (!lhs || !rhs) return null;
+      return { rearranged: `(${lhs}) - (${rhs})`, operator: op };
+    }
+  }
+  return null;
+}
+
+export function validateInequalityExpression(expr: string): { valid: boolean; error?: string } {
+  const parsed = parseInequalityExpression(expr);
+  if (!parsed) return { valid: false, error: 'Not a valid inequality (use >, <, >=, or <=)' };
+  return validateExpression(parsed.rearranged);
+}
+
+export function evaluateParametric2D(
+  xExpr: string,
+  yExpr: string,
+  tMin: number,
+  tMax: number,
+  numPoints: number = 500,
+  variables: Variable[] = [],
+): { x: number[]; y: number[] } {
+  const xs: number[] = [];
+  const ys: number[] = [];
+  const step = (tMax - tMin) / (numPoints - 1);
+  const compiledX = parse(xExpr).compile();
+  const compiledY = parse(yExpr).compile();
+
+  const scope: Record<string, number> = {};
+  for (const v of variables) {
+    scope[v.name] = v.value;
+  }
+
+  for (let i = 0; i < numPoints; i++) {
+    const t = tMin + i * step;
+    try {
+      scope.t = t;
+      const xVal = compiledX.evaluate(scope) as number;
+      const yVal = compiledY.evaluate(scope) as number;
+      if (typeof xVal === 'number' && Number.isFinite(xVal) && typeof yVal === 'number' && Number.isFinite(yVal)) {
+        xs.push(xVal);
+        ys.push(yVal);
+      } else {
+        xs.push(NaN);
+        ys.push(NaN);
+      }
+    } catch {
+      xs.push(NaN);
+      ys.push(NaN);
+    }
+  }
+
+  return { x: xs, y: ys };
+}
+
+export function evaluateParametric3D(
+  xExpr: string,
+  yExpr: string,
+  zExpr: string,
+  tMin: number,
+  tMax: number,
+  numPoints: number = 500,
+  variables: Variable[] = [],
+): { x: number[]; y: number[]; z: number[] } {
+  const xs: number[] = [];
+  const ys: number[] = [];
+  const zs: number[] = [];
+  const step = (tMax - tMin) / (numPoints - 1);
+  const compiledX = parse(xExpr).compile();
+  const compiledY = parse(yExpr).compile();
+  const compiledZ = parse(zExpr).compile();
+
+  const scope: Record<string, number> = {};
+  for (const v of variables) {
+    scope[v.name] = v.value;
+  }
+
+  for (let i = 0; i < numPoints; i++) {
+    const t = tMin + i * step;
+    try {
+      scope.t = t;
+      const xVal = compiledX.evaluate(scope) as number;
+      const yVal = compiledY.evaluate(scope) as number;
+      const zVal = compiledZ.evaluate(scope) as number;
+      if (
+        typeof xVal === 'number' &&
+        Number.isFinite(xVal) &&
+        typeof yVal === 'number' &&
+        Number.isFinite(yVal) &&
+        typeof zVal === 'number' &&
+        Number.isFinite(zVal)
+      ) {
+        xs.push(xVal);
+        ys.push(yVal);
+        zs.push(zVal);
+      } else {
+        xs.push(NaN);
+        ys.push(NaN);
+        zs.push(NaN);
+      }
+    } catch {
+      xs.push(NaN);
+      ys.push(NaN);
+      zs.push(NaN);
+    }
+  }
+
+  return { x: xs, y: ys, z: zs };
+}
+
+export function evaluatePolar(
+  rExpr: string,
+  thetaMin: number,
+  thetaMax: number,
+  numPoints: number = 500,
+  variables: Variable[] = [],
+): { r: number[]; theta: number[]; x: number[]; y: number[] } {
+  const rs: number[] = [];
+  const thetas: number[] = [];
+  const xs: number[] = [];
+  const ys: number[] = [];
+  const step = (thetaMax - thetaMin) / (numPoints - 1);
+  const compiled = parse(rExpr).compile();
+
+  const scope: Record<string, number> = {};
+  for (const v of variables) {
+    scope[v.name] = v.value;
+  }
+
+  for (let i = 0; i < numPoints; i++) {
+    const theta = thetaMin + i * step;
+    try {
+      scope.theta = theta;
+      const r = compiled.evaluate(scope) as number;
+      if (typeof r === 'number' && Number.isFinite(r)) {
+        rs.push(r);
+        thetas.push((theta * 180) / Math.PI); // Convert to degrees for Plotly
+        xs.push(r * Math.cos(theta));
+        ys.push(r * Math.sin(theta));
+      } else {
+        rs.push(NaN);
+        thetas.push(NaN);
+        xs.push(NaN);
+        ys.push(NaN);
+      }
+    } catch {
+      rs.push(NaN);
+      thetas.push(NaN);
+      xs.push(NaN);
+      ys.push(NaN);
+    }
+  }
+
+  return { r: rs, theta: thetas, x: xs, y: ys };
+}
+
 export function detectEquationMode(expr: string): EquationMode {
+  // Check inequality before implicit since >= and <= contain =
+  if (parseInequalityExpression(expr) !== null) return 'inequality';
   return parseImplicitEquation(expr) !== null ? 'implicit' : 'standard';
 }

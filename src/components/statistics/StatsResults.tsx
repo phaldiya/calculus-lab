@@ -24,7 +24,7 @@ export default function StatsResults({ results }: Props) {
   ];
 
   return (
-    <div role="status" aria-live="polite" className="flex flex-col gap-1">
+    <output aria-live="polite" className="flex flex-col gap-1">
       <h3 className="font-semibold text-[var(--color-text)] text-sm">Descriptive Statistics</h3>
       <div className="grid grid-cols-2 gap-x-4 gap-y-1">
         {stats.map((s) => (
@@ -34,6 +34,6 @@ export default function StatsResults({ results }: Props) {
           </div>
         ))}
       </div>
-    </div>
+    </output>
   );
 }

@@ -6,7 +6,9 @@ import DocsPage from './components/DocsPage';
 import GraphPanel from './components/graphing/GraphPanel';
 import Header from './components/layout/Header';
 import Sidebar from './components/layout/Sidebar';
+import ManipulatePanel from './components/manipulate/ManipulatePanel';
 import MatrixPanel from './components/matrix/MatrixPanel';
+import ParametricPanel from './components/parametric/ParametricPanel';
 import ScientificPanel from './components/scientific/ScientificPanel';
 import ErrorBoundary from './components/shared/ErrorBoundary';
 import ExpressionHistory from './components/shared/ExpressionHistory';
@@ -24,6 +26,8 @@ const pathToTab: Record<string, TabId> = {
   '/calculus': 'calculus',
   '/matrix': 'matrix',
   '/statistics': 'statistics',
+  '/parametric': 'parametric',
+  '/manipulate': 'manipulate',
 };
 
 function TabSync() {
@@ -162,6 +166,8 @@ export default function App() {
           <Route path="/calculus" element={<CalculusPanel />} />
           <Route path="/matrix" element={<MatrixPanel />} />
           <Route path="/statistics" element={<StatisticsPanel />} />
+          <Route path="/parametric" element={<ParametricPanel />} />
+          <Route path="/manipulate" element={<ManipulatePanel />} />
         </Route>
         <Route path="/docs/*" element={<DocsPage />} />
       </Routes>

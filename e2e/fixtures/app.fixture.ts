@@ -1,6 +1,14 @@
 import { test as base, expect, type Page } from '@playwright/test';
 
-type Tab = 'scientific' | 'graphing' | '3d-graphing' | 'calculus' | 'matrix' | 'statistics';
+type Tab =
+  | 'scientific'
+  | 'graphing'
+  | '3d-graphing'
+  | 'calculus'
+  | 'matrix'
+  | 'statistics'
+  | 'parametric'
+  | 'manipulate';
 
 export class CalcPage {
   private page: Page;
@@ -19,6 +27,8 @@ export class CalcPage {
       calculus: this.page.getByLabel('Derivative expression'),
       matrix: this.page.getByText('Matrix Calculator'),
       statistics: this.page.getByText('Data Input'),
+      parametric: this.page.getByText('Parametric & Polar'),
+      manipulate: this.page.getByText('Interact'),
     };
     await readyLocators[tab].first().waitFor({ state: 'visible', timeout: 15000 });
   }

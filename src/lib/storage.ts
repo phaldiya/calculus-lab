@@ -9,6 +9,8 @@ export function saveState(state: AppState): void {
       equations: state.equations,
       pointDataSets: state.pointDataSets,
       threeDGraphing: state.threeDGraphing,
+      parametric: state.parametric,
+      manipulate: state.manipulate,
       history: state.history,
       variables: state.variables,
       darkMode: state.darkMode,

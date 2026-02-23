@@ -26,8 +26,7 @@ export default function StatisticsPanel() {
 
   return (
     <div className="flex h-full flex-col md:flex-row">
-      <div
-        role="region"
+      <section
         aria-label="Statistics inputs"
         className="flex max-h-[40vh] w-full flex-col gap-4 overflow-y-auto border-[var(--color-border)] border-b p-4 md:max-h-none md:w-80 md:border-r md:border-b-0"
       >
@@ -45,7 +44,7 @@ export default function StatisticsPanel() {
         <div className="border-[var(--color-border)] border-t pt-3">
           <RegressionPanel />
         </div>
-      </div>
+      </section>
       <div role="img" aria-label="Statistics chart" className="min-h-[300px] flex-1">
         <StatisticsPlot />
       </div>
