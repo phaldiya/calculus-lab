@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/phaldiya/calculus-lab/compare/v1.4.0...v1.5.0) (2026-02-23)
+
+
+### Features
+
+* add inequality plotting, parametric/polar curves, interactive manipulate, and docs ([361e5c6](https://github.com/phaldiya/calculus-lab/commit/361e5c68130da941f70404fccd867bc2c1b86715))
+
 # [1.4.0](https://github.com/phaldiya/calculus-lab/compare/v1.3.1...v1.4.0) (2026-02-19)
 
 
