@@ -1,5 +1,7 @@
 # Calculus Lab
 
+[![Deploy to GitHub Pages](https://github.com/phaldiya/calculus-lab/actions/workflows/deploy.yml/badge.svg)](https://github.com/phaldiya/calculus-lab/actions/workflows/deploy.yml) [![GitHub Pages](https://img.shields.io/badge/demo-GitHub%20Pages-blue)](https://phaldiya.github.io/calculus-lab/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)](https://www.typescriptlang.org/) [![React](https://img.shields.io/badge/React-19-61dafb?logo=react)](https://react.dev/) [![Bun](https://img.shields.io/badge/Bun-runtime-f9f1e1?logo=bun)](https://bun.sh/)
+
 A full-featured scientific graphing calculator built with React, TypeScript, and Plotly.js. Runs entirely in the browser — no backend required.
 
 ## Features
