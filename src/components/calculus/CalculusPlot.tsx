@@ -4,9 +4,11 @@ import { useMemo } from 'react';
 import { useAppContext } from '../../context/AppContext';
 import { evaluateOverRange } from '../../lib/expressionParser';
 import PlotlyWrapper from '../../lib/PlotlyWrapper';
+import { make2DBaseLayout, make2DXAxis, make2DYAxis, useCenteredAxes } from '../../lib/plotTheme';
 
 export default function CalculusPlot() {
   const { state } = useAppContext();
+  const { xRange, yRange, xAxisPos, yAxisPos, onRelayout } = useCenteredAxes();
   const {
     derivativeExpr,
     derivativeResult,
@@ -133,38 +135,17 @@ export default function CalculusPlot() {
 
   const layout = useMemo<Partial<Layout>>(
     () => ({
-      autosize: true,
-      margin: { l: 50, r: 20, t: 20, b: 40 },
-      xaxis: {
-        zeroline: true,
-        zerolinecolor: '#94a3b8',
-        gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
-        color: state.darkMode ? '#94a3b8' : '#64748b',
-      },
-      yaxis: {
-        zeroline: true,
-        zerolinecolor: '#94a3b8',
-        gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
-        color: state.darkMode ? '#94a3b8' : '#64748b',
-      },
-      paper_bgcolor: 'transparent',
-      plot_bgcolor: 'transparent',
-      showlegend: true,
-      legend: {
-        x: 0,
-        y: 1,
-        bgcolor: 'transparent',
-        font: { color: state.darkMode ? '#e2e8f0' : '#1e293b', size: 11 },
-      },
-      dragmode: 'pan',
+      ...make2DBaseLayout(state.darkMode, { showlegend: true }),
+      xaxis: make2DXAxis(state.darkMode, { range: xRange, position: xAxisPos }),
+      yaxis: make2DYAxis(state.darkMode, { range: yRange, position: yAxisPos }),
     }),
-    [state.darkMode],
+    [state.darkMode, xRange, yRange, xAxisPos, yAxisPos],
   );
 
   if (data.length === 0) {
     return (
       <div className="relative h-full w-full">
-        <PlotlyWrapper data={[]} layout={layout} style={{ width: '100%', height: '100%' }} />
+        <PlotlyWrapper data={[]} layout={layout} style={{ width: '100%', height: '100%' }} onRelayout={onRelayout} />
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <span className="rounded-lg bg-[var(--color-surface)] px-4 py-2 text-[var(--color-text-secondary)] text-sm opacity-60">
             Compute a derivative, integral, or limit to see the graph
@@ -174,5 +155,7 @@ export default function CalculusPlot() {
     );
   }
 
-  return <PlotlyWrapper data={data} layout={layout} style={{ width: '100%', height: '100%' }} />;
+  return (
+    <PlotlyWrapper data={data} layout={layout} style={{ width: '100%', height: '100%' }} onRelayout={onRelayout} />
+  );
 }

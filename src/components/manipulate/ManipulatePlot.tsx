@@ -4,11 +4,13 @@ import { useMemo } from 'react';
 import { useAppContext } from '../../context/AppContext';
 import { evaluateOverGrid, evaluateOverRange, parseImplicitEquation } from '../../lib/expressionParser';
 import PlotlyWrapper from '../../lib/PlotlyWrapper';
+import { make2DBaseLayout, make2DXAxis, make2DYAxis, useCenteredAxes } from '../../lib/plotTheme';
 import type { Variable } from '../../types';
 
 export default function ManipulatePlot() {
   const { state } = useAppContext();
   const { equations, sliders, xRange, yRange, gridResolution } = state.manipulate;
+  const { xRange: liveXRange, yRange: liveYRange, xAxisPos, yAxisPos, onRelayout } = useCenteredAxes();
 
   // Merge global variables with slider values (sliders take precedence)
   const mergedVariables = useMemo<Variable[]>(() => {
@@ -75,40 +77,19 @@ export default function ManipulatePlot() {
 
   const layout = useMemo<Partial<Layout>>(
     () => ({
-      autosize: true,
-      margin: { l: 50, r: 20, t: 20, b: 40 },
-      xaxis: {
-        zeroline: true,
-        zerolinecolor: '#94a3b8',
-        gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
-        color: state.darkMode ? '#94a3b8' : '#64748b',
-        range: [xRange[0], xRange[1]],
-      },
-      yaxis: {
-        zeroline: true,
-        zerolinecolor: '#94a3b8',
-        gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
-        color: state.darkMode ? '#94a3b8' : '#64748b',
-        scaleanchor: 'x',
-      },
-      paper_bgcolor: 'transparent',
-      plot_bgcolor: 'transparent',
-      showlegend: data.length > 1,
-      legend: {
-        x: 0,
-        y: 1,
-        bgcolor: 'transparent',
-        font: { color: state.darkMode ? '#e2e8f0' : '#1e293b', size: 11 },
-      },
-      dragmode: 'pan',
-      hovermode: 'closest',
+      ...make2DBaseLayout(state.darkMode, {
+        showlegend: data.length > 1,
+        hovermode: 'closest',
+      }),
+      xaxis: make2DXAxis(state.darkMode, { range: liveXRange, position: xAxisPos }),
+      yaxis: make2DYAxis(state.darkMode, { range: liveYRange, position: yAxisPos }),
     }),
-    [data.length, state.darkMode, xRange],
+    [data.length, state.darkMode, liveXRange, liveYRange, xAxisPos, yAxisPos],
   );
 
   return (
     <div className="relative h-full w-full">
-      <PlotlyWrapper data={data} layout={layout} style={{ width: '100%', height: '100%' }} />
+      <PlotlyWrapper data={data} layout={layout} style={{ width: '100%', height: '100%' }} onRelayout={onRelayout} />
       {data.length === 0 && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <span className="rounded-lg bg-[var(--color-surface)] px-4 py-2 text-[var(--color-text-secondary)] text-sm opacity-60">

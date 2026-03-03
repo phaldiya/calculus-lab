@@ -1,4 +1,4 @@
-import type { Config, Data, Layout, PlotMouseEvent } from 'plotly.js-dist-min';
+import type { Config, Data, Layout, PlotMouseEvent, PlotRelayoutEvent } from 'plotly.js-dist-min';
 import { lazy, Suspense } from 'react';
 
 const Plot = lazy(() => import('react-plotly.js'));
@@ -11,6 +11,7 @@ interface PlotlyWrapperProps {
   style?: React.CSSProperties;
   onHover?: (event: PlotMouseEvent) => void;
   onUnhover?: (event: PlotMouseEvent) => void;
+  onRelayout?: (event: PlotRelayoutEvent) => void;
 }
 
 export default function PlotlyWrapper({
@@ -21,6 +22,7 @@ export default function PlotlyWrapper({
   style,
   onHover,
   onUnhover,
+  onRelayout,
 }: PlotlyWrapperProps) {
   const defaultConfig: Partial<Config> = {
     responsive: true,
@@ -48,6 +50,7 @@ export default function PlotlyWrapper({
         useResizeHandler
         onHover={onHover}
         onUnhover={onUnhover}
+        onRelayout={onRelayout}
       />
     </Suspense>
   );

@@ -4,9 +4,18 @@ import { useMemo } from 'react';
 import { useAppContext } from '../../context/AppContext';
 import { evaluateParametric2D, evaluateParametric3D, evaluatePolar } from '../../lib/expressionParser';
 import PlotlyWrapper from '../../lib/PlotlyWrapper';
+import {
+  make2DBaseLayout,
+  make2DXAxis,
+  make2DYAxis,
+  make3DAxis,
+  makePolarAxis,
+  useCenteredAxes,
+} from '../../lib/plotTheme';
 
 export default function ParametricPlot() {
   const { state } = useAppContext();
+  const { xRange, yRange, xAxisPos, yAxisPos, onRelayout } = useCenteredAxes();
 
   const data = useMemo(() => {
     const traces: Data[] = [];
@@ -68,71 +77,28 @@ export default function ParametricPlot() {
 
   const layout = useMemo<Partial<Layout>>(
     () => ({
-      autosize: true,
-      margin: { l: 50, r: 20, t: 20, b: 40 },
-      paper_bgcolor: 'transparent',
-      plot_bgcolor: 'transparent',
-      showlegend: data.length > 1,
-      legend: {
-        x: 0,
-        y: 1,
-        bgcolor: 'transparent',
-        font: { color: state.darkMode ? '#e2e8f0' : '#1e293b', size: 11 },
-      },
-      dragmode: 'pan',
+      ...make2DBaseLayout(state.darkMode, { showlegend: data.length > 1 }),
       ...(isPolar
-        ? {
-            polar: {
-              bgcolor: 'transparent',
-              radialaxis: {
-                color: state.darkMode ? '#94a3b8' : '#64748b',
-                gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
-              },
-              angularaxis: {
-                color: state.darkMode ? '#94a3b8' : '#64748b',
-                gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
-              },
-            },
-          }
+        ? { polar: makePolarAxis(state.darkMode) }
         : is3D
           ? {
               scene: {
-                xaxis: {
-                  color: state.darkMode ? '#94a3b8' : '#64748b',
-                  gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
-                },
-                yaxis: {
-                  color: state.darkMode ? '#94a3b8' : '#64748b',
-                  gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
-                },
-                zaxis: {
-                  color: state.darkMode ? '#94a3b8' : '#64748b',
-                  gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
-                },
+                xaxis: make3DAxis(state.darkMode),
+                yaxis: make3DAxis(state.darkMode),
+                zaxis: make3DAxis(state.darkMode),
               },
             }
           : {
-              xaxis: {
-                zeroline: true,
-                zerolinecolor: '#94a3b8',
-                gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
-                color: state.darkMode ? '#94a3b8' : '#64748b',
-              },
-              yaxis: {
-                zeroline: true,
-                zerolinecolor: '#94a3b8',
-                gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
-                color: state.darkMode ? '#94a3b8' : '#64748b',
-                scaleanchor: 'x',
-              },
+              xaxis: make2DXAxis(state.darkMode, { range: xRange, position: xAxisPos }),
+              yaxis: make2DYAxis(state.darkMode, { range: yRange, position: yAxisPos }),
             }),
     }),
-    [data.length, state.darkMode, is3D, isPolar],
+    [data.length, state.darkMode, is3D, isPolar, xRange, yRange, xAxisPos, yAxisPos],
   );
 
   return (
     <div className="relative h-full w-full">
-      <PlotlyWrapper data={data} layout={layout} style={{ width: '100%', height: '100%' }} />
+      <PlotlyWrapper data={data} layout={layout} style={{ width: '100%', height: '100%' }} onRelayout={onRelayout} />
       {data.length === 0 && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <span className="rounded-lg bg-[var(--color-surface)] px-4 py-2 text-[var(--color-text-secondary)] text-sm opacity-60">

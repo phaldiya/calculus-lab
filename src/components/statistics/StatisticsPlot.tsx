@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 import { useAppContext } from '../../context/AppContext';
 import PlotlyWrapper from '../../lib/PlotlyWrapper';
+import { make2DBaseLayout, make2DXAxis, make2DYAxis } from '../../lib/plotTheme';
 
 export default function StatisticsPlot() {
   const { state } = useAppContext();
@@ -50,32 +51,25 @@ export default function StatisticsPlot() {
 
   const layout = useMemo<Partial<Layout>>(
     () => ({
-      autosize: true,
-      margin: { l: 50, r: 20, t: 20, b: 40 },
-      xaxis: {
-        zeroline: true,
-        zerolinecolor: '#94a3b8',
-        showgrid: true,
-        gridcolor: state.darkMode ? '#475569' : '#e2e8f0',
-        color: state.darkMode ? '#94a3b8' : '#64748b',
-      },
-      yaxis: {
-        zeroline: true,
-        zerolinecolor: '#94a3b8',
-        showgrid: true,
-        gridcolor: state.darkMode ? '#475569' : '#e2e8f0',
-        color: state.darkMode ? '#94a3b8' : '#64748b',
-      },
-      paper_bgcolor: 'transparent',
-      plot_bgcolor: 'transparent',
-      showlegend: true,
-      legend: {
-        x: 0,
-        y: 1,
-        bgcolor: 'transparent',
-        font: { color: state.darkMode ? '#e2e8f0' : '#1e293b', size: 11 },
-      },
-      barmode: 'overlay',
+      ...make2DBaseLayout(state.darkMode, {
+        showlegend: true,
+        barmode: 'overlay',
+        margin: { l: 50, r: 20, t: 20, b: 40 },
+      }),
+      xaxis: make2DXAxis(state.darkMode, {
+        anchor: 'y',
+        position: undefined,
+        dtick: undefined,
+        range: undefined,
+        tickfont: undefined,
+      }),
+      yaxis: make2DYAxis(state.darkMode, {
+        anchor: 'x',
+        position: undefined,
+        dtick: undefined,
+        range: undefined,
+        tickfont: undefined,
+      }),
     }),
     [state.darkMode],
   );

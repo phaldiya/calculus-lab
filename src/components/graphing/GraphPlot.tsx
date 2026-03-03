@@ -9,11 +9,13 @@ import {
   parseInequalityExpression,
 } from '../../lib/expressionParser';
 import PlotlyWrapper from '../../lib/PlotlyWrapper';
+import { make2DBaseLayout, make2DXAxis, make2DYAxis, useCenteredAxes } from '../../lib/plotTheme';
 import CoordinateDisplay from './CoordinateDisplay';
 
 export default function GraphPlot() {
   const { state } = useAppContext();
   const [coordinates, setCoordinates] = useState<{ x: number; y: number } | null>(null);
+  const { xRange, yRange, xAxisPos, yAxisPos, onRelayout } = useCenteredAxes();
 
   const data = useMemo(() => {
     const traces: Data[] = [];
@@ -96,34 +98,14 @@ export default function GraphPlot() {
 
   const layout = useMemo<Partial<Layout>>(
     () => ({
-      autosize: true,
-      margin: { l: 50, r: 20, t: 20, b: 40 },
-      xaxis: {
-        zeroline: true,
-        zerolinecolor: '#94a3b8',
-        gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
-        color: state.darkMode ? '#94a3b8' : '#64748b',
-      },
-      yaxis: {
-        zeroline: true,
-        zerolinecolor: '#94a3b8',
-        gridcolor: state.darkMode ? '#334155' : '#e2e8f0',
-        color: state.darkMode ? '#94a3b8' : '#64748b',
-        scaleanchor: 'x',
-      },
-      paper_bgcolor: 'transparent',
-      plot_bgcolor: 'transparent',
-      showlegend: data.length > 1,
-      legend: {
-        x: 0,
-        y: 1,
-        bgcolor: 'transparent',
-        font: { color: state.darkMode ? '#e2e8f0' : '#1e293b', size: 11 },
-      },
-      dragmode: 'pan',
-      hovermode: 'closest',
+      ...make2DBaseLayout(state.darkMode, {
+        showlegend: data.length > 1,
+        hovermode: 'closest',
+      }),
+      xaxis: make2DXAxis(state.darkMode, { range: xRange, position: xAxisPos }),
+      yaxis: make2DYAxis(state.darkMode, { range: yRange, position: yAxisPos }),
     }),
-    [data.length, state.darkMode],
+    [data.length, state.darkMode, xRange, yRange, xAxisPos, yAxisPos],
   );
 
   const handleHover = useCallback((event: PlotMouseEvent) => {
@@ -145,6 +127,7 @@ export default function GraphPlot() {
         style={{ width: '100%', height: '100%' }}
         onHover={handleHover}
         onUnhover={handleUnhover}
+        onRelayout={onRelayout}
       />
       {data.length === 0 && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
