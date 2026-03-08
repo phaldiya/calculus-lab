@@ -1,3 +1,16 @@
+# [1.6.0](https://github.com/phaldiya/calculus-lab/compare/v1.5.0...v1.6.0) (2026-03-08)
+
+
+### Bug Fixes
+
+* prevent x/y input overflow in custom point plotter ([b04433a](https://github.com/phaldiya/calculus-lab/commit/b04433af146c598bb72c6e306fd1f9308b9f7033))
+* replace missing PlotRelayoutEvent import with local type ([e1180e8](https://github.com/phaldiya/calculus-lab/commit/e1180e8874e3c8b5e64349265fc3fbf4cc3ce1f9))
+
+
+### Features
+
+* add centered axes, minor gridlines, and improved dark mode to 2D plots ([dd5b2eb](https://github.com/phaldiya/calculus-lab/commit/dd5b2ebb673470848a7868be80b73698756f0d2c))
+
 # [1.5.0](https://github.com/phaldiya/calculus-lab/compare/v1.4.0...v1.5.0) (2026-02-23)
 
 
