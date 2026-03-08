@@ -1,4 +1,7 @@
-import type { Config, Data, Layout, PlotMouseEvent, PlotRelayoutEvent } from 'plotly.js-dist-min';
+import type { Config, Data, Layout, PlotMouseEvent } from 'plotly.js-dist-min';
+
+type PlotRelayoutEvent = Record<string, unknown>;
+
 import { lazy, Suspense } from 'react';
 
 const Plot = lazy(() => import('react-plotly.js'));

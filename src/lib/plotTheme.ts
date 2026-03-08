@@ -1,4 +1,7 @@
-import type { Layout, PlotRelayoutEvent } from 'plotly.js-dist-min';
+import type { Layout } from 'plotly.js-dist-min';
+
+type PlotRelayoutEvent = Record<string, unknown>;
+
 import { useCallback, useState } from 'react';
 
 type AxisConfig = Record<string, unknown>;
