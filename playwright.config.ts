@@ -15,8 +15,11 @@ export default defineConfig({
 
   expect: {
     toHaveScreenshot: {
+      threshold: 0.01,
       maxDiffPixelRatio: 0.01,
       animations: 'disabled',
+      caret: 'hide',
+      scale: 'css',
     },
   },
 
@@ -35,22 +38,35 @@ export default defineConfig({
     {
       name: 'functional',
       testMatch: 'functional/**/*.e2e.ts',
-      use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1440, height: 900 },
+      },
     },
     {
       name: 'visual-desktop',
       testMatch: 'visual/**/*.e2e.ts',
-      use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1440, height: 900 },
+      },
     },
     {
       name: 'visual-tablet',
       testMatch: 'visual/**/*.e2e.ts',
-      use: { ...devices['Desktop Chrome'], viewport: { width: 768, height: 1024 } },
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 768, height: 1024 },
+      },
     },
     {
       name: 'visual-mobile',
       testMatch: 'visual/**/*.e2e.ts',
-      use: { ...devices['Desktop Chrome'], viewport: { width: 375, height: 812 }, isMobile: true },
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 375, height: 812 },
+        isMobile: true,
+      },
     },
   ],
 });
