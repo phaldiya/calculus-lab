@@ -85,8 +85,8 @@ export default function PointPlotInput() {
 
           <div className="flex flex-col gap-1">
             <div className="grid grid-cols-[1fr_1fr_auto] gap-1 font-medium text-[var(--color-text-secondary)] text-xs">
-              <span>X</span>
-              <span>Y</span>
+              <span className="pl-2">X</span>
+              <span className="pl-2">Y</span>
               <span className="w-6" />
             </div>
             {points.map((p, i) => (
@@ -95,14 +95,14 @@ export default function PointPlotInput() {
                   type="number"
                   value={p.x}
                   onChange={(e) => updatePoint(i, 'x', e.target.value)}
-                  className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-[var(--color-text)] text-sm"
+                  className="min-w-0 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-[var(--color-text)] text-sm"
                   placeholder="x"
                 />
                 <input
                   type="number"
                   value={p.y}
                   onChange={(e) => updatePoint(i, 'y', e.target.value)}
-                  className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-[var(--color-text)] text-sm"
+                  className="min-w-0 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-[var(--color-text)] text-sm"
                   placeholder="y"
                 />
                 <button
