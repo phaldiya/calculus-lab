@@ -410,6 +410,11 @@ export default function DocsPage() {
             </div>
 
             <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Plotting Custom Points</h3>
+            <img
+              src={`${base}docs/custom-points.png`}
+              alt="Custom points showing scatter, line, and both plot modes"
+              className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+            />
             <p className="mb-4 text-slate-500 dark:text-slate-400">
               Click <CodeBlock>+ Plot custom points</CodeBlock> to enter (x, y) coordinate pairs manually. Choose
               between scatter, line, or both display modes. Points appear as an additional trace overlaid on the graph.
