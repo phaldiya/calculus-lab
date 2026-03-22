@@ -1,7 +1,6 @@
 import {
   evaluateOverGrid,
   evaluateOverRange,
-  evaluateParametric2D,
   evaluateParametric3D,
   evaluatePolar,
 } from '../../src/lib/expressionParser';
