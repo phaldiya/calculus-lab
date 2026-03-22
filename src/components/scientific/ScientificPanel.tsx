@@ -10,21 +10,41 @@ import StepViewer from '../shared/StepViewer';
 
 type AngleMode = 'deg' | 'rad';
 
-const BUTTONS = [
-  // Row 0: memory & clear
-  ['MC', 'MR', 'M+', 'M-', 'AC', 'C'],
-  // Row 1: scientific functions top
-  ['x²', 'x³', 'xʸ', '10ˣ', 'eˣ', '1/x'],
-  // Row 2: scientific functions bottom
-  ['sin', 'cos', 'tan', 'ln', 'log', '√'],
-  // Row 3: inverse trig + constants
-  ['sin⁻¹', 'cos⁻¹', 'tan⁻¹', 'π', 'e', '|x|'],
-  // Row 4: parentheses + operators
-  ['(', ')', '%', '÷', '!', 'mod'],
-  // Row 5-8: number pad + operators
-  ['7', '8', '9', '×', '⌫'],
-  ['4', '5', '6', '-', 'Ans'],
-  ['1', '2', '3', '+', 'EXP'],
+// Scientific function rows (6 columns each)
+const SCI_ROWS = [
+  ['(', ')', 'mc', 'm+', 'm-', 'mr'],
+  ['2nd', 'x²', 'x³', 'xʸ', 'eˣ', '10ˣ'],
+  ['1/x', '²√x', '³√x', 'ʸ√x', 'ln', 'log₁₀'],
+  ['x!', 'sin', 'cos', 'tan', 'e', 'EE'],
+  ['Rand', 'sinh', 'cosh', 'tanh', 'π', 'Deg'],
+];
+
+// 2nd mode swaps
+const SECOND_MODE_MAP: Record<string, string> = {
+  'x²': 'x³',
+  'x³': 'x²',
+  xʸ: 'ʸ√x',
+  eˣ: 'yˣ',
+  '10ˣ': '2ˣ',
+  '²√x': '²√x',
+  '³√x': '³√x',
+  'ʸ√x': 'xʸ',
+  ln: 'log₂',
+  'log₁₀': '2ˣ',
+  sin: 'sin⁻¹',
+  cos: 'cos⁻¹',
+  tan: 'tan⁻¹',
+  sinh: 'sinh⁻¹',
+  cosh: 'cosh⁻¹',
+  tanh: 'tanh⁻¹',
+};
+
+// Number pad rows (4 columns, operator on right)
+const NUM_ROWS = [
+  ['⌫', 'AC', '%', '÷'],
+  ['7', '8', '9', '×'],
+  ['4', '5', '6', '−'],
+  ['1', '2', '3', '+'],
   ['±', '0', '.', '='],
 ];
 
@@ -41,18 +61,17 @@ const SHORTCUT_TOOLTIPS: Record<string, string> = {
   '9': '9',
   '.': '.',
   '+': '+',
-  '-': '-',
+  '−': '-',
   '×': '*',
   '÷': '/',
   '%': '%',
   '(': '(',
   ')': ')',
   xʸ: '^',
-  '!': '!',
+  'x!': '!',
   '=': 'Enter',
   '⌫': 'Backspace',
   AC: 'Esc',
-  C: 'Delete',
   π: 'p',
   e: 'e',
 };
@@ -66,30 +85,180 @@ const BUTTON_ARIA_LABELS: Record<string, string> = {
   '10ˣ': '10 to the power of x',
   eˣ: 'e to the power of x',
   '1/x': 'Reciprocal',
-  '|x|': 'Absolute value',
+  'x!': 'Factorial',
+  '²√x': 'Square root',
+  '³√x': 'Cube root',
+  'ʸ√x': 'Nth root',
   'sin⁻¹': 'Inverse sine',
   'cos⁻¹': 'Inverse cosine',
   'tan⁻¹': 'Inverse tangent',
+  'sinh⁻¹': 'Inverse hyperbolic sine',
+  'cosh⁻¹': 'Inverse hyperbolic cosine',
+  'tanh⁻¹': 'Inverse hyperbolic tangent',
+  'log₁₀': 'Log base 10',
+  'log₂': 'Log base 2',
+  '2ˣ': '2 to the power of x',
+  yˣ: 'y to the power of x',
+  Rand: 'Random number',
+  EE: 'Scientific notation',
+  Deg: 'Toggle degrees/radians',
+  Rad: 'Toggle degrees/radians',
+  '2nd': 'Toggle second functions',
+  mc: 'Memory clear',
+  mr: 'Memory recall',
+  'm+': 'Memory add',
+  'm-': 'Memory subtract',
 };
 
-function getButtonStyle(btn: string): string {
-  const base =
-    'flex items-center justify-center rounded-lg text-sm font-medium transition-all active:scale-95 select-none ';
+function renderLabel(btn: string): React.ReactNode {
+  switch (btn) {
+    case '2nd':
+      return (
+        <span>
+          2<sup className="text-[0.6em]">nd</sup>
+        </span>
+      );
+    case 'x²':
+      return (
+        <span>
+          x<sup>2</sup>
+        </span>
+      );
+    case 'x³':
+      return (
+        <span>
+          x<sup>3</sup>
+        </span>
+      );
+    case 'xʸ':
+      return (
+        <span>
+          x<sup>y</sup>
+        </span>
+      );
+    case 'eˣ':
+      return (
+        <span>
+          e<sup>x</sup>
+        </span>
+      );
+    case '10ˣ':
+      return (
+        <span>
+          10<sup>x</sup>
+        </span>
+      );
+    case '2ˣ':
+      return (
+        <span>
+          2<sup>x</sup>
+        </span>
+      );
+    case 'yˣ':
+      return (
+        <span>
+          y<sup>x</sup>
+        </span>
+      );
+    case '²√x':
+      return (
+        <span>
+          <sup>2</sup>√x
+        </span>
+      );
+    case '³√x':
+      return (
+        <span>
+          <sup>3</sup>√x
+        </span>
+      );
+    case 'ʸ√x':
+      return (
+        <span>
+          <sup>y</sup>√x
+        </span>
+      );
+    case '1/x':
+      return (
+        <span>
+          <sup>1</sup>/<sub>x</sub>
+        </span>
+      );
+    case 'log₁₀':
+      return (
+        <span>
+          log<sub>10</sub>
+        </span>
+      );
+    case 'log₂':
+      return (
+        <span>
+          log<sub>2</sub>
+        </span>
+      );
+    case 'sin⁻¹':
+      return (
+        <span>
+          sin<sup>-1</sup>
+        </span>
+      );
+    case 'cos⁻¹':
+      return (
+        <span>
+          cos<sup>-1</sup>
+        </span>
+      );
+    case 'tan⁻¹':
+      return (
+        <span>
+          tan<sup>-1</sup>
+        </span>
+      );
+    case 'sinh⁻¹':
+      return (
+        <span>
+          sinh<sup>-1</sup>
+        </span>
+      );
+    case 'cosh⁻¹':
+      return (
+        <span>
+          cosh<sup>-1</sup>
+        </span>
+      );
+    case 'tanh⁻¹':
+      return (
+        <span>
+          tanh<sup>-1</sup>
+        </span>
+      );
+    case 'x!':
+      return <span>x!</span>;
+    default:
+      return btn;
+  }
+}
 
+function getSciButtonStyle(btn: string, isSecondActive: boolean): string {
+  const base =
+    'flex items-center justify-center rounded-lg text-xs font-medium transition-all active:scale-95 select-none ';
+  if (btn === '2nd') {
+    return isSecondActive
+      ? `${base}bg-[var(--color-primary)] text-white`
+      : `${base}bg-indigo-100 text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-900 dark:text-indigo-300 dark:hover:bg-indigo-800`;
+  }
+  return `${base}bg-indigo-50 text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-300 dark:hover:bg-indigo-900`;
+}
+
+function getNumButtonStyle(btn: string): string {
+  const base = 'flex items-center justify-center rounded-lg font-medium transition-all active:scale-95 select-none ';
   if (btn === '=')
     return `${base}bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] text-lg font-bold`;
-  if (btn === 'AC' || btn === 'C') return `${base}bg-red-500/15 text-red-500 hover:bg-red-500/25`;
-  if (['÷', '×', '-', '+', '%', 'mod'].includes(btn))
-    return `${base}bg-amber-500/15 text-amber-600 dark:text-amber-400 hover:bg-amber-500/25 font-bold`;
-  if (['(', ')', '⌫'].includes(btn))
-    return `${base}bg-[var(--color-surface-alt)] text-[var(--color-text)] hover:bg-[var(--color-border)]`;
-  if (/^[0-9.]$/.test(btn) || btn === '±' || btn === 'EXP' || btn === 'Ans')
-    return (
-      base +
-      'bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-surface-alt)] border border-[var(--color-border)]'
-    );
-  // Scientific functions
-  return `${base}bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/20 text-xs`;
+  if (['÷', '×', '−', '+'].includes(btn))
+    return `${base}bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] text-lg font-bold`;
+  if (['AC', '⌫', '%'].includes(btn))
+    return `${base}bg-indigo-100 text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-900 dark:text-indigo-300 dark:hover:bg-indigo-800 text-sm`;
+  return `${base}bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-surface-alt)] border border-[var(--color-border)] text-base`;
 }
 
 export default function ScientificPanel() {
@@ -99,6 +268,7 @@ export default function ScientificPanel() {
   const [prevResult, setPrevResult] = useState('0');
   const [memory, setMemory] = useState(0);
   const [angleMode, setAngleMode] = useState<AngleMode>('rad');
+  const [secondMode, setSecondMode] = useState(false);
   const [steps, setSteps] = useState<CalculationStep[]>([]);
   const [showSteps, setShowSteps] = useState(false);
 
@@ -119,16 +289,17 @@ export default function ScientificPanel() {
     let result = expr
       .replace(/×/g, '*')
       .replace(/÷/g, '/')
+      .replace(/−/g, '-')
       .replace(/π/g, 'pi')
       .replace(/mod/g, '%')
-      .replace(/\blog\(/g, 'log10(')
+      .replace(/\blog10\(/g, 'log10(')
+      .replace(/\blog2\(/g, 'log2(')
       .replace(/\bln\(/g, 'log(');
 
-    // Handle angle mode for trig functions
     if (angleMode === 'deg') {
-      result = result.replace(/sin\(([^)]+)\)/g, 'sin(($1) * pi / 180)');
-      result = result.replace(/cos\(([^)]+)\)/g, 'cos(($1) * pi / 180)');
-      result = result.replace(/tan\(([^)]+)\)/g, 'tan(($1) * pi / 180)');
+      result = result.replace(/\bsin\(([^)]+)\)/g, 'sin(($1) * pi / 180)');
+      result = result.replace(/\bcos\(([^)]+)\)/g, 'cos(($1) * pi / 180)');
+      result = result.replace(/\btan\(([^)]+)\)/g, 'tan(($1) * pi / 180)');
     }
 
     return result;
@@ -194,12 +365,6 @@ export default function ScientificPanel() {
           setSteps([]);
           setShowSteps(false);
           break;
-        case 'C':
-          setExpression('');
-          setDisplay('0');
-          setSteps([]);
-          setShowSteps(false);
-          break;
         case '⌫':
           setExpression((prev) => prev.slice(0, -1) || '');
           setDisplay((prev) => prev.slice(0, -1) || '0');
@@ -216,28 +381,32 @@ export default function ScientificPanel() {
             setDisplay(`-${display}`);
           }
           break;
-        case 'Ans':
-          appendToExpression(prevResult);
-          break;
-        case 'MC':
+        case 'mc':
           setMemory(0);
           break;
-        case 'MR':
+        case 'mr':
           appendToExpression(memory.toString());
           break;
-        case 'M+':
+        case 'm+':
           try {
             setMemory(memory + parseFloat(display));
           } catch {
             /* ignore */
           }
           break;
-        case 'M-':
+        case 'm-':
           try {
             setMemory(memory - parseFloat(display));
           } catch {
             /* ignore */
           }
+          break;
+        case '2nd':
+          setSecondMode((v) => !v);
+          break;
+        case 'Deg':
+        case 'Rad':
+          setAngleMode((m) => (m === 'deg' ? 'rad' : 'deg'));
           break;
         case 'π':
           appendToExpression('π');
@@ -249,8 +418,16 @@ export default function ScientificPanel() {
         case 'cos':
         case 'tan':
         case 'ln':
-        case 'log':
+        case 'sinh':
+        case 'cosh':
+        case 'tanh':
           appendToExpression(`${btn}(`);
+          break;
+        case 'log₁₀':
+          appendToExpression('log10(');
+          break;
+        case 'log₂':
+          appendToExpression('log2(');
           break;
         case 'sin⁻¹':
           appendToExpression('asin(');
@@ -261,8 +438,23 @@ export default function ScientificPanel() {
         case 'tan⁻¹':
           appendToExpression('atan(');
           break;
-        case '√':
+        case 'sinh⁻¹':
+          appendToExpression('asinh(');
+          break;
+        case 'cosh⁻¹':
+          appendToExpression('acosh(');
+          break;
+        case 'tanh⁻¹':
+          appendToExpression('atanh(');
+          break;
+        case '²√x':
           appendToExpression('sqrt(');
+          break;
+        case '³√x':
+          appendToExpression('cbrt(');
+          break;
+        case 'ʸ√x':
+          appendToExpression('nthRoot(');
           break;
         case 'x²':
           appendToExpression('^2');
@@ -279,23 +471,28 @@ export default function ScientificPanel() {
         case 'eˣ':
           appendToExpression('e^');
           break;
+        case '2ˣ':
+          appendToExpression('2^');
+          break;
+        case 'yˣ':
+          appendToExpression('^');
+          break;
         case '1/x':
           appendToExpression('1/(');
           break;
-        case '|x|':
-          appendToExpression('abs(');
-          break;
-        case '!':
+        case 'x!':
           appendToExpression('!');
           break;
-        case 'EXP':
+        case 'EE':
           appendToExpression('e');
           break;
+        case 'Rand':
+          appendToExpression(Math.random().toFixed(6));
+          break;
         case '%':
-        case 'mod':
         case '÷':
         case '×':
-        case '-':
+        case '−':
         case '+':
         case '(':
         case ')':
@@ -303,12 +500,11 @@ export default function ScientificPanel() {
           appendToExpression(btn);
           break;
         default:
-          // Numbers
           appendToExpression(btn);
           break;
       }
     },
-    [expression, display, prevResult, memory, appendToExpression, calculateResult],
+    [expression, display, memory, appendToExpression, calculateResult],
   );
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -331,26 +527,24 @@ export default function ScientificPanel() {
       '9': '9',
       '.': '.',
       '+': '+',
-      '-': '-',
+      '-': '−',
       '*': '×',
       '/': '÷',
       '%': '%',
       '(': '(',
       ')': ')',
       '^': 'xʸ',
-      '!': '!',
+      '!': 'x!',
       Enter: '=',
       '=': '=',
       Backspace: '⌫',
       Escape: 'AC',
-      Delete: 'C',
       p: 'π',
       e: 'e',
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
-
       const mapped = KEY_MAP[e.key];
       if (mapped) {
         e.preventDefault();
@@ -371,6 +565,11 @@ export default function ScientificPanel() {
   } catch {
     // fallback to plain text
   }
+
+  const resolveBtn = (btn: string): string => {
+    if (!secondMode) return btn;
+    return SECOND_MODE_MAP[btn] ?? btn;
+  };
 
   return (
     <div className="flex h-full">
@@ -416,55 +615,48 @@ export default function ScientificPanel() {
 
           {/* Mode & memory indicator */}
           <div className="flex items-center justify-between px-1">
-            <div className="flex gap-1">
-              <button
-                type="button"
-                aria-pressed={angleMode === 'rad'}
-                onClick={() => setAngleMode('rad')}
-                className={`rounded px-2 py-0.5 font-medium text-xs transition-colors ${
-                  angleMode === 'rad'
-                    ? 'bg-[var(--color-primary)] text-white'
-                    : 'bg-[var(--color-surface-alt)] text-[var(--color-text-secondary)]'
-                }`}
-              >
-                RAD
-              </button>
-              <button
-                type="button"
-                aria-pressed={angleMode === 'deg'}
-                onClick={() => setAngleMode('deg')}
-                className={`rounded px-2 py-0.5 font-medium text-xs transition-colors ${
-                  angleMode === 'deg'
-                    ? 'bg-[var(--color-primary)] text-white'
-                    : 'bg-[var(--color-surface-alt)] text-[var(--color-text-secondary)]'
-                }`}
-              >
-                DEG
-              </button>
-            </div>
+            <span className="font-mono text-[var(--color-text-secondary)] text-xs">
+              {angleMode === 'rad' ? 'Rad' : 'Deg'}
+            </span>
             {memory !== 0 && <span className="font-mono text-[var(--color-text-secondary)] text-xs">M = {memory}</span>}
           </div>
 
-          {/* Button grid */}
+          {/* Scientific function rows (6 columns) */}
+          <div className="flex flex-col gap-1">
+            {SCI_ROWS.map((row, rowIdx) => (
+              <div key={rowIdx} className="grid grid-cols-6 gap-1">
+                {row.map((rawBtn, btnIdx) => {
+                  const btn = resolveBtn(rawBtn);
+                  const displayBtn = btn === 'Deg' ? (angleMode === 'rad' ? 'Deg' : 'Rad') : btn;
+                  return (
+                    <button
+                      type="button"
+                      key={`sci-${rowIdx}-${btnIdx}`}
+                      onClick={() => handleButton(btn)}
+                      className={`${getSciButtonStyle(btn, secondMode)} h-10`}
+                      title={SHORTCUT_TOOLTIPS[btn] ? `Keyboard: ${SHORTCUT_TOOLTIPS[btn]}` : undefined}
+                      aria-label={BUTTON_ARIA_LABELS[btn] ?? btn}
+                    >
+                      {renderLabel(displayBtn)}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+
+          {/* Number pad rows (4 columns) */}
           <div className="flex flex-col gap-1.5">
-            {BUTTONS.map((row, rowIdx) => (
-              <div
-                key={rowIdx}
-                className="grid gap-1.5"
-                style={{
-                  gridTemplateColumns:
-                    rowIdx <= 4 ? `repeat(${row.length}, minmax(0, 1fr))` : `repeat(5, minmax(0, 1fr))`,
-                }}
-              >
+            {NUM_ROWS.map((row, rowIdx) => (
+              <div key={rowIdx} className="grid grid-cols-4 gap-1.5">
                 {row.map((btn, btnIdx) => (
                   <button
                     type="button"
-                    key={`${rowIdx}-${btnIdx}`}
+                    key={`num-${rowIdx}-${btnIdx}`}
                     onClick={() => handleButton(btn)}
-                    className={`${getButtonStyle(btn)} h-11`}
-                    style={rowIdx === 8 && btn === '=' ? { gridColumn: 'span 2' } : undefined}
+                    className={`${getNumButtonStyle(btn)} h-12`}
                     title={SHORTCUT_TOOLTIPS[btn] ? `Keyboard: ${SHORTCUT_TOOLTIPS[btn]}` : undefined}
-                    aria-label={BUTTON_ARIA_LABELS[btn]}
+                    aria-label={BUTTON_ARIA_LABELS[btn] ?? btn}
                   >
                     {btn}
                   </button>

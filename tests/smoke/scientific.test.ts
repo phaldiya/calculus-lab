@@ -77,6 +77,38 @@ describe('QA Audit: Scientific - Smoke', () => {
     it('natural log: log(e)=1', () => {
       expect(evaluate('log(e)')).toBeCloseTo(1);
     });
+
+    it('log base 2: log2(8)=3', () => {
+      expect(evaluate('log2(8)')).toBe(3);
+    });
+  });
+
+  describe('hyperbolic functions', () => {
+    it('sinh(0)=0', () => {
+      expect(evaluate('sinh(0)')).toBe(0);
+    });
+
+    it('cosh(0)=1', () => {
+      expect(evaluate('cosh(0)')).toBe(1);
+    });
+
+    it('tanh(0)=0', () => {
+      expect(evaluate('tanh(0)')).toBe(0);
+    });
+
+    it('asinh(0)=0', () => {
+      expect(evaluate('asinh(0)')).toBe(0);
+    });
+  });
+
+  describe('roots', () => {
+    it('cbrt(27)=3', () => {
+      expect(evaluate('cbrt(27)')).toBe(3);
+    });
+
+    it('nthRoot(16, 4)=2', () => {
+      expect(evaluate('nthRoot(16, 4)')).toBe(2);
+    });
   });
 
   describe('generateSteps', () => {
