@@ -1,23 +1,23 @@
 import { useAppContext } from '../../context/AppContext';
 
-export default function ManipulateRangeControls() {
+export default function RangeControls() {
   const { state, dispatch } = useAppContext();
-  const { xRange, yRange, gridResolution } = state.manipulate;
+  const { xRange, yRange, gridResolution } = state.graph;
 
   const update = (updates: { xRange?: [number, number]; yRange?: [number, number]; gridResolution?: number }) => {
-    dispatch({ type: 'SET_MANIPULATE', updates });
+    dispatch({ type: 'GRAPH_SET_CONFIG', updates });
   };
 
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="font-medium text-[var(--color-text)] text-xs">Axis Ranges</h3>
+      <h3 className="font-medium text-[var(--color-text)] text-xs">Range & Grid</h3>
       <div className="flex gap-2">
         <div className="flex-1">
-          <label htmlFor="manip-xmin" className="mb-0.5 block text-[10px] text-[var(--color-text-secondary)]">
+          <label htmlFor="graph-xmin" className="mb-0.5 block text-[10px] text-[var(--color-text-secondary)]">
             X min
           </label>
           <input
-            id="manip-xmin"
+            id="graph-xmin"
             type="number"
             value={xRange[0]}
             onChange={(e) => update({ xRange: [Number(e.target.value), xRange[1]] })}
@@ -26,11 +26,11 @@ export default function ManipulateRangeControls() {
           />
         </div>
         <div className="flex-1">
-          <label htmlFor="manip-xmax" className="mb-0.5 block text-[10px] text-[var(--color-text-secondary)]">
+          <label htmlFor="graph-xmax" className="mb-0.5 block text-[10px] text-[var(--color-text-secondary)]">
             X max
           </label>
           <input
-            id="manip-xmax"
+            id="graph-xmax"
             type="number"
             value={xRange[1]}
             onChange={(e) => update({ xRange: [xRange[0], Number(e.target.value)] })}
@@ -41,11 +41,11 @@ export default function ManipulateRangeControls() {
       </div>
       <div className="flex gap-2">
         <div className="flex-1">
-          <label htmlFor="manip-ymin" className="mb-0.5 block text-[10px] text-[var(--color-text-secondary)]">
+          <label htmlFor="graph-ymin" className="mb-0.5 block text-[10px] text-[var(--color-text-secondary)]">
             Y min
           </label>
           <input
-            id="manip-ymin"
+            id="graph-ymin"
             type="number"
             value={yRange[0]}
             onChange={(e) => update({ yRange: [Number(e.target.value), yRange[1]] })}
@@ -54,11 +54,11 @@ export default function ManipulateRangeControls() {
           />
         </div>
         <div className="flex-1">
-          <label htmlFor="manip-ymax" className="mb-0.5 block text-[10px] text-[var(--color-text-secondary)]">
+          <label htmlFor="graph-ymax" className="mb-0.5 block text-[10px] text-[var(--color-text-secondary)]">
             Y max
           </label>
           <input
-            id="manip-ymax"
+            id="graph-ymax"
             type="number"
             value={yRange[1]}
             onChange={(e) => update({ yRange: [yRange[0], Number(e.target.value)] })}
@@ -68,11 +68,11 @@ export default function ManipulateRangeControls() {
         </div>
       </div>
       <div>
-        <label htmlFor="manip-grid-res" className="mb-0.5 block text-[10px] text-[var(--color-text-secondary)]">
+        <label htmlFor="graph-grid-res" className="mb-0.5 block text-[10px] text-[var(--color-text-secondary)]">
           Grid resolution
         </label>
         <input
-          id="manip-grid-res"
+          id="graph-grid-res"
           type="number"
           value={gridResolution}
           min={10}

@@ -3,31 +3,24 @@ import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 
 import CalculusPanel from './components/calculus/CalculusPanel';
 import DocsPage from './components/DocsPage';
-import GraphPanel from './components/graphing/GraphPanel';
+import UnifiedGraphPanel from './components/graph/UnifiedGraphPanel';
 import Header from './components/layout/Header';
 import Sidebar from './components/layout/Sidebar';
-import ManipulatePanel from './components/manipulate/ManipulatePanel';
 import MatrixPanel from './components/matrix/MatrixPanel';
-import ParametricPanel from './components/parametric/ParametricPanel';
 import ScientificPanel from './components/scientific/ScientificPanel';
 import ErrorBoundary from './components/shared/ErrorBoundary';
 import ExpressionHistory from './components/shared/ExpressionHistory';
 import { CloseIcon } from './components/shared/Icons';
-import VariablePanel from './components/shared/VariablePanel';
 import StatisticsPanel from './components/statistics/StatisticsPanel';
-import ThreeDGraphingPanel from './components/threeDGraphing/ThreeDGraphingPanel';
 import { AppProvider, useAppContext } from './context/AppContext';
 import type { TabId } from './types';
 
 const pathToTab: Record<string, TabId> = {
   '/scientific': 'scientific',
-  '/graphing': 'graphing',
-  '/3d-graphing': '3d-graphing',
+  '/graph': 'graph',
   '/calculus': 'calculus',
   '/matrix': 'matrix',
   '/statistics': 'statistics',
-  '/parametric': 'parametric',
-  '/manipulate': 'manipulate',
 };
 
 function TabSync() {
@@ -46,13 +39,8 @@ function TabSync() {
 
 function RightPanelContent() {
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 p-3">
-      <div className="shrink-0">
-        <VariablePanel />
-      </div>
-      <div className="flex min-h-0 flex-1 flex-col border-[var(--color-border)] border-t pt-3">
-        <ExpressionHistory />
-      </div>
+    <div className="flex min-h-0 flex-1 flex-col p-3">
+      <ExpressionHistory />
     </div>
   );
 }
@@ -61,7 +49,7 @@ function CalculatorLayout() {
   const location = useLocation();
   const tabName = pathToTab[location.pathname] || 'scientific';
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [rightPanelOpen, setRightPanelOpen] = useState(() => window.matchMedia('(min-width: 1280px)').matches);
+  const [rightPanelOpen, setRightPanelOpen] = useState(false);
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
@@ -106,7 +94,7 @@ function CalculatorLayout() {
 
         {/* Desktop right sidebar */}
         <aside
-          aria-label="Variables and history"
+          aria-label="History"
           className={`hidden flex-col overflow-hidden border-[var(--color-border)] border-l bg-[var(--color-surface)] transition-[width] duration-200 ease-in-out lg:flex ${rightPanelOpen ? 'w-56' : 'w-0 border-l-0'}`}
         >
           <RightPanelContent />
@@ -133,7 +121,7 @@ function CalculatorLayout() {
           >
             <div className="flex items-center justify-between border-[var(--color-border)] border-b px-3 py-2">
               <span id="drawer-title" className="font-semibold text-[var(--color-text)] text-sm">
-                Variables & History
+                History
               </span>
               <button
                 type="button"
@@ -161,13 +149,15 @@ export default function App() {
         <Route element={<CalculatorLayout />}>
           <Route index element={<Navigate to="/scientific" replace />} />
           <Route path="/scientific" element={<ScientificPanel />} />
-          <Route path="/graphing" element={<GraphPanel />} />
-          <Route path="/3d-graphing" element={<ThreeDGraphingPanel />} />
+          <Route path="/graph" element={<UnifiedGraphPanel />} />
           <Route path="/calculus" element={<CalculusPanel />} />
           <Route path="/matrix" element={<MatrixPanel />} />
           <Route path="/statistics" element={<StatisticsPanel />} />
-          <Route path="/parametric" element={<ParametricPanel />} />
-          <Route path="/manipulate" element={<ManipulatePanel />} />
+          {/* Redirects from old tab paths */}
+          <Route path="/graphing" element={<Navigate to="/graph" replace />} />
+          <Route path="/3d-graphing" element={<Navigate to="/graph" replace />} />
+          <Route path="/parametric" element={<Navigate to="/graph" replace />} />
+          <Route path="/manipulate" element={<Navigate to="/graph" replace />} />
         </Route>
         <Route path="/docs/*" element={<DocsPage />} />
       </Routes>

@@ -1,4 +1,7 @@
-export type TabId =
+export type TabId = 'scientific' | 'graph' | 'calculus' | 'matrix' | 'statistics';
+
+/** @deprecated Use TabId instead. Kept for localStorage migration. */
+export type LegacyTabId =
   | 'scientific'
   | 'graphing'
   | '3d-graphing'
@@ -168,62 +171,85 @@ export interface ManipulateState {
   gridResolution: number;
 }
 
+// --- Unified Graph Types ---
+
+export type UnifiedExpressionType =
+  | 'standard-2d'
+  | 'implicit-2d'
+  | 'inequality-2d'
+  | 'polar'
+  | 'parametric-2d'
+  | 'parametric-3d'
+  | 'surface-3d';
+
+export interface UnifiedEquation {
+  id: string;
+  rawInput: string;
+  type: UnifiedExpressionType;
+  components: string[];
+  color: string;
+  visible: boolean;
+  inequalityOp?: InequalityOperator;
+  paramRange?: { min: number; max: number; numPoints: number };
+}
+
+export interface GraphState {
+  equations: UnifiedEquation[];
+  pointDataSets: PointData[];
+  sliders: SliderParam[];
+  xRange: [number, number];
+  yRange: [number, number];
+  gridResolution: number;
+}
+
 export interface AppState {
   activeTab: TabId;
-  equations: Equation[];
-  pointDataSets: PointData[];
+  graph: GraphState;
   calculus: CalculusState;
   matrix: MatrixState;
   statistics: StatisticsState;
-  threeDGraphing: ThreeDGraphingState;
-  parametric: ParametricState;
-  manipulate: ManipulateState;
   history: HistoryEntry[];
   variables: Variable[];
   darkMode: boolean;
+  /** @deprecated Kept for localStorage migration. */
+  equations?: Equation[];
+  /** @deprecated Kept for localStorage migration. */
+  pointDataSets?: PointData[];
+  /** @deprecated Kept for localStorage migration. */
+  threeDGraphing?: ThreeDGraphingState;
+  /** @deprecated Kept for localStorage migration. */
+  parametric?: ParametricState;
+  /** @deprecated Kept for localStorage migration. */
+  manipulate?: ManipulateState;
 }
 
 export type AppAction =
   | { type: 'SET_TAB'; tab: TabId }
-  | { type: 'ADD_EQUATION'; equation: Equation }
-  | { type: 'UPDATE_EQUATION'; id: string; expression: string }
-  | { type: 'TOGGLE_EQUATION'; id: string }
-  | { type: 'REMOVE_EQUATION'; id: string }
-  | { type: 'ADD_POINT_DATA'; pointData: PointData }
-  | { type: 'UPDATE_POINT_DATA'; id: string; updates: Partial<PointData> }
-  | { type: 'REMOVE_POINT_DATA'; id: string }
+  // Unified Graph actions
+  | { type: 'GRAPH_ADD_EQUATION'; equation: UnifiedEquation }
+  | { type: 'GRAPH_UPDATE_EQUATION'; id: string; updates: Partial<UnifiedEquation> }
+  | { type: 'GRAPH_TOGGLE_EQUATION'; id: string }
+  | { type: 'GRAPH_REMOVE_EQUATION'; id: string }
+  | { type: 'GRAPH_ADD_POINT_DATA'; pointData: PointData }
+  | { type: 'GRAPH_UPDATE_POINT_DATA'; id: string; updates: Partial<PointData> }
+  | { type: 'GRAPH_REMOVE_POINT_DATA'; id: string }
+  | { type: 'GRAPH_ADD_SLIDER'; slider: SliderParam }
+  | { type: 'GRAPH_UPDATE_SLIDER'; id: string; value: number }
+  | { type: 'GRAPH_UPDATE_SLIDER_CONFIG'; id: string; updates: Partial<SliderParam> }
+  | { type: 'GRAPH_REMOVE_SLIDER'; id: string }
+  | { type: 'GRAPH_SET_CONFIG'; updates: Partial<Pick<GraphState, 'xRange' | 'yRange' | 'gridResolution'>> }
+  | { type: 'GRAPH_CLEAR' }
+  // Calculus, Matrix, Statistics
   | { type: 'SET_CALCULUS'; updates: Partial<CalculusState> }
   | { type: 'SET_MATRIX'; updates: Partial<MatrixState> }
   | { type: 'SET_STATISTICS'; updates: Partial<StatisticsState> }
   | { type: 'ADD_HISTORY'; entry: HistoryEntry }
   | { type: 'CLEAR_HISTORY' }
-  | { type: 'CLEAR_EQUATIONS' }
   | { type: 'CLEAR_CALCULUS' }
   | { type: 'CLEAR_MATRIX' }
   | { type: 'CLEAR_STATISTICS' }
   | { type: 'ADD_VARIABLE'; variable: Variable }
   | { type: 'UPDATE_VARIABLE'; name: string; value: number }
   | { type: 'REMOVE_VARIABLE'; name: string }
-  | { type: 'ADD_3D_EQUATION'; equation: Equation3D }
-  | { type: 'UPDATE_3D_EQUATION'; id: string; updates: Partial<Equation3D> }
-  | { type: 'TOGGLE_3D_EQUATION'; id: string }
-  | { type: 'REMOVE_3D_EQUATION'; id: string }
-  | { type: 'SET_3D_GRAPHING'; updates: Partial<ThreeDGraphingState> }
-  | { type: 'CLEAR_3D_GRAPHING' }
-  | { type: 'ADD_PARAMETRIC_EQUATION'; equation: ParametricEquation }
-  | { type: 'UPDATE_PARAMETRIC_EQUATION'; id: string; updates: Partial<ParametricEquation> }
-  | { type: 'TOGGLE_PARAMETRIC_EQUATION'; id: string }
-  | { type: 'REMOVE_PARAMETRIC_EQUATION'; id: string }
-  | { type: 'SET_PARAMETRIC'; updates: Partial<ParametricState> }
-  | { type: 'CLEAR_PARAMETRIC' }
-  | { type: 'ADD_MANIPULATE_EQUATION'; equation: ManipulateEquation }
-  | { type: 'TOGGLE_MANIPULATE_EQUATION'; id: string }
-  | { type: 'REMOVE_MANIPULATE_EQUATION'; id: string }
-  | { type: 'ADD_SLIDER'; slider: SliderParam }
-  | { type: 'UPDATE_SLIDER'; id: string; value: number }
-  | { type: 'UPDATE_SLIDER_CONFIG'; id: string; updates: Partial<SliderParam> }
-  | { type: 'REMOVE_SLIDER'; id: string }
-  | { type: 'SET_MANIPULATE'; updates: Partial<ManipulateState> }
-  | { type: 'CLEAR_MANIPULATE' }
   | { type: 'TOGGLE_DARK_MODE' }
   | { type: 'LOAD_STATE'; state: Partial<AppState> };

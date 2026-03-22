@@ -10,17 +10,17 @@ export default function SliderBar() {
     (id: string, value: number) => {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {
-        dispatch({ type: 'UPDATE_SLIDER', id, value });
+        dispatch({ type: 'GRAPH_UPDATE_SLIDER', id, value });
       });
     },
     [dispatch],
   );
 
-  if (state.manipulate.sliders.length === 0) return null;
+  if (state.graph.sliders.length === 0) return null;
 
   return (
     <div className="flex flex-wrap gap-x-6 gap-y-2 border-[var(--color-border)] border-t bg-[var(--color-surface)] px-4 py-3">
-      {state.manipulate.sliders.map((slider) => (
+      {state.graph.sliders.map((slider) => (
         <div key={slider.id} className="flex items-center gap-2">
           <label className="font-mono text-[var(--color-text)] text-xs" htmlFor={`slider-${slider.id}`}>
             {slider.name}

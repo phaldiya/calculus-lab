@@ -40,7 +40,7 @@ export function make2DXAxis(darkMode: boolean, extra?: AxisConfig): AxisConfig {
     color: c.axisText,
     range: [-10, 10],
     tick0: 0,
-    nticks: 21,
+    dtick: 1,
     anchor: 'free',
     position: 0.5,
     tickfont: { size: 9 },
@@ -48,14 +48,14 @@ export function make2DXAxis(darkMode: boolean, extra?: AxisConfig): AxisConfig {
       showgrid: true,
       gridcolor: c.minorGrid,
       gridwidth: 1,
-      nticks: 5,
+      dtick: 0.2,
     },
     ...extra,
   };
 }
 
 export function make2DYAxis(darkMode: boolean, extra?: AxisConfig): AxisConfig {
-  return make2DXAxis(darkMode, extra);
+  return make2DXAxis(darkMode, { scaleanchor: 'x', scaleratio: 1, constrain: 'domain', ...extra });
 }
 
 export function make2DBaseLayout(darkMode: boolean, extra?: Partial<Layout>): Partial<Layout> {

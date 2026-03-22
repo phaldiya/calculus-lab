@@ -1,16 +1,7 @@
 import { createContext, type ReactNode, useContext, useEffect, useReducer } from 'react';
 
 import { loadState, saveState } from '../lib/storage';
-import type {
-  AppAction,
-  AppState,
-  CalculusState,
-  ManipulateState,
-  MatrixState,
-  ParametricState,
-  StatisticsState,
-  ThreeDGraphingState,
-} from '../types';
+import type { AppAction, AppState, CalculusState, GraphState, MatrixState, StatisticsState } from '../types';
 
 const initialCalculus: CalculusState = {
   derivativeExpr: '',
@@ -48,20 +39,9 @@ const initialStatistics: StatisticsState = {
   xyData: [],
 };
 
-const initialThreeDGraphing: ThreeDGraphingState = {
+export const initialGraph: GraphState = {
   equations: [],
-  xRange: [-5, 5],
-  yRange: [-5, 5],
-  gridResolution: 50,
-};
-
-const initialParametric: ParametricState = {
-  equations: [],
-  activePlotType: 'parametric-2d',
-};
-
-const initialManipulate: ManipulateState = {
-  equations: [],
+  pointDataSets: [],
   sliders: [],
   xRange: [-10, 10],
   yRange: [-10, 10],
@@ -70,14 +50,10 @@ const initialManipulate: ManipulateState = {
 
 const initialState: AppState = {
   activeTab: 'scientific',
-  equations: [],
-  pointDataSets: [],
+  graph: initialGraph,
   calculus: initialCalculus,
   matrix: initialMatrix,
   statistics: initialStatistics,
-  threeDGraphing: initialThreeDGraphing,
-  parametric: initialParametric,
-  manipulate: initialManipulate,
   history: [],
   variables: [],
   darkMode: false,
@@ -88,42 +64,88 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case 'SET_TAB':
       return { ...state, activeTab: action.tab };
 
-    case 'ADD_EQUATION':
-      return { ...state, equations: [...state.equations, action.equation] };
+    // --- Unified Graph ---
+    case 'GRAPH_ADD_EQUATION':
+      return { ...state, graph: { ...state.graph, equations: [...state.graph.equations, action.equation] } };
 
-    case 'UPDATE_EQUATION':
+    case 'GRAPH_UPDATE_EQUATION':
       return {
         ...state,
-        equations: state.equations.map((eq) => (eq.id === action.id ? { ...eq, expression: action.expression } : eq)),
+        graph: {
+          ...state.graph,
+          equations: state.graph.equations.map((eq) => (eq.id === action.id ? { ...eq, ...action.updates } : eq)),
+        },
       };
 
-    case 'TOGGLE_EQUATION':
+    case 'GRAPH_TOGGLE_EQUATION':
       return {
         ...state,
-        equations: state.equations.map((eq) => (eq.id === action.id ? { ...eq, visible: !eq.visible } : eq)),
+        graph: {
+          ...state.graph,
+          equations: state.graph.equations.map((eq) => (eq.id === action.id ? { ...eq, visible: !eq.visible } : eq)),
+        },
       };
 
-    case 'REMOVE_EQUATION':
+    case 'GRAPH_REMOVE_EQUATION':
       return {
         ...state,
-        equations: state.equations.filter((eq) => eq.id !== action.id),
+        graph: { ...state.graph, equations: state.graph.equations.filter((eq) => eq.id !== action.id) },
       };
 
-    case 'ADD_POINT_DATA':
-      return { ...state, pointDataSets: [...state.pointDataSets, action.pointData] };
+    case 'GRAPH_ADD_POINT_DATA':
+      return { ...state, graph: { ...state.graph, pointDataSets: [...state.graph.pointDataSets, action.pointData] } };
 
-    case 'UPDATE_POINT_DATA':
+    case 'GRAPH_UPDATE_POINT_DATA':
       return {
         ...state,
-        pointDataSets: state.pointDataSets.map((pd) => (pd.id === action.id ? { ...pd, ...action.updates } : pd)),
+        graph: {
+          ...state.graph,
+          pointDataSets: state.graph.pointDataSets.map((pd) =>
+            pd.id === action.id ? { ...pd, ...action.updates } : pd,
+          ),
+        },
       };
 
-    case 'REMOVE_POINT_DATA':
+    case 'GRAPH_REMOVE_POINT_DATA':
       return {
         ...state,
-        pointDataSets: state.pointDataSets.filter((pd) => pd.id !== action.id),
+        graph: { ...state.graph, pointDataSets: state.graph.pointDataSets.filter((pd) => pd.id !== action.id) },
       };
 
+    case 'GRAPH_ADD_SLIDER':
+      return { ...state, graph: { ...state.graph, sliders: [...state.graph.sliders, action.slider] } };
+
+    case 'GRAPH_UPDATE_SLIDER':
+      return {
+        ...state,
+        graph: {
+          ...state.graph,
+          sliders: state.graph.sliders.map((s) => (s.id === action.id ? { ...s, value: action.value } : s)),
+        },
+      };
+
+    case 'GRAPH_UPDATE_SLIDER_CONFIG':
+      return {
+        ...state,
+        graph: {
+          ...state.graph,
+          sliders: state.graph.sliders.map((s) => (s.id === action.id ? { ...s, ...action.updates } : s)),
+        },
+      };
+
+    case 'GRAPH_REMOVE_SLIDER':
+      return {
+        ...state,
+        graph: { ...state.graph, sliders: state.graph.sliders.filter((s) => s.id !== action.id) },
+      };
+
+    case 'GRAPH_SET_CONFIG':
+      return { ...state, graph: { ...state.graph, ...action.updates } };
+
+    case 'GRAPH_CLEAR':
+      return { ...state, graph: initialGraph };
+
+    // --- Calculus, Matrix, Statistics ---
     case 'SET_CALCULUS':
       return { ...state, calculus: { ...state.calculus, ...action.updates } };
 
@@ -138,9 +160,6 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case 'CLEAR_HISTORY':
       return { ...state, history: [] };
-
-    case 'CLEAR_EQUATIONS':
-      return { ...state, equations: [], pointDataSets: [] };
 
     case 'CLEAR_CALCULUS':
       return { ...state, calculus: initialCalculus };
@@ -165,155 +184,6 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ...state,
         variables: state.variables.filter((v) => v.name !== action.name),
       };
-
-    case 'ADD_3D_EQUATION':
-      return {
-        ...state,
-        threeDGraphing: { ...state.threeDGraphing, equations: [...state.threeDGraphing.equations, action.equation] },
-      };
-
-    case 'UPDATE_3D_EQUATION':
-      return {
-        ...state,
-        threeDGraphing: {
-          ...state.threeDGraphing,
-          equations: state.threeDGraphing.equations.map((eq) =>
-            eq.id === action.id ? { ...eq, ...action.updates } : eq,
-          ),
-        },
-      };
-
-    case 'TOGGLE_3D_EQUATION':
-      return {
-        ...state,
-        threeDGraphing: {
-          ...state.threeDGraphing,
-          equations: state.threeDGraphing.equations.map((eq) =>
-            eq.id === action.id ? { ...eq, visible: !eq.visible } : eq,
-          ),
-        },
-      };
-
-    case 'REMOVE_3D_EQUATION':
-      return {
-        ...state,
-        threeDGraphing: {
-          ...state.threeDGraphing,
-          equations: state.threeDGraphing.equations.filter((eq) => eq.id !== action.id),
-        },
-      };
-
-    case 'SET_3D_GRAPHING':
-      return { ...state, threeDGraphing: { ...state.threeDGraphing, ...action.updates } };
-
-    case 'CLEAR_3D_GRAPHING':
-      return { ...state, threeDGraphing: initialThreeDGraphing };
-
-    case 'ADD_PARAMETRIC_EQUATION':
-      return {
-        ...state,
-        parametric: { ...state.parametric, equations: [...state.parametric.equations, action.equation] },
-      };
-
-    case 'UPDATE_PARAMETRIC_EQUATION':
-      return {
-        ...state,
-        parametric: {
-          ...state.parametric,
-          equations: state.parametric.equations.map((eq) => (eq.id === action.id ? { ...eq, ...action.updates } : eq)),
-        },
-      };
-
-    case 'TOGGLE_PARAMETRIC_EQUATION':
-      return {
-        ...state,
-        parametric: {
-          ...state.parametric,
-          equations: state.parametric.equations.map((eq) =>
-            eq.id === action.id ? { ...eq, visible: !eq.visible } : eq,
-          ),
-        },
-      };
-
-    case 'REMOVE_PARAMETRIC_EQUATION':
-      return {
-        ...state,
-        parametric: {
-          ...state.parametric,
-          equations: state.parametric.equations.filter((eq) => eq.id !== action.id),
-        },
-      };
-
-    case 'SET_PARAMETRIC':
-      return { ...state, parametric: { ...state.parametric, ...action.updates } };
-
-    case 'CLEAR_PARAMETRIC':
-      return { ...state, parametric: initialParametric };
-
-    case 'ADD_MANIPULATE_EQUATION':
-      return {
-        ...state,
-        manipulate: { ...state.manipulate, equations: [...state.manipulate.equations, action.equation] },
-      };
-
-    case 'TOGGLE_MANIPULATE_EQUATION':
-      return {
-        ...state,
-        manipulate: {
-          ...state.manipulate,
-          equations: state.manipulate.equations.map((eq) =>
-            eq.id === action.id ? { ...eq, visible: !eq.visible } : eq,
-          ),
-        },
-      };
-
-    case 'REMOVE_MANIPULATE_EQUATION':
-      return {
-        ...state,
-        manipulate: {
-          ...state.manipulate,
-          equations: state.manipulate.equations.filter((eq) => eq.id !== action.id),
-        },
-      };
-
-    case 'ADD_SLIDER':
-      return {
-        ...state,
-        manipulate: { ...state.manipulate, sliders: [...state.manipulate.sliders, action.slider] },
-      };
-
-    case 'UPDATE_SLIDER':
-      return {
-        ...state,
-        manipulate: {
-          ...state.manipulate,
-          sliders: state.manipulate.sliders.map((s) => (s.id === action.id ? { ...s, value: action.value } : s)),
-        },
-      };
-
-    case 'UPDATE_SLIDER_CONFIG':
-      return {
-        ...state,
-        manipulate: {
-          ...state.manipulate,
-          sliders: state.manipulate.sliders.map((s) => (s.id === action.id ? { ...s, ...action.updates } : s)),
-        },
-      };
-
-    case 'REMOVE_SLIDER':
-      return {
-        ...state,
-        manipulate: {
-          ...state.manipulate,
-          sliders: state.manipulate.sliders.filter((s) => s.id !== action.id),
-        },
-      };
-
-    case 'SET_MANIPULATE':
-      return { ...state, manipulate: { ...state.manipulate, ...action.updates } };
-
-    case 'CLEAR_MANIPULATE':
-      return { ...state, manipulate: initialManipulate };
 
     case 'TOGGLE_DARK_MODE':
       return { ...state, darkMode: !state.darkMode };

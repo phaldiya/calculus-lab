@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 
 import { useAppContext } from '../../context/AppContext';
-import { CalculusLabIcon, CloseIcon, MoonIcon, PanelIcon, SunIcon } from '../shared/Icons';
+import { CalculusLabIcon, CloseIcon, HistoryIcon, MoonIcon, SunIcon } from '../shared/Icons';
 
 interface HeaderProps {
   onToggleSidebar?: () => void;
@@ -43,12 +43,12 @@ export default function Header({ onToggleSidebar, sidebarOpen, onToggleRightPane
           <button
             type="button"
             onClick={onToggleRightPanel}
-            aria-label={rightPanelOpen ? 'Hide variables panel' : 'Show variables panel'}
+            aria-label={rightPanelOpen ? 'Hide history' : 'Show history'}
             aria-expanded={rightPanelOpen}
             className="hidden rounded-lg p-2 transition-colors hover:bg-[var(--color-surface-alt)] lg:block"
-            title={rightPanelOpen ? 'Hide panel' : 'Show panel'}
+            title={rightPanelOpen ? 'Hide history' : 'Show history'}
           >
-            <PanelIcon className="h-5 w-5" />
+            <HistoryIcon className="h-5 w-5" />
           </button>
         )}
         {/* Sidebar toggle — visible below lg */}
@@ -56,12 +56,12 @@ export default function Header({ onToggleSidebar, sidebarOpen, onToggleRightPane
           <button
             type="button"
             onClick={onToggleSidebar}
-            aria-label={sidebarOpen ? 'Close variables panel' : 'Open variables panel'}
+            aria-label={sidebarOpen ? 'Close history' : 'Open history'}
             aria-expanded={sidebarOpen}
             className="rounded-lg p-2 transition-colors hover:bg-[var(--color-surface-alt)] lg:hidden"
-            title={sidebarOpen ? 'Close panel' : 'Open panel'}
+            title={sidebarOpen ? 'Close history' : 'Open history'}
           >
-            {sidebarOpen ? <CloseIcon className="h-5 w-5" /> : <PanelIcon className="h-5 w-5" />}
+            {sidebarOpen ? <CloseIcon className="h-5 w-5" /> : <HistoryIcon className="h-5 w-5" />}
           </button>
         )}
       </div>

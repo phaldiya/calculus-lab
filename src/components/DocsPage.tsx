@@ -1,30 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import {
-  CalculatorIcon,
-  CalculusLabIcon,
-  CubeIcon,
-  GraphIcon,
-  IntegralIcon,
-  ManipulateIcon,
-  MatrixIcon,
-  ParametricIcon,
-  StatsIcon,
-} from './shared/Icons';
+import { CalculatorIcon, CalculusLabIcon, GraphIcon, IntegralIcon, MatrixIcon, StatsIcon } from './shared/Icons';
 
 const base = import.meta.env.BASE_URL;
 
 const sections = [
   { id: 'overview', label: 'Overview', tooltip: 'Features, capabilities, and quick stats' },
   { id: 'scientific', label: 'Calculator', tooltip: 'Arithmetic, trig, logs, memory, and angle modes' },
-  { id: 'graphing', label: 'Graphing', tooltip: 'Plot functions, custom points, zoom and pan' },
-  { id: '3d-graphing', label: '3D Graphing', tooltip: '3D surface plots of z = f(x, y)' },
+  { id: 'graph', label: 'Graph', tooltip: '2D, 3D, parametric, polar, and interactive plots' },
   { id: 'calculus', label: 'Calculus', tooltip: 'Derivatives, integrals, and limits' },
   { id: 'matrix', label: 'Matrix', tooltip: 'Add, multiply, invert, and transpose matrices' },
   { id: 'statistics', label: 'Statistics', tooltip: 'Descriptive stats, histograms, and regression' },
-  { id: 'parametric', label: 'Parametric', tooltip: 'Parametric curves and polar plots' },
-  { id: 'manipulate', label: 'Interact', tooltip: 'Interactive plots with parameter sliders' },
   { id: 'variables', label: 'Variables', tooltip: 'Custom variables, history, and URL navigation' },
   { id: 'responsive', label: 'Responsive', tooltip: 'Mobile, tablet, and desktop layouts' },
   { id: 'dark-mode', label: 'Dark Mode', tooltip: 'Toggle light/dark theme preference' },
@@ -75,16 +62,7 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode; titl
   );
 }
 
-const calculatorTabs = [
-  'scientific',
-  'graphing',
-  '3d-graphing',
-  'calculus',
-  'matrix',
-  'statistics',
-  'parametric',
-  'manipulate',
-];
+const calculatorTabs = ['scientific', 'graph', 'calculus', 'matrix', 'statistics'];
 
 export default function DocsPage() {
   const navigate = useNavigate();
@@ -232,7 +210,7 @@ export default function DocsPage() {
                 description="Plot multiple functions with auto-coloring, zoom, pan, and hover coordinates."
               />
               <FeatureCard
-                icon={<CubeIcon className="h-5 w-5" />}
+                icon={<GraphIcon className="h-5 w-5" />}
                 title="3D Surface Plots"
                 description="Visualize z = f(x, y) as interactive 3D surfaces with auto-assigned colors."
               />
@@ -252,20 +230,15 @@ export default function DocsPage() {
                 description="Descriptive statistics, histograms, linear and polynomial regression with R²."
               />
               <FeatureCard
-                icon={<ParametricIcon className="h-5 w-5" />}
-                title="Parametric & Polar"
-                description="2D/3D parametric curves and polar plots with configurable parameter ranges."
-              />
-              <FeatureCard
-                icon={<ManipulateIcon className="h-5 w-5" />}
-                title="Interactive Manipulate"
-                description="Dynamic plots with sliders to adjust equation parameters in real time."
+                icon={<GraphIcon className="h-5 w-5" />}
+                title="Parametric, Polar & Sliders"
+                description="Parametric curves, polar plots, and interactive sliders — all in the unified Graph tab."
               />
             </div>
 
             <div className="grid grid-cols-1 gap-4 rounded-xl bg-slate-50 p-5 sm:grid-cols-3 dark:bg-slate-900">
               <div className="text-center">
-                <div className="font-bold text-2xl text-indigo-600 dark:text-indigo-400">8</div>
+                <div className="font-bold text-2xl text-indigo-600 dark:text-indigo-400">5</div>
                 <div className="mt-1 text-slate-500 text-xs dark:text-slate-400">Calculator Modes</div>
               </div>
               <div className="text-center">
@@ -354,20 +327,114 @@ export default function DocsPage() {
           </section>
 
           {/* Graphing */}
-          <section id="graphing" className="mb-16">
-            <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Graphing</h2>
+          <section id="graph" className="mb-16">
+            <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Graph</h2>
             <p className="mb-6 text-slate-500 dark:text-slate-400">
-              Plot mathematical functions instantly. Type an expression using standard math notation and hit{' '}
-              <CodeBlock>Plot</CodeBlock> to see it rendered on an interactive Cartesian plane. Each equation gets a
-              unique color automatically.
+              The unified Graph tab handles all plot types from a single input field. Type any expression and hit{' '}
+              <CodeBlock>Plot</CodeBlock> — the app auto-detects whether it is a standard 2D function, an implicit
+              equation, an inequality, a 3D surface, a parametric curve, or a polar plot, and renders it on the
+              appropriate coordinate system. Each equation gets a unique color automatically, and you can mix different
+              plot types in a single session.
             </p>
 
-            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Supported Expressions</h3>
+            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Auto-Detection Algorithm</h3>
+            <p className="mb-3 text-slate-500 dark:text-slate-400">
+              The input field uses a priority-based classifier to determine expression type. No mode switching is needed
+              — just type naturally and the correct plot type is selected.
+            </p>
+            <div className="mb-6 overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-slate-200 border-b dark:border-slate-700">
+                    <th className="py-2 pr-4 font-medium text-slate-800 dark:text-white">Priority</th>
+                    <th className="py-2 pr-4 font-medium text-slate-800 dark:text-white">Detected Type</th>
+                    <th className="py-2 pr-4 font-medium text-slate-800 dark:text-white">Trigger</th>
+                    <th className="py-2 font-medium text-slate-800 dark:text-white">Example</th>
+                  </tr>
+                </thead>
+                <tbody className="text-slate-500 dark:text-slate-400">
+                  <tr className="border-slate-100 border-b dark:border-slate-800">
+                    <td className="py-2 pr-4">1</td>
+                    <td className="py-2 pr-4">Parametric 3D</td>
+                    <td className="py-2 pr-4">
+                      Three semicolon-separated expressions with <CodeBlock>t</CodeBlock>
+                    </td>
+                    <td className="py-2">
+                      <CodeBlock>cos(t); sin(t); t/10</CodeBlock>
+                    </td>
+                  </tr>
+                  <tr className="border-slate-100 border-b dark:border-slate-800">
+                    <td className="py-2 pr-4">2</td>
+                    <td className="py-2 pr-4">Parametric 2D</td>
+                    <td className="py-2 pr-4">
+                      Two semicolon-separated expressions with <CodeBlock>t</CodeBlock>
+                    </td>
+                    <td className="py-2">
+                      <CodeBlock>cos(t); sin(t)</CodeBlock>
+                    </td>
+                  </tr>
+                  <tr className="border-slate-100 border-b dark:border-slate-800">
+                    <td className="py-2 pr-4">3</td>
+                    <td className="py-2 pr-4">Polar</td>
+                    <td className="py-2 pr-4">
+                      Expression contains <CodeBlock>theta</CodeBlock>
+                    </td>
+                    <td className="py-2">
+                      <CodeBlock>1 + cos(theta)</CodeBlock>
+                    </td>
+                  </tr>
+                  <tr className="border-slate-100 border-b dark:border-slate-800">
+                    <td className="py-2 pr-4">4</td>
+                    <td className="py-2 pr-4">Inequality</td>
+                    <td className="py-2 pr-4">
+                      Contains <CodeBlock>&gt;</CodeBlock>, <CodeBlock>&lt;</CodeBlock>, <CodeBlock>&gt;=</CodeBlock>,
+                      or <CodeBlock>&lt;=</CodeBlock>
+                    </td>
+                    <td className="py-2">
+                      <CodeBlock>y &gt; x^2</CodeBlock>
+                    </td>
+                  </tr>
+                  <tr className="border-slate-100 border-b dark:border-slate-800">
+                    <td className="py-2 pr-4">5</td>
+                    <td className="py-2 pr-4">Implicit</td>
+                    <td className="py-2 pr-4">
+                      Contains <CodeBlock>=</CodeBlock> (equality)
+                    </td>
+                    <td className="py-2">
+                      <CodeBlock>x^2 + y^2 = 25</CodeBlock>
+                    </td>
+                  </tr>
+                  <tr className="border-slate-100 border-b dark:border-slate-800">
+                    <td className="py-2 pr-4">6</td>
+                    <td className="py-2 pr-4">3D Surface</td>
+                    <td className="py-2 pr-4">
+                      Expression uses both <CodeBlock>x</CodeBlock> and <CodeBlock>y</CodeBlock>
+                    </td>
+                    <td className="py-2">
+                      <CodeBlock>sin(x) * cos(y)</CodeBlock>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4">7</td>
+                    <td className="py-2 pr-4">2D Function</td>
+                    <td className="py-2 pr-4">Default — single-variable expression</td>
+                    <td className="py-2">
+                      <CodeBlock>sin(x)</CodeBlock>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">2D Functions</h3>
             <img
               src={`${base}docs/graph-tab.png`}
               alt="Graphing tab showing multiple plotted equations"
               className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
             />
+            <p className="mb-3 text-slate-500 dark:text-slate-400">
+              Standard single-variable expressions in <CodeBlock>x</CodeBlock> are plotted on the 2D Cartesian plane.
+            </p>
             <div className="mb-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
               <ExampleCard title="Trigonometric" input="sin(x)" output="Sine wave" />
               <ExampleCard title="Polynomial" input="x^3 - 2*x + 1" output="Cubic curve" />
@@ -421,31 +488,24 @@ export default function DocsPage() {
               Use <CodeBlock>Clear All</CodeBlock> to remove all equations and point datasets at once.
             </p>
 
-            <div className="rounded-xl bg-indigo-50 p-4 text-indigo-700 text-sm dark:bg-indigo-950 dark:text-indigo-300">
+            <div className="mb-8 rounded-xl bg-indigo-50 p-4 text-indigo-700 text-sm dark:bg-indigo-950 dark:text-indigo-300">
               <strong>Tip:</strong> Use scroll to zoom, drag to pan. Hover over any curve to see exact (x, y)
               coordinates displayed in the top-right corner.
             </div>
-          </section>
 
-          {/* 3D Graphing */}
-          <section id="3d-graphing" className="mb-16">
-            <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">3D Graphing</h2>
-            <p className="mb-6 text-slate-500 dark:text-slate-400">
-              Plot 3D surfaces from <CodeBlock>z = f(x, y)</CodeBlock> expressions. Enter a two-variable function and
-              explore the surface interactively with orbit, zoom, and pan controls. Each surface gets a unique color
-              automatically, just like 2D graphing.
+            {/* 3D Surfaces */}
+            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">3D Surface Plots</h3>
+            <p className="mb-3 text-slate-500 dark:text-slate-400">
+              Expressions using both <CodeBlock>x</CodeBlock> and <CodeBlock>y</CodeBlock> are auto-detected as 3D
+              surfaces. Enter a two-variable function in the same input field and the surface is rendered in an
+              interactive 3D viewport. When both 2D and 3D expressions are plotted, the 3D view appears in a split view
+              below the 2D graph.
             </p>
-
-            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Supported Expressions</h3>
             <img
               src={`${base}docs/3d-tab.png`}
-              alt="3D graphing tab showing multiple surface plots"
+              alt="3D surface plots in the unified Graph tab"
               className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
             />
-            <p className="mb-3 text-slate-500 dark:text-slate-400">
-              Any expression using <CodeBlock>x</CodeBlock> and <CodeBlock>y</CodeBlock> as variables. Standard math
-              functions work the same as in 2D graphing.
-            </p>
             <div className="mb-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
               <ExampleCard title="Trigonometric" input="sin(x) * cos(y)" output="Ripple surface" />
               <ExampleCard title="Gaussian" input="exp(-(x^2 + y^2))" output="Bell-shaped peak" />
@@ -453,7 +513,7 @@ export default function DocsPage() {
               <ExampleCard title="Radial" input="sin(sqrt(x^2 + y^2))" output="Concentric rings" />
             </div>
 
-            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Controls</h3>
+            <h4 className="mb-2 font-medium text-base text-slate-800 dark:text-white">3D Controls</h4>
             <div className="mb-6 space-y-3">
               <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
                 <h4 className="mb-1 font-medium text-slate-800 text-sm dark:text-slate-200">X/Y Range</h4>
@@ -470,235 +530,228 @@ export default function DocsPage() {
               </div>
             </div>
 
-            <div className="rounded-xl bg-indigo-50 p-4 text-indigo-700 text-sm dark:bg-indigo-950 dark:text-indigo-300">
+            <div className="mb-8 rounded-xl bg-indigo-50 p-4 text-indigo-700 text-sm dark:bg-indigo-950 dark:text-indigo-300">
               <strong>Tip:</strong> Click and drag to orbit the 3D view. Scroll to zoom. You can plot multiple surfaces
               simultaneously and toggle their visibility individually.
             </div>
-          </section>
 
-          {/* Calculus */}
-          <section id="calculus" className="mb-16">
-            <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Calculus</h2>
-            <p className="mb-6 text-slate-500 dark:text-slate-400">
-              Perform symbolic differentiation, numerical integration, and limit computation. Results are visualized
-              alongside the original function on the graph. Use <CodeBlock>Clear All</CodeBlock> to reset all inputs and
-              results.
-            </p>
+            {/* Calculus */}
+            <section id="calculus" className="mb-16">
+              <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Calculus</h2>
+              <p className="mb-6 text-slate-500 dark:text-slate-400">
+                Perform symbolic differentiation, numerical integration, and limit computation. Results are visualized
+                alongside the original function on the graph. Use <CodeBlock>Clear All</CodeBlock> to reset all inputs
+                and results.
+              </p>
 
-            <div className="space-y-6">
-              <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Derivatives</h3>
-                <img
-                  src={`${base}docs/calculus-tab.png`}
-                  alt="Calculus tab showing derivative, integral, and limit computations"
-                  className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
-                />
-                <p className="mb-3 text-slate-500 dark:text-slate-400">
-                  Computes symbolic derivatives using math.js. Enter any expression and click
-                  <CodeBlock>d/dx</CodeBlock> to get the derivative. The original function (solid line) and its
-                  derivative (dashed line) are plotted together.
-                </p>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <ExampleCard title="Power rule" input="x^3" output="3 * x ^ 2" />
-                  <ExampleCard title="Trig" input="sin(x)" output="cos(x)" />
-                  <ExampleCard title="Chain rule" input="sin(x^2)" output="2 * x * cos(x ^ 2)" />
-                  <ExampleCard title="Product" input="x * cos(x)" output="cos(x) - x * sin(x)" />
-                </div>
-              </div>
-
-              <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Definite Integrals</h3>
-                <p className="mb-3 text-slate-500 dark:text-slate-400">
-                  Computes definite integrals numerically using Simpson's rule with 1000 intervals. The shaded area
-                  under the curve is visualized on the graph.
-                </p>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <ExampleCard title="Polynomial" input="x^2 from 0 to 1" output="0.333333" />
-                  <ExampleCard title="Trigonometric" input="sin(x) from 0 to pi" output="2.000000" />
-                  <ExampleCard title="Exponential" input="exp(x) from 0 to 1" output="1.718282" />
-                  <ExampleCard title="Gaussian" input="exp(-x^2) from -1 to 1" output="1.493648" />
-                </div>
-              </div>
-
-              <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Limits</h3>
-                <p className="mb-3 text-slate-500 dark:text-slate-400">
-                  Evaluates limits numerically by approaching the target point from both sides. Handles indeterminate
-                  forms like 0/0.
-                </p>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <ExampleCard title="Classic" input="sin(x)/x as x -> 0" output="1.000000" />
-                  <ExampleCard title="Indeterminate" input="(x^2-1)/(x-1) as x -> 1" output="2.000000" />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Matrix */}
-          <section id="matrix" className="mb-16">
-            <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Matrix Calculator</h2>
-            <p className="mb-6 text-slate-500 dark:text-slate-400">
-              Perform matrix operations on matrices up to 5x5. Resize matrices dynamically using the row/column
-              selectors. Operations that only need one matrix (determinant, inverse, transpose) automatically hide
-              Matrix B. Use <CodeBlock>Clear All</CodeBlock> to reset matrices and results to defaults.
-            </p>
-
-            <img
-              src={`${base}docs/matrix-tab.png`}
-              alt="Matrix tab showing determinant computation"
-              className="mb-6 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
-            />
-
-            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Operations</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="border-slate-200 border-b dark:border-slate-700">
-                    <th className="py-2 pr-4 font-medium text-slate-800 dark:text-white">Operation</th>
-                    <th className="py-2 pr-4 font-medium text-slate-800 dark:text-white">Button</th>
-                    <th className="py-2 font-medium text-slate-800 dark:text-white">Description</th>
-                  </tr>
-                </thead>
-                <tbody className="text-slate-500 dark:text-slate-400">
-                  <tr className="border-slate-100 border-b dark:border-slate-800">
-                    <td className="py-2 pr-4">Addition</td>
-                    <td className="py-2 pr-4">
-                      <CodeBlock>A + B</CodeBlock>
-                    </td>
-                    <td className="py-2">Element-wise addition of two matrices of the same dimensions</td>
-                  </tr>
-                  <tr className="border-slate-100 border-b dark:border-slate-800">
-                    <td className="py-2 pr-4">Subtraction</td>
-                    <td className="py-2 pr-4">
-                      <CodeBlock>A - B</CodeBlock>
-                    </td>
-                    <td className="py-2">Element-wise subtraction</td>
-                  </tr>
-                  <tr className="border-slate-100 border-b dark:border-slate-800">
-                    <td className="py-2 pr-4">Multiplication</td>
-                    <td className="py-2 pr-4">
-                      <CodeBlock>A x B</CodeBlock>
-                    </td>
-                    <td className="py-2">Standard matrix multiplication (columns of A must equal rows of B)</td>
-                  </tr>
-                  <tr className="border-slate-100 border-b dark:border-slate-800">
-                    <td className="py-2 pr-4">Determinant</td>
-                    <td className="py-2 pr-4">
-                      <CodeBlock>det(A)</CodeBlock>
-                    </td>
-                    <td className="py-2">Computes the determinant of a square matrix</td>
-                  </tr>
-                  <tr className="border-slate-100 border-b dark:border-slate-800">
-                    <td className="py-2 pr-4">Inverse</td>
-                    <td className="py-2 pr-4">
-                      <CodeBlock>A^-1</CodeBlock>
-                    </td>
-                    <td className="py-2">Computes the inverse (errors on singular matrices)</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 pr-4">Transpose</td>
-                    <td className="py-2 pr-4">
-                      <CodeBlock>A^T</CodeBlock>
-                    </td>
-                    <td className="py-2">Flips rows and columns</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <ExampleCard title="Determinant" input="[[1,2],[3,4]]" output="-2.0000" />
-              <ExampleCard title="Inverse check" input="det(A) != 0" output="Matrix is invertible" />
-            </div>
-          </section>
-
-          {/* Statistics */}
-          <section id="statistics" className="mb-16">
-            <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Statistics</h2>
-            <p className="mb-6 text-slate-500 dark:text-slate-400">
-              Enter numerical data to instantly see descriptive statistics and a distribution histogram. Switch to X,Y
-              pairs mode for regression analysis. Use <CodeBlock>Clear All</CodeBlock> to reset all data and results.
-            </p>
-
-            <img
-              src={`${base}docs/stats-tab.png`}
-              alt="Statistics tab showing descriptive stats and histogram"
-              className="mb-6 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
-            />
-
-            <div className="space-y-6">
-              <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Descriptive Statistics</h3>
-                <p className="mb-3 text-slate-500 dark:text-slate-400">
-                  Enter numbers separated by commas, spaces, or newlines. Statistics are computed automatically as you
-                  type.
-                </p>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {[
-                    { label: 'Mean', desc: 'Arithmetic average' },
-                    { label: 'Median', desc: 'Middle value' },
-                    { label: 'Mode', desc: 'Most frequent value(s)' },
-                    { label: 'Std Dev', desc: 'Standard deviation' },
-                    { label: 'Variance', desc: 'Squared deviation from mean' },
-                    { label: 'Q1 / Q3', desc: 'First & third quartiles' },
-                    { label: 'IQR', desc: 'Interquartile range' },
-                    { label: 'Min / Max', desc: 'Data bounds' },
-                    { label: 'Range', desc: 'Max minus Min' },
-                  ].map((s) => (
-                    <div key={s.label} className="rounded-lg bg-slate-50 p-3 dark:bg-slate-900">
-                      <div className="font-medium text-slate-800 text-sm dark:text-slate-200">{s.label}</div>
-                      <div className="mt-0.5 text-slate-400 text-xs">{s.desc}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Regression</h3>
-                <p className="mb-3 text-slate-500 dark:text-slate-400">
-                  Click <CodeBlock>X,Y pairs</CodeBlock> to switch to coordinate input mode. Choose between linear or
-                  polynomial regression (degree 2-4). The fitted curve is plotted over the scatter data with an R²
-                  goodness-of-fit measure.
-                </p>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <ExampleCard
-                    title="Linear"
-                    input="(1,2),(2,4),(3,5),(4,8)"
-                    output="y = 1.9000x + -0.1000 (R²=0.97)"
+              <div className="space-y-6">
+                <div>
+                  <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Derivatives</h3>
+                  <img
+                    src={`${base}docs/calculus-tab.png`}
+                    alt="Calculus tab showing derivative, integral, and limit computations"
+                    className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
                   />
-                  <ExampleCard title="Polynomial" input="Degree 2 fit" output="y = ax² + bx + c with R² score" />
+                  <p className="mb-3 text-slate-500 dark:text-slate-400">
+                    Computes symbolic derivatives using math.js. Enter any expression and click
+                    <CodeBlock>d/dx</CodeBlock> to get the derivative. The original function (solid line) and its
+                    derivative (dashed line) are plotted together.
+                  </p>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <ExampleCard title="Power rule" input="x^3" output="3 * x ^ 2" />
+                    <ExampleCard title="Trig" input="sin(x)" output="cos(x)" />
+                    <ExampleCard title="Chain rule" input="sin(x^2)" output="2 * x * cos(x ^ 2)" />
+                    <ExampleCard title="Product" input="x * cos(x)" output="cos(x) - x * sin(x)" />
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Definite Integrals</h3>
+                  <p className="mb-3 text-slate-500 dark:text-slate-400">
+                    Computes definite integrals numerically using Simpson's rule with 1000 intervals. The shaded area
+                    under the curve is visualized on the graph.
+                  </p>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <ExampleCard title="Polynomial" input="x^2 from 0 to 1" output="0.333333" />
+                    <ExampleCard title="Trigonometric" input="sin(x) from 0 to pi" output="2.000000" />
+                    <ExampleCard title="Exponential" input="exp(x) from 0 to 1" output="1.718282" />
+                    <ExampleCard title="Gaussian" input="exp(-x^2) from -1 to 1" output="1.493648" />
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Limits</h3>
+                  <p className="mb-3 text-slate-500 dark:text-slate-400">
+                    Evaluates limits numerically by approaching the target point from both sides. Handles indeterminate
+                    forms like 0/0.
+                  </p>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <ExampleCard title="Classic" input="sin(x)/x as x -> 0" output="1.000000" />
+                    <ExampleCard title="Indeterminate" input="(x^2-1)/(x-1) as x -> 1" output="2.000000" />
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
 
-          {/* Parametric & Polar */}
-          <section id="parametric" className="mb-16">
-            <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Parametric & Polar</h2>
-            <p className="mb-6 text-slate-500 dark:text-slate-400">
-              Plot parametric curves in 2D and 3D, or polar graphs. Switch between modes using the segmented toggle at
-              the top of the input panel. Each mode provides context-sensitive input fields for the relevant expressions
-              and parameter ranges.
+            {/* Matrix */}
+            <section id="matrix" className="mb-16">
+              <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Matrix Calculator</h2>
+              <p className="mb-6 text-slate-500 dark:text-slate-400">
+                Perform matrix operations on matrices up to 5x5. Resize matrices dynamically using the row/column
+                selectors. Operations that only need one matrix (determinant, inverse, transpose) automatically hide
+                Matrix B. Use <CodeBlock>Clear All</CodeBlock> to reset matrices and results to defaults.
+              </p>
+
+              <img
+                src={`${base}docs/matrix-tab.png`}
+                alt="Matrix tab showing determinant computation"
+                className="mb-6 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+              />
+
+              <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Operations</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-slate-200 border-b dark:border-slate-700">
+                      <th className="py-2 pr-4 font-medium text-slate-800 dark:text-white">Operation</th>
+                      <th className="py-2 pr-4 font-medium text-slate-800 dark:text-white">Button</th>
+                      <th className="py-2 font-medium text-slate-800 dark:text-white">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-slate-500 dark:text-slate-400">
+                    <tr className="border-slate-100 border-b dark:border-slate-800">
+                      <td className="py-2 pr-4">Addition</td>
+                      <td className="py-2 pr-4">
+                        <CodeBlock>A + B</CodeBlock>
+                      </td>
+                      <td className="py-2">Element-wise addition of two matrices of the same dimensions</td>
+                    </tr>
+                    <tr className="border-slate-100 border-b dark:border-slate-800">
+                      <td className="py-2 pr-4">Subtraction</td>
+                      <td className="py-2 pr-4">
+                        <CodeBlock>A - B</CodeBlock>
+                      </td>
+                      <td className="py-2">Element-wise subtraction</td>
+                    </tr>
+                    <tr className="border-slate-100 border-b dark:border-slate-800">
+                      <td className="py-2 pr-4">Multiplication</td>
+                      <td className="py-2 pr-4">
+                        <CodeBlock>A x B</CodeBlock>
+                      </td>
+                      <td className="py-2">Standard matrix multiplication (columns of A must equal rows of B)</td>
+                    </tr>
+                    <tr className="border-slate-100 border-b dark:border-slate-800">
+                      <td className="py-2 pr-4">Determinant</td>
+                      <td className="py-2 pr-4">
+                        <CodeBlock>det(A)</CodeBlock>
+                      </td>
+                      <td className="py-2">Computes the determinant of a square matrix</td>
+                    </tr>
+                    <tr className="border-slate-100 border-b dark:border-slate-800">
+                      <td className="py-2 pr-4">Inverse</td>
+                      <td className="py-2 pr-4">
+                        <CodeBlock>A^-1</CodeBlock>
+                      </td>
+                      <td className="py-2">Computes the inverse (errors on singular matrices)</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2 pr-4">Transpose</td>
+                      <td className="py-2 pr-4">
+                        <CodeBlock>A^T</CodeBlock>
+                      </td>
+                      <td className="py-2">Flips rows and columns</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <ExampleCard title="Determinant" input="[[1,2],[3,4]]" output="-2.0000" />
+                <ExampleCard title="Inverse check" input="det(A) != 0" output="Matrix is invertible" />
+              </div>
+            </section>
+
+            {/* Statistics */}
+            <section id="statistics" className="mb-16">
+              <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Statistics</h2>
+              <p className="mb-6 text-slate-500 dark:text-slate-400">
+                Enter numerical data to instantly see descriptive statistics and a distribution histogram. Switch to X,Y
+                pairs mode for regression analysis. Use <CodeBlock>Clear All</CodeBlock> to reset all data and results.
+              </p>
+
+              <img
+                src={`${base}docs/stats-tab.png`}
+                alt="Statistics tab showing descriptive stats and histogram"
+                className="mb-6 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+              />
+
+              <div className="space-y-6">
+                <div>
+                  <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Descriptive Statistics</h3>
+                  <p className="mb-3 text-slate-500 dark:text-slate-400">
+                    Enter numbers separated by commas, spaces, or newlines. Statistics are computed automatically as you
+                    type.
+                  </p>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {[
+                      { label: 'Mean', desc: 'Arithmetic average' },
+                      { label: 'Median', desc: 'Middle value' },
+                      { label: 'Mode', desc: 'Most frequent value(s)' },
+                      { label: 'Std Dev', desc: 'Standard deviation' },
+                      { label: 'Variance', desc: 'Squared deviation from mean' },
+                      { label: 'Q1 / Q3', desc: 'First & third quartiles' },
+                      { label: 'IQR', desc: 'Interquartile range' },
+                      { label: 'Min / Max', desc: 'Data bounds' },
+                      { label: 'Range', desc: 'Max minus Min' },
+                    ].map((s) => (
+                      <div key={s.label} className="rounded-lg bg-slate-50 p-3 dark:bg-slate-900">
+                        <div className="font-medium text-slate-800 text-sm dark:text-slate-200">{s.label}</div>
+                        <div className="mt-0.5 text-slate-400 text-xs">{s.desc}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Regression</h3>
+                  <p className="mb-3 text-slate-500 dark:text-slate-400">
+                    Click <CodeBlock>X,Y pairs</CodeBlock> to switch to coordinate input mode. Choose between linear or
+                    polynomial regression (degree 2-4). The fitted curve is plotted over the scatter data with an R²
+                    goodness-of-fit measure.
+                  </p>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <ExampleCard
+                      title="Linear"
+                      input="(1,2),(2,4),(3,5),(4,8)"
+                      output="y = 1.9000x + -0.1000 (R²=0.97)"
+                    />
+                    <ExampleCard title="Polynomial" input="Degree 2 fit" output="y = ax² + bx + c with R² score" />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Parametric & Polar */}
+            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Parametric Curves</h3>
+            <p className="mb-3 text-slate-500 dark:text-slate-400">
+              Parametric curves use <strong>semicolon syntax</strong> in the same input field. Separate the component
+              expressions with <CodeBlock>;</CodeBlock> and use <CodeBlock>t</CodeBlock> as the parameter variable. Two
+              semicolon-separated expressions produce a 2D parametric curve; three produce a 3D parametric curve.
             </p>
 
-            <div className="space-y-6">
+            <div className="mb-6 space-y-6">
               <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">2D Parametric Curves</h3>
+                <h4 className="mb-2 font-medium text-base text-slate-800 dark:text-white">2D Parametric</h4>
                 <img
                   src={`${base}docs/parametric-tab.png`}
-                  alt="Parametric tab showing 2D parametric curves"
+                  alt="Parametric curves in the unified Graph tab"
                   className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
                 />
-                <p className="mb-3 text-slate-500 dark:text-slate-400">
-                  Define curves with separate <CodeBlock>x(t)</CodeBlock> and <CodeBlock>y(t)</CodeBlock> expressions.
-                  Set the parameter range with <CodeBlock>t min</CodeBlock>, <CodeBlock>t max</CodeBlock>, and the
-                  number of sample points. The curve is drawn as a connected line in the Cartesian plane.
-                </p>
                 <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <ExampleCard title="Circle" input="x(t) = cos(t), y(t) = sin(t)" output="Unit circle" />
-                  <ExampleCard title="Lissajous" input="x(t) = sin(3t), y(t) = sin(2t)" output="Figure-eight knot" />
-                  <ExampleCard title="Spiral" input="x(t) = t*cos(t), y(t) = t*sin(t)" output="Archimedean spiral" />
-                  <ExampleCard title="Cycloid" input="x(t) = t - sin(t), y(t) = 1 - cos(t)" output="Rolling curve" />
+                  <ExampleCard title="Circle" input="cos(t); sin(t)" output="Unit circle" />
+                  <ExampleCard title="Lissajous" input="sin(3*t); sin(2*t)" output="Figure-eight knot" />
+                  <ExampleCard title="Spiral" input="t*cos(t); t*sin(t)" output="Archimedean spiral" />
+                  <ExampleCard title="Cycloid" input="t - sin(t); 1 - cos(t)" output="Rolling curve" />
                 </div>
                 <div className="rounded-xl bg-indigo-50 p-4 text-indigo-700 text-sm dark:bg-indigo-950 dark:text-indigo-300">
                   <strong>Tip:</strong> The default range is <CodeBlock>t: 0 to 2π</CodeBlock> with 200 sample points.
@@ -707,92 +760,71 @@ export default function DocsPage() {
               </div>
 
               <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">3D Parametric Curves</h3>
+                <h4 className="mb-2 font-medium text-base text-slate-800 dark:text-white">3D Parametric</h4>
                 <img
                   src={`${base}docs/parametric-3d-tab.png`}
-                  alt="3D Parametric curves showing helix, trefoil knot, and toroidal spiral"
+                  alt="3D parametric curves in the unified Graph tab"
                   className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
                 />
                 <p className="mb-3 text-slate-500 dark:text-slate-400">
-                  Add a third expression <CodeBlock>z(t)</CodeBlock> to plot curves in 3D space. The resulting curve is
-                  rendered with Plotly's 3D scatter mode, supporting orbit, zoom, and pan interactions.
+                  Add a third semicolon-separated expression to plot curves in 3D space. The resulting curve is rendered
+                  with Plotly's 3D scatter mode, supporting orbit, zoom, and pan interactions.
                 </p>
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <ExampleCard
-                    title="Helix"
-                    input="x = cos(t), y = sin(t), z = t/5"
-                    output="Spiral rising along z-axis"
-                  />
+                  <ExampleCard title="Helix" input="cos(t); sin(t); t/5" output="Spiral rising along z-axis" />
                   <ExampleCard
                     title="Trefoil knot"
-                    input="x = sin(t)+2sin(2t), y = cos(t)-2cos(2t), z = -sin(3t)"
+                    input="sin(t)+2*sin(2*t); cos(t)-2*cos(2*t); -sin(3*t)"
                     output="3D knot"
                   />
                   <ExampleCard
                     title="Toroidal spiral"
-                    input="x = (2+cos(5t))cos(t), y = (2+cos(5t))sin(t), z = sin(5t)"
+                    input="(2+cos(5*t))*cos(t); (2+cos(5*t))*sin(t); sin(5*t)"
                     output="Spiral on torus"
                   />
-                  <ExampleCard
-                    title="Conical helix"
-                    input="x = t*cos(t), y = t*sin(t), z = t"
-                    output="Expanding helix"
-                  />
+                  <ExampleCard title="Conical helix" input="t*cos(t); t*sin(t); t" output="Expanding helix" />
                 </div>
-              </div>
-
-              <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Polar Plots</h3>
-                <img
-                  src={`${base}docs/parametric-polar-tab.png`}
-                  alt="Polar plots showing cardioid, rose, spiral, and lemniscate curves"
-                  className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
-                />
-                <p className="mb-3 text-slate-500 dark:text-slate-400">
-                  Enter a single <CodeBlock>r(θ)</CodeBlock> expression to plot in polar coordinates. The angle
-                  parameter is <CodeBlock>theta</CodeBlock> in radians. Curves are rendered on a polar coordinate grid
-                  with angular gridlines.
-                </p>
-                <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <ExampleCard title="Cardioid" input="r(θ) = 1 + cos(theta)" output="Heart-shaped curve" />
-                  <ExampleCard title="Rose" input="r(θ) = cos(3 * theta)" output="Three-petal rose" />
-                  <ExampleCard title="Spiral" input="r(θ) = theta / (2*pi)" output="Archimedean spiral" />
-                  <ExampleCard title="Lemniscate" input="r(θ) = sqrt(cos(2*theta))" output="Figure-eight" />
-                </div>
-                <div className="rounded-xl bg-indigo-50 p-4 text-indigo-700 text-sm dark:bg-indigo-950 dark:text-indigo-300">
-                  <strong>Tip:</strong> The default range is <CodeBlock>θ: 0 to 2π</CodeBlock>. For multi-loop curves
-                  like spirals, increase the maximum to <CodeBlock>4π</CodeBlock> or <CodeBlock>6π</CodeBlock>. Polar
-                  plots use Plotly's <CodeBlock>scatterpolar</CodeBlock> trace type with angles displayed in degrees.
-                </div>
-              </div>
-
-              <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Equation Management</h3>
-                <p className="text-slate-500 text-sm dark:text-slate-400">
-                  Each plotted equation shows a colored badge indicating its type (2D, 3D, or Polar). Use the toggle
-                  switch to show or hide individual curves. Click the <CodeBlock>×</CodeBlock> button to remove an
-                  equation, or <CodeBlock>Clear All</CodeBlock> to reset everything. Multiple curves of the same or
-                  different types can be plotted simultaneously.
-                </p>
               </div>
             </div>
-          </section>
 
-          {/* Interactive Manipulate */}
-          <section id="manipulate" className="mb-16">
-            <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Interactive Manipulate</h2>
-            <p className="mb-6 text-slate-500 dark:text-slate-400">
-              Create dynamic visualizations where equation parameters are controlled by interactive sliders. Type an
+            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Polar Plots</h3>
+            <img
+              src={`${base}docs/parametric-polar-tab.png`}
+              alt="Polar plots showing cardioid, rose, spiral, and lemniscate curves"
+              className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
+            />
+            <p className="mb-3 text-slate-500 dark:text-slate-400">
+              Any expression containing <CodeBlock>theta</CodeBlock> is auto-detected as a polar plot. Enter an{' '}
+              <CodeBlock>r(θ)</CodeBlock> expression and it is rendered on a polar coordinate grid with angular
+              gridlines. No mode switching needed — just use <CodeBlock>theta</CodeBlock> as the variable.
+            </p>
+            <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <ExampleCard title="Cardioid" input="1 + cos(theta)" output="Heart-shaped curve" />
+              <ExampleCard title="Rose" input="cos(3 * theta)" output="Three-petal rose" />
+              <ExampleCard title="Spiral" input="theta / (2*pi)" output="Archimedean spiral" />
+              <ExampleCard title="Lemniscate" input="sqrt(cos(2*theta))" output="Figure-eight" />
+            </div>
+            <div className="mb-8 rounded-xl bg-indigo-50 p-4 text-indigo-700 text-sm dark:bg-indigo-950 dark:text-indigo-300">
+              <strong>Tip:</strong> The default range is <CodeBlock>θ: 0 to 2π</CodeBlock>. For multi-loop curves like
+              spirals, increase the maximum to <CodeBlock>4π</CodeBlock> or <CodeBlock>6π</CodeBlock>. Polar plots use
+              Plotly's <CodeBlock>scatterpolar</CodeBlock> trace type with angles displayed in degrees.
+            </div>
+
+            {/* Interactive Sliders */}
+            <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Interactive Sliders</h3>
+            <p className="mb-3 text-slate-500 dark:text-slate-400">
+              Interactive parameter sliders are available across all expression types in the Graph tab. Type an
               expression with named parameters (any letter except <CodeBlock>x</CodeBlock>, <CodeBlock>y</CodeBlock>,{' '}
-              <CodeBlock>z</CodeBlock>, <CodeBlock>t</CodeBlock>) and sliders are created automatically.
+              <CodeBlock>z</CodeBlock>, <CodeBlock>t</CodeBlock>, <CodeBlock>theta</CodeBlock>) and sliders are created
+              automatically.
             </p>
 
             <div className="space-y-6">
               <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Auto-Parameter Detection</h3>
+                <h4 className="mb-2 font-medium text-base text-slate-800 dark:text-white">Auto-Parameter Detection</h4>
                 <img
                   src={`${base}docs/manipulate-tab.png`}
-                  alt="Interactive manipulate tab with sliders controlling equation parameters"
+                  alt="Graph tab with sliders controlling equation parameters"
                   className="mb-4 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
                 />
                 <p className="mb-3 text-slate-500 dark:text-slate-400">
@@ -817,7 +849,7 @@ export default function DocsPage() {
               </div>
 
               <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Slider Controls</h3>
+                <h4 className="mb-2 font-medium text-base text-slate-800 dark:text-white">Slider Controls</h4>
                 <p className="mb-3 text-slate-500 dark:text-slate-400">
                   Sliders appear in two places: the sidebar <CodeBlock>Parameters</CodeBlock> panel (with configurable
                   min, max, and step) and the <CodeBlock>Slider Bar</CodeBlock> below the plot (for quick adjustment).
@@ -851,16 +883,7 @@ export default function DocsPage() {
               </div>
 
               <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Axis Ranges & Grid</h3>
-                <p className="mb-3 text-slate-500 dark:text-slate-400">
-                  Customize the X and Y axis ranges and grid resolution from the sidebar. The default range is{' '}
-                  <CodeBlock>-10 to 10</CodeBlock> for both axes with a grid resolution of <CodeBlock>50</CodeBlock>{' '}
-                  points. Higher resolution produces smoother curves at the cost of computation time.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Variable Integration</h3>
+                <h4 className="mb-2 font-medium text-base text-slate-800 dark:text-white">Variable Integration</h4>
                 <p className="mb-3 text-slate-500 dark:text-slate-400">
                   Slider parameters integrate with the global Variables panel. If you define a variable{' '}
                   <CodeBlock>a = 5</CodeBlock> in the sidebar and also have a slider for <CodeBlock>a</CodeBlock>, the
@@ -875,6 +898,16 @@ export default function DocsPage() {
                 <CodeBlock>c</CodeBlock> (phase). Drag each slider to explore how each parameter transforms the wave in
                 real time. Use the sidebar to widen the slider range or adjust the step size for finer control.
               </div>
+            </div>
+
+            <div className="mt-6">
+              <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Equation Management</h3>
+              <p className="text-slate-500 text-sm dark:text-slate-400">
+                Each plotted equation shows a colored badge indicating its type (2D, 3D, Polar, Parametric, Implicit, or
+                Inequality). Use the toggle switch to show or hide individual curves. Click the <CodeBlock>×</CodeBlock>{' '}
+                button to remove an equation, or <CodeBlock>Clear All</CodeBlock> to reset everything. Multiple curves
+                of the same or different types can be plotted simultaneously.
+              </p>
             </div>
           </section>
 
@@ -913,13 +946,10 @@ export default function DocsPage() {
                 <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
                   {[
                     ['/scientific', 'Calculator'],
-                    ['/graphing', 'Graphing'],
-                    ['/3d-graphing', '3D Graphing'],
+                    ['/graph', 'Graph'],
                     ['/calculus', 'Calculus'],
                     ['/matrix', 'Matrix'],
                     ['/statistics', 'Statistics'],
-                    ['/parametric', 'Parametric'],
-                    ['/manipulate', 'Interact'],
                     ['/docs', 'Documentation'],
                   ].map(([path, label]) => (
                     <div key={path} className="flex items-center gap-2">
@@ -948,7 +978,7 @@ export default function DocsPage() {
                   (variables &amp; history) is hidden and accessible via a slide-over drawer triggered by the panel icon
                   in the header. Inner panels stack vertically — inputs on top, plots below.
                 </p>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
                   <img
                     src={`${base}docs/mobile-scientific.png`}
                     alt="Mobile scientific calculator with bottom tab bar"
@@ -956,12 +986,12 @@ export default function DocsPage() {
                   />
                   <img
                     src={`${base}docs/mobile-graphing.png`}
-                    alt="Mobile graphing view with stacked layout"
+                    alt="Mobile unified Graph tab with stacked layout"
                     className="rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
                   />
                   <img
                     src={`${base}docs/mobile-3d.png`}
-                    alt="Mobile 3D graphing view with stacked layout"
+                    alt="Mobile Graph tab showing 3D surface plots"
                     className="rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
                   />
                   <img
@@ -975,13 +1005,8 @@ export default function DocsPage() {
                     className="rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
                   />
                   <img
-                    src={`${base}docs/mobile-parametric.png`}
-                    alt="Mobile parametric view with stacked layout"
-                    className="rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
-                  />
-                  <img
-                    src={`${base}docs/mobile-manipulate.png`}
-                    alt="Mobile interactive manipulate view with sliders"
+                    src={`${base}docs/mobile-matrix.png`}
+                    alt="Mobile matrix view with stacked layout"
                     className="rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
                   />
                   <img
@@ -991,7 +1016,7 @@ export default function DocsPage() {
                   />
                 </div>
                 <p className="mt-2 text-slate-400 text-xs">
-                  Left to right: Calculator, Graphing, 3D, Calculus, Statistics, Parametric, Interact, Variables drawer
+                  Left to right: Calculator, Graph, Graph (3D), Calculus, Statistics, Matrix, Variables drawer
                 </p>
               </div>
 

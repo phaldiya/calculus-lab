@@ -46,33 +46,50 @@ describe('QA Audit: Graphing - Smoke', () => {
     });
   });
 
-  describe('reducer: equation actions', () => {
-    it('ADD_EQUATION adds an equation', () => {
+  describe('reducer: graph equation actions', () => {
+    it('GRAPH_ADD_EQUATION adds an equation', () => {
       const state = createTestState();
       const next = applyActions(state, [
         {
-          type: 'ADD_EQUATION',
-          equation: { id: '1', expression: 'x^2', color: '#6366f1', visible: true },
+          type: 'GRAPH_ADD_EQUATION',
+          equation: {
+            id: '1',
+            rawInput: 'x^2',
+            type: 'standard-2d',
+            components: ['x^2'],
+            color: '#6366f1',
+            visible: true,
+          },
         },
       ]);
-      expect(next.equations).toHaveLength(1);
-      expect(next.equations[0].expression).toBe('x^2');
+      expect(next.graph.equations).toHaveLength(1);
+      expect(next.graph.equations[0].rawInput).toBe('x^2');
     });
 
-    it('REMOVE_EQUATION removes by id', () => {
+    it('GRAPH_REMOVE_EQUATION removes by id', () => {
       const state = createTestState({
-        equations: [{ id: '1', expression: 'x^2', color: '#6366f1', visible: true }],
+        graph: {
+          ...createTestState().graph,
+          equations: [
+            { id: '1', rawInput: 'x^2', type: 'standard-2d', components: ['x^2'], color: '#6366f1', visible: true },
+          ],
+        },
       });
-      const next = applyActions(state, [{ type: 'REMOVE_EQUATION', id: '1' }]);
-      expect(next.equations).toHaveLength(0);
+      const next = applyActions(state, [{ type: 'GRAPH_REMOVE_EQUATION', id: '1' }]);
+      expect(next.graph.equations).toHaveLength(0);
     });
 
-    it('TOGGLE_EQUATION toggles visibility', () => {
+    it('GRAPH_TOGGLE_EQUATION toggles visibility', () => {
       const state = createTestState({
-        equations: [{ id: '1', expression: 'x^2', color: '#6366f1', visible: true }],
+        graph: {
+          ...createTestState().graph,
+          equations: [
+            { id: '1', rawInput: 'x^2', type: 'standard-2d', components: ['x^2'], color: '#6366f1', visible: true },
+          ],
+        },
       });
-      const next = applyActions(state, [{ type: 'TOGGLE_EQUATION', id: '1' }]);
-      expect(next.equations[0].visible).toBe(false);
+      const next = applyActions(state, [{ type: 'GRAPH_TOGGLE_EQUATION', id: '1' }]);
+      expect(next.graph.equations[0].visible).toBe(false);
     });
   });
 

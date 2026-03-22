@@ -1,11 +1,10 @@
-import { appReducer } from '../../src/context/AppContext';
+import { appReducer, initialGraph } from '../../src/context/AppContext';
 import type { AppAction, AppState } from '../../src/types';
 
 export function createTestState(overrides: Partial<AppState> = {}): AppState {
   return {
     activeTab: 'scientific',
-    equations: [],
-    pointDataSets: [],
+    graph: initialGraph,
     calculus: {
       derivativeExpr: '',
       derivativeResult: '',
@@ -38,23 +37,6 @@ export function createTestState(overrides: Partial<AppState> = {}): AppState {
       regressionDegree: 2,
       regressionResult: null,
       xyData: [],
-    },
-    threeDGraphing: {
-      equations: [],
-      xRange: [-5, 5],
-      yRange: [-5, 5],
-      gridResolution: 50,
-    },
-    parametric: {
-      equations: [],
-      activePlotType: 'parametric-2d',
-    },
-    manipulate: {
-      equations: [],
-      sliders: [],
-      xRange: [-10, 10],
-      yRange: [-10, 10],
-      gridResolution: 50,
     },
     history: [],
     variables: [],

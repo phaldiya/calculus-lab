@@ -18,13 +18,13 @@ export default function SliderPanel() {
       return;
     }
 
-    if (state.manipulate.sliders.some((s) => s.name === trimmed)) {
+    if (state.graph.sliders.some((s) => s.name === trimmed)) {
       setError('Slider already exists');
       return;
     }
 
     dispatch({
-      type: 'ADD_SLIDER',
+      type: 'GRAPH_ADD_SLIDER',
       slider: {
         id: crypto.randomUUID(),
         name: trimmed,
@@ -61,7 +61,7 @@ export default function SliderPanel() {
         </button>
       </form>
       {error && <p className="text-[var(--color-error)] text-xs">{error}</p>}
-      {state.manipulate.sliders.map((slider) => (
+      {state.graph.sliders.map((slider) => (
         <div key={slider.id} className="flex flex-col gap-1 rounded-lg bg-[var(--color-surface-alt)] p-2">
           <div className="flex items-center justify-between">
             <span className="font-mono text-[var(--color-text)] text-xs">
@@ -70,7 +70,7 @@ export default function SliderPanel() {
             <button
               type="button"
               aria-label={`Remove slider ${slider.name}`}
-              onClick={() => dispatch({ type: 'REMOVE_SLIDER', id: slider.id })}
+              onClick={() => dispatch({ type: 'GRAPH_REMOVE_SLIDER', id: slider.id })}
               className="text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-error)]"
             >
               <CloseIcon className="h-3 w-3" />
@@ -81,7 +81,11 @@ export default function SliderPanel() {
               type="number"
               value={slider.min}
               onChange={(e) =>
-                dispatch({ type: 'UPDATE_SLIDER_CONFIG', id: slider.id, updates: { min: Number(e.target.value) } })
+                dispatch({
+                  type: 'GRAPH_UPDATE_SLIDER_CONFIG',
+                  id: slider.id,
+                  updates: { min: Number(e.target.value) },
+                })
               }
               aria-label={`${slider.name} minimum`}
               className="w-12 rounded border border-[var(--color-border)] bg-[var(--color-bg)] px-1 py-0.5 text-center text-[var(--color-text)] text-xs"
@@ -90,7 +94,11 @@ export default function SliderPanel() {
               type="number"
               value={slider.max}
               onChange={(e) =>
-                dispatch({ type: 'UPDATE_SLIDER_CONFIG', id: slider.id, updates: { max: Number(e.target.value) } })
+                dispatch({
+                  type: 'GRAPH_UPDATE_SLIDER_CONFIG',
+                  id: slider.id,
+                  updates: { max: Number(e.target.value) },
+                })
               }
               aria-label={`${slider.name} maximum`}
               className="w-12 rounded border border-[var(--color-border)] bg-[var(--color-bg)] px-1 py-0.5 text-center text-[var(--color-text)] text-xs"
@@ -100,7 +108,7 @@ export default function SliderPanel() {
               value={slider.step}
               onChange={(e) =>
                 dispatch({
-                  type: 'UPDATE_SLIDER_CONFIG',
+                  type: 'GRAPH_UPDATE_SLIDER_CONFIG',
                   id: slider.id,
                   updates: { step: Number(e.target.value) || 0.1 },
                 })

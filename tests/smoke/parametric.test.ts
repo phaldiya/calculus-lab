@@ -49,103 +49,88 @@ describe('Parametric - Smoke', () => {
     });
   });
 
-  describe('reducer: parametric actions', () => {
-    it('ADD_PARAMETRIC_EQUATION adds equation', () => {
+  describe('reducer: parametric graph actions', () => {
+    it('GRAPH_ADD_EQUATION adds parametric 2D equation', () => {
       const state = createTestState();
       const next = applyActions(state, [
         {
-          type: 'ADD_PARAMETRIC_EQUATION',
+          type: 'GRAPH_ADD_EQUATION',
           equation: {
             id: '1',
-            plotType: 'parametric-2d',
-            xExpr: 'cos(t)',
-            yExpr: 'sin(t)',
-            tMin: 0,
-            tMax: 6.28,
-            numPoints: 500,
+            rawInput: 'cos(t); sin(t)',
+            type: 'parametric-2d',
+            components: ['cos(t)', 'sin(t)'],
             color: '#6366f1',
             visible: true,
+            paramRange: { min: 0, max: 6.28, numPoints: 500 },
           },
         },
       ]);
-      expect(next.parametric.equations).toHaveLength(1);
-      expect(next.parametric.equations[0].xExpr).toBe('cos(t)');
+      expect(next.graph.equations).toHaveLength(1);
+      expect(next.graph.equations[0].components[0]).toBe('cos(t)');
     });
 
-    it('TOGGLE_PARAMETRIC_EQUATION toggles visibility', () => {
+    it('GRAPH_TOGGLE_EQUATION toggles parametric visibility', () => {
       const state = createTestState({
-        parametric: {
+        graph: {
+          ...createTestState().graph,
           equations: [
             {
               id: '1',
-              plotType: 'parametric-2d',
-              xExpr: 'cos(t)',
-              yExpr: 'sin(t)',
-              tMin: 0,
-              tMax: 6.28,
-              numPoints: 500,
+              rawInput: 'cos(t); sin(t)',
+              type: 'parametric-2d',
+              components: ['cos(t)', 'sin(t)'],
               color: '#6366f1',
               visible: true,
+              paramRange: { min: 0, max: 6.28, numPoints: 500 },
             },
           ],
-          activePlotType: 'parametric-2d',
         },
       });
-      const next = applyActions(state, [{ type: 'TOGGLE_PARAMETRIC_EQUATION', id: '1' }]);
-      expect(next.parametric.equations[0].visible).toBe(false);
+      const next = applyActions(state, [{ type: 'GRAPH_TOGGLE_EQUATION', id: '1' }]);
+      expect(next.graph.equations[0].visible).toBe(false);
     });
 
-    it('REMOVE_PARAMETRIC_EQUATION removes by id', () => {
+    it('GRAPH_REMOVE_EQUATION removes parametric by id', () => {
       const state = createTestState({
-        parametric: {
+        graph: {
+          ...createTestState().graph,
           equations: [
             {
               id: '1',
-              plotType: 'polar',
-              xExpr: '2 + cos(3*theta)',
-              yExpr: '',
-              tMin: 0,
-              tMax: 6.28,
-              numPoints: 500,
+              rawInput: '2 + cos(3*theta)',
+              type: 'polar',
+              components: ['2 + cos(3*theta)'],
               color: '#ef4444',
               visible: true,
+              paramRange: { min: 0, max: 6.28, numPoints: 500 },
             },
           ],
-          activePlotType: 'polar',
         },
       });
-      const next = applyActions(state, [{ type: 'REMOVE_PARAMETRIC_EQUATION', id: '1' }]);
-      expect(next.parametric.equations).toHaveLength(0);
+      const next = applyActions(state, [{ type: 'GRAPH_REMOVE_EQUATION', id: '1' }]);
+      expect(next.graph.equations).toHaveLength(0);
     });
 
-    it('SET_PARAMETRIC updates active plot type', () => {
-      const state = createTestState();
-      const next = applyActions(state, [{ type: 'SET_PARAMETRIC', updates: { activePlotType: 'polar' } }]);
-      expect(next.parametric.activePlotType).toBe('polar');
-    });
-
-    it('CLEAR_PARAMETRIC resets state', () => {
+    it('GRAPH_CLEAR resets parametric state', () => {
       const state = createTestState({
-        parametric: {
+        graph: {
+          ...createTestState().graph,
           equations: [
             {
               id: '1',
-              plotType: 'parametric-2d',
-              xExpr: 'cos(t)',
-              yExpr: 'sin(t)',
-              tMin: 0,
-              tMax: 6.28,
-              numPoints: 500,
+              rawInput: 'cos(t); sin(t)',
+              type: 'parametric-2d',
+              components: ['cos(t)', 'sin(t)'],
               color: '#6366f1',
               visible: true,
+              paramRange: { min: 0, max: 6.28, numPoints: 500 },
             },
           ],
-          activePlotType: 'parametric-3d',
         },
       });
-      const next = applyActions(state, [{ type: 'CLEAR_PARAMETRIC' }]);
-      expect(next.parametric.equations).toHaveLength(0);
-      expect(next.parametric.activePlotType).toBe('parametric-2d');
+      const next = applyActions(state, [{ type: 'GRAPH_CLEAR' }]);
+      expect(next.graph.equations).toHaveLength(0);
     });
   });
 });

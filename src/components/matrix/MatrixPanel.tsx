@@ -46,9 +46,9 @@ export default function MatrixPanel() {
   };
 
   return (
-    <section aria-label="Matrix calculator" className="flex h-full flex-col overflow-y-auto p-6">
+    <section aria-label="Matrix calculator" className="flex h-full flex-col overflow-y-auto p-4">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold text-[var(--color-text)] text-lg">Matrix Calculator</h2>
+        <h2 className="font-semibold text-[var(--color-text)] text-sm">Matrix Calculator</h2>
         <button
           type="button"
           onClick={() => {

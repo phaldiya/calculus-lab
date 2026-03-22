@@ -34,13 +34,13 @@ export default function PointPlotInput() {
     if (validPoints.length === 0) return;
 
     dispatch({
-      type: 'ADD_POINT_DATA',
+      type: 'GRAPH_ADD_POINT_DATA',
       pointData: {
         id: crypto.randomUUID(),
         points: validPoints,
         color: nextColor(),
         visible: true,
-        label: label || `Points ${state.pointDataSets.length + 1}`,
+        label: label || `Points ${state.graph.pointDataSets.length + 1}`,
         mode,
       },
     });
@@ -137,9 +137,9 @@ export default function PointPlotInput() {
         </div>
       )}
 
-      {state.pointDataSets.length > 0 && (
+      {state.graph.pointDataSets.length > 0 && (
         <div className="flex flex-col gap-1">
-          {state.pointDataSets.map((pd) => (
+          {state.graph.pointDataSets.map((pd) => (
             <div key={pd.id} className="flex items-center gap-2 rounded-lg bg-[var(--color-surface-alt)] px-3 py-1.5">
               <span className="h-3 w-3 flex-shrink-0 rounded-full" style={{ backgroundColor: pd.color }} />
               <span className="flex-1 text-[var(--color-text)] text-sm">
@@ -148,7 +148,7 @@ export default function PointPlotInput() {
               <button
                 type="button"
                 aria-label={`Remove ${pd.label}`}
-                onClick={() => dispatch({ type: 'REMOVE_POINT_DATA', id: pd.id })}
+                onClick={() => dispatch({ type: 'GRAPH_REMOVE_POINT_DATA', id: pd.id })}
                 className="text-[var(--color-text-secondary)] hover:text-[var(--color-error)]"
               >
                 <CloseIcon className="h-4 w-4" />

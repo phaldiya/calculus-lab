@@ -6,7 +6,6 @@ describe('QA Audit: Graphing - Deep', () => {
   describe('discontinuity handling', () => {
     it('1/x around x=0 produces NaN at x=0', () => {
       const result = evaluateOverRange('1/x', -1, 1, 3);
-      // x=0 should produce Infinity, which gets pushed as NaN
       const zeroIdx = result.x.findIndex((v) => Math.abs(v) < 1e-10);
       if (zeroIdx >= 0) {
         expect(Number.isNaN(result.y[zeroIdx])).toBe(true);
@@ -15,7 +14,6 @@ describe('QA Audit: Graphing - Deep', () => {
 
     it('sin(x)/x near x=0', () => {
       const result = evaluateOverRange('sin(x)/x', -1, 1, 101);
-      // Most points should be valid numbers
       const validCount = result.y.filter((y) => !Number.isNaN(y)).length;
       expect(validCount).toBeGreaterThan(90);
     });
@@ -47,7 +45,6 @@ describe('QA Audit: Graphing - Deep', () => {
         { name: 'a', value: 2 },
         { name: 'b', value: 1 },
       ]);
-      // At x=0: y=1, at x=4: y=9
       expect(result.y[0]).toBeCloseTo(1);
       expect(result.y[4]).toBeCloseTo(9);
     });
@@ -57,45 +54,79 @@ describe('QA Audit: Graphing - Deep', () => {
     it('add 3, remove middle, verify order', () => {
       const state = createTestState();
       const next = applyActions(state, [
-        { type: 'ADD_EQUATION', equation: { id: '1', expression: 'x', color: '#f00', visible: true } },
-        { type: 'ADD_EQUATION', equation: { id: '2', expression: 'x^2', color: '#0f0', visible: true } },
-        { type: 'ADD_EQUATION', equation: { id: '3', expression: 'x^3', color: '#00f', visible: true } },
-        { type: 'REMOVE_EQUATION', id: '2' },
+        {
+          type: 'GRAPH_ADD_EQUATION',
+          equation: { id: '1', rawInput: 'x', type: 'standard-2d', components: ['x'], color: '#f00', visible: true },
+        },
+        {
+          type: 'GRAPH_ADD_EQUATION',
+          equation: {
+            id: '2',
+            rawInput: 'x^2',
+            type: 'standard-2d',
+            components: ['x^2'],
+            color: '#0f0',
+            visible: true,
+          },
+        },
+        {
+          type: 'GRAPH_ADD_EQUATION',
+          equation: {
+            id: '3',
+            rawInput: 'x^3',
+            type: 'standard-2d',
+            components: ['x^3'],
+            color: '#00f',
+            visible: true,
+          },
+        },
+        { type: 'GRAPH_REMOVE_EQUATION', id: '2' },
       ]);
-      expect(next.equations).toHaveLength(2);
-      expect(next.equations[0].id).toBe('1');
-      expect(next.equations[1].id).toBe('3');
+      expect(next.graph.equations).toHaveLength(2);
+      expect(next.graph.equations[0].id).toBe('1');
+      expect(next.graph.equations[1].id).toBe('3');
     });
   });
 
-  describe('UPDATE_EQUATION', () => {
+  describe('GRAPH_UPDATE_EQUATION', () => {
     it('preserves id and color', () => {
       const state = createTestState({
-        equations: [{ id: '1', expression: 'x', color: '#f00', visible: true }],
+        graph: {
+          ...createTestState().graph,
+          equations: [{ id: '1', rawInput: 'x', type: 'standard-2d', components: ['x'], color: '#f00', visible: true }],
+        },
       });
-      const next = applyActions(state, [{ type: 'UPDATE_EQUATION', id: '1', expression: 'x^2' }]);
-      expect(next.equations[0].id).toBe('1');
-      expect(next.equations[0].color).toBe('#f00');
-      expect(next.equations[0].expression).toBe('x^2');
+      const next = applyActions(state, [
+        { type: 'GRAPH_UPDATE_EQUATION', id: '1', updates: { rawInput: 'x^2', components: ['x^2'] } },
+      ]);
+      expect(next.graph.equations[0].id).toBe('1');
+      expect(next.graph.equations[0].color).toBe('#f00');
+      expect(next.graph.equations[0].rawInput).toBe('x^2');
     });
   });
 
-  describe('CLEAR_EQUATIONS', () => {
-    it('resets both equations and pointDataSets', () => {
+  describe('GRAPH_CLEAR', () => {
+    it('resets equations, pointDataSets, and sliders', () => {
       const state = createTestState({
-        equations: [{ id: '1', expression: 'x', color: '#f00', visible: true }],
-        pointDataSets: [
-          { id: 'p1', points: [{ x: 0, y: 0 }], color: '#00f', visible: true, label: 'test', mode: 'markers' },
-        ],
+        graph: {
+          equations: [{ id: '1', rawInput: 'x', type: 'standard-2d', components: ['x'], color: '#f00', visible: true }],
+          pointDataSets: [
+            { id: 'p1', points: [{ x: 0, y: 0 }], color: '#00f', visible: true, label: 'test', mode: 'markers' },
+          ],
+          sliders: [],
+          xRange: [-10, 10],
+          yRange: [-10, 10],
+          gridResolution: 50,
+        },
       });
-      const next = applyActions(state, [{ type: 'CLEAR_EQUATIONS' }]);
-      expect(next.equations).toEqual([]);
-      expect(next.pointDataSets).toEqual([]);
+      const next = applyActions(state, [{ type: 'GRAPH_CLEAR' }]);
+      expect(next.graph.equations).toEqual([]);
+      expect(next.graph.pointDataSets).toEqual([]);
     });
   });
 
   describe('point data reducer', () => {
-    it('ADD_POINT_DATA adds a dataset', () => {
+    it('GRAPH_ADD_POINT_DATA adds a dataset', () => {
       const state = createTestState();
       const pd = {
         id: 'p1',
@@ -105,11 +136,11 @@ describe('QA Audit: Graphing - Deep', () => {
         label: 'A',
         mode: 'markers' as const,
       };
-      const next = applyActions(state, [{ type: 'ADD_POINT_DATA', pointData: pd }]);
-      expect(next.pointDataSets).toHaveLength(1);
+      const next = applyActions(state, [{ type: 'GRAPH_ADD_POINT_DATA', pointData: pd }]);
+      expect(next.graph.pointDataSets).toHaveLength(1);
     });
 
-    it('UPDATE_POINT_DATA modifies dataset', () => {
+    it('GRAPH_UPDATE_POINT_DATA modifies dataset', () => {
       const pd = {
         id: 'p1',
         points: [{ x: 1, y: 2 }],
@@ -118,12 +149,14 @@ describe('QA Audit: Graphing - Deep', () => {
         label: 'A',
         mode: 'markers' as const,
       };
-      const state = createTestState({ pointDataSets: [pd] });
-      const next = applyActions(state, [{ type: 'UPDATE_POINT_DATA', id: 'p1', updates: { label: 'B' } }]);
-      expect(next.pointDataSets[0].label).toBe('B');
+      const state = createTestState({
+        graph: { ...createTestState().graph, pointDataSets: [pd] },
+      });
+      const next = applyActions(state, [{ type: 'GRAPH_UPDATE_POINT_DATA', id: 'p1', updates: { label: 'B' } }]);
+      expect(next.graph.pointDataSets[0].label).toBe('B');
     });
 
-    it('REMOVE_POINT_DATA removes dataset', () => {
+    it('GRAPH_REMOVE_POINT_DATA removes dataset', () => {
       const pd = {
         id: 'p1',
         points: [{ x: 1, y: 2 }],
@@ -132,9 +165,11 @@ describe('QA Audit: Graphing - Deep', () => {
         label: 'A',
         mode: 'markers' as const,
       };
-      const state = createTestState({ pointDataSets: [pd] });
-      const next = applyActions(state, [{ type: 'REMOVE_POINT_DATA', id: 'p1' }]);
-      expect(next.pointDataSets).toHaveLength(0);
+      const state = createTestState({
+        graph: { ...createTestState().graph, pointDataSets: [pd] },
+      });
+      const next = applyActions(state, [{ type: 'GRAPH_REMOVE_POINT_DATA', id: 'p1' }]);
+      expect(next.graph.pointDataSets).toHaveLength(0);
     });
   });
 
@@ -144,7 +179,6 @@ describe('QA Audit: Graphing - Deep', () => {
     });
 
     it('wraps around after exhausting palette', () => {
-      // There are 10 colors in the palette
       for (let i = 0; i < 10; i++) nextColor();
       const wrapped = nextColor();
       expect(wrapped).toBe(getColor(0));

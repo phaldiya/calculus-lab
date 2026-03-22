@@ -65,63 +65,72 @@ describe('QA Audit: 3D Graphing & Implicit Equations - Smoke', () => {
     });
   });
 
-  describe('reducer: 3D equation actions', () => {
-    it('ADD_3D_EQUATION adds a 3D equation', () => {
+  describe('reducer: 3D graph equation actions', () => {
+    it('GRAPH_ADD_EQUATION adds a 3D surface equation', () => {
       const state = createTestState();
       const next = applyActions(state, [
         {
-          type: 'ADD_3D_EQUATION',
-          equation: { id: '1', expression: 'sin(x) * cos(y)', color: '#6366f1', visible: true },
+          type: 'GRAPH_ADD_EQUATION',
+          equation: {
+            id: '1',
+            rawInput: 'sin(x) * cos(y)',
+            type: 'surface-3d',
+            components: ['sin(x) * cos(y)'],
+            color: '#6366f1',
+            visible: true,
+          },
         },
       ]);
-      expect(next.threeDGraphing.equations).toHaveLength(1);
-      expect(next.threeDGraphing.equations[0].expression).toBe('sin(x) * cos(y)');
+      expect(next.graph.equations).toHaveLength(1);
+      expect(next.graph.equations[0].rawInput).toBe('sin(x) * cos(y)');
+      expect(next.graph.equations[0].type).toBe('surface-3d');
     });
 
-    it('REMOVE_3D_EQUATION removes by id', () => {
+    it('GRAPH_REMOVE_EQUATION removes by id', () => {
       const state = createTestState({
-        threeDGraphing: {
-          equations: [{ id: '1', expression: 'x + y', color: '#6366f1', visible: true }],
-          xRange: [-5, 5],
-          yRange: [-5, 5],
-          gridResolution: 50,
+        graph: {
+          ...createTestState().graph,
+          equations: [
+            { id: '1', rawInput: 'x + y', type: 'surface-3d', components: ['x + y'], color: '#6366f1', visible: true },
+          ],
         },
       });
-      const next = applyActions(state, [{ type: 'REMOVE_3D_EQUATION', id: '1' }]);
-      expect(next.threeDGraphing.equations).toHaveLength(0);
+      const next = applyActions(state, [{ type: 'GRAPH_REMOVE_EQUATION', id: '1' }]);
+      expect(next.graph.equations).toHaveLength(0);
     });
 
-    it('TOGGLE_3D_EQUATION toggles visibility', () => {
+    it('GRAPH_TOGGLE_EQUATION toggles visibility', () => {
       const state = createTestState({
-        threeDGraphing: {
-          equations: [{ id: '1', expression: 'x + y', color: '#6366f1', visible: true }],
-          xRange: [-5, 5],
-          yRange: [-5, 5],
-          gridResolution: 50,
+        graph: {
+          ...createTestState().graph,
+          equations: [
+            { id: '1', rawInput: 'x + y', type: 'surface-3d', components: ['x + y'], color: '#6366f1', visible: true },
+          ],
         },
       });
-      const next = applyActions(state, [{ type: 'TOGGLE_3D_EQUATION', id: '1' }]);
-      expect(next.threeDGraphing.equations[0].visible).toBe(false);
+      const next = applyActions(state, [{ type: 'GRAPH_TOGGLE_EQUATION', id: '1' }]);
+      expect(next.graph.equations[0].visible).toBe(false);
     });
 
-    it('SET_3D_GRAPHING updates partial state', () => {
+    it('GRAPH_SET_CONFIG updates grid resolution', () => {
       const state = createTestState();
-      const next = applyActions(state, [{ type: 'SET_3D_GRAPHING', updates: { gridResolution: 80 } }]);
-      expect(next.threeDGraphing.gridResolution).toBe(80);
+      const next = applyActions(state, [{ type: 'GRAPH_SET_CONFIG', updates: { gridResolution: 80 } }]);
+      expect(next.graph.gridResolution).toBe(80);
     });
 
-    it('CLEAR_3D_GRAPHING resets to initial state', () => {
+    it('GRAPH_CLEAR resets to initial state', () => {
       const state = createTestState({
-        threeDGraphing: {
-          equations: [{ id: '1', expression: 'x + y', color: '#6366f1', visible: true }],
-          xRange: [-10, 10],
-          yRange: [-10, 10],
+        graph: {
+          ...createTestState().graph,
+          equations: [
+            { id: '1', rawInput: 'x + y', type: 'surface-3d', components: ['x + y'], color: '#6366f1', visible: true },
+          ],
           gridResolution: 80,
         },
       });
-      const next = applyActions(state, [{ type: 'CLEAR_3D_GRAPHING' }]);
-      expect(next.threeDGraphing.equations).toHaveLength(0);
-      expect(next.threeDGraphing.gridResolution).toBe(50);
+      const next = applyActions(state, [{ type: 'GRAPH_CLEAR' }]);
+      expect(next.graph.equations).toHaveLength(0);
+      expect(next.graph.gridResolution).toBe(50);
     });
   });
 });
