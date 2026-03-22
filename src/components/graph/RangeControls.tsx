@@ -8,9 +8,22 @@ export default function RangeControls() {
     dispatch({ type: 'GRAPH_SET_CONFIG', updates });
   };
 
+  const handleReset = () => {
+    update({ xRange: [-10, 10], yRange: [-10, 10], gridResolution: 50 });
+  };
+
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="font-medium text-[var(--color-text)] text-xs">Range & Grid</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="font-medium text-[var(--color-text)] text-xs">Range & Grid</h3>
+        <button
+          type="button"
+          onClick={handleReset}
+          className="rounded px-1.5 py-0.5 text-[10px] text-[var(--color-primary)] transition-colors hover:bg-[var(--color-surface-alt)]"
+        >
+          Reset View
+        </button>
+      </div>
       <div className="flex gap-2">
         <div className="flex-1">
           <label htmlFor="graph-xmin" className="mb-0.5 block text-[10px] text-[var(--color-text-secondary)]">
@@ -19,7 +32,7 @@ export default function RangeControls() {
           <input
             id="graph-xmin"
             type="number"
-            value={xRange[0]}
+            value={Math.round(xRange[0] * 100) / 100}
             onChange={(e) => update({ xRange: [Number(e.target.value), xRange[1]] })}
             aria-label="X axis minimum"
             className="w-full rounded border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-2 py-1 text-[var(--color-text)] text-xs focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
@@ -32,7 +45,7 @@ export default function RangeControls() {
           <input
             id="graph-xmax"
             type="number"
-            value={xRange[1]}
+            value={Math.round(xRange[1] * 100) / 100}
             onChange={(e) => update({ xRange: [xRange[0], Number(e.target.value)] })}
             aria-label="X axis maximum"
             className="w-full rounded border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-2 py-1 text-[var(--color-text)] text-xs focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
@@ -47,7 +60,7 @@ export default function RangeControls() {
           <input
             id="graph-ymin"
             type="number"
-            value={yRange[0]}
+            value={Math.round(yRange[0] * 100) / 100}
             onChange={(e) => update({ yRange: [Number(e.target.value), yRange[1]] })}
             aria-label="Y axis minimum"
             className="w-full rounded border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-2 py-1 text-[var(--color-text)] text-xs focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
@@ -60,7 +73,7 @@ export default function RangeControls() {
           <input
             id="graph-ymax"
             type="number"
-            value={yRange[1]}
+            value={Math.round(yRange[1] * 100) / 100}
             onChange={(e) => update({ yRange: [yRange[0], Number(e.target.value)] })}
             aria-label="Y axis maximum"
             className="w-full rounded border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-2 py-1 text-[var(--color-text)] text-xs focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"

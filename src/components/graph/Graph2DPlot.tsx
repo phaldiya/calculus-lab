@@ -1,5 +1,5 @@
 import type { Data, Layout, PlotMouseEvent } from 'plotly.js-dist-min';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   evaluateOverGrid,
@@ -21,12 +21,33 @@ interface Props {
   sliders: GraphState['sliders'];
   xRange: [number, number];
   yRange: [number, number];
+  gridResolution: number;
   darkMode: boolean;
+  onRangeChange?: (xRange: [number, number], yRange: [number, number]) => void;
 }
 
-export default function Graph2DPlot({ equations, pointDataSets, variables, sliders, xRange, yRange, darkMode }: Props) {
+export default function Graph2DPlot({
+  equations,
+  pointDataSets,
+  variables,
+  sliders,
+  xRange,
+  yRange,
+  gridResolution,
+  darkMode,
+  onRangeChange,
+}: Props) {
   const [coordinates, setCoordinates] = useState<{ x: number; y: number } | null>(null);
-  const { xRange: liveXRange, yRange: liveYRange, xAxisPos, yAxisPos, onRelayout } = useCenteredAxes();
+  const { xRange: liveXRange, yRange: liveYRange, xAxisPos, yAxisPos, onRelayout } = useCenteredAxes(xRange, yRange);
+
+  // Notify parent of live range changes (for syncing sidebar controls)
+  const prevLiveRef = useRef({ x: liveXRange, y: liveYRange });
+  useEffect(() => {
+    if (prevLiveRef.current.x !== liveXRange || prevLiveRef.current.y !== liveYRange) {
+      prevLiveRef.current = { x: liveXRange, y: liveYRange };
+      onRangeChange?.(liveXRange, liveYRange);
+    }
+  }, [liveXRange, liveYRange, onRangeChange]);
 
   const mergedVariables = useMemo<Variable[]>(() => {
     const varMap = new Map<string, number>();
@@ -51,8 +72,8 @@ export default function Graph2DPlot({ equations, pointDataSets, variables, slide
               xRange[1],
               yRange[0],
               yRange[1],
-              200,
-              200,
+              gridResolution * 4,
+              gridResolution * 4,
               mergedVariables,
             );
             traces.push({
@@ -83,8 +104,8 @@ export default function Graph2DPlot({ equations, pointDataSets, variables, slide
               xRange[1],
               yRange[0],
               yRange[1],
-              200,
-              200,
+              gridResolution * 4,
+              gridResolution * 4,
               mergedVariables,
             );
             traces.push({

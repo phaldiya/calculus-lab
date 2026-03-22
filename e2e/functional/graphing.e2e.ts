@@ -86,4 +86,33 @@ test.describe('Unified Graph', () => {
 
     await expect(page.getByText('No equations yet')).toBeVisible();
   });
+
+  test('Range controls update X min value', async ({ page }) => {
+    const xMinInput = page.getByLabel('X axis minimum');
+    await xMinInput.fill('-5');
+    await xMinInput.press('Tab');
+
+    await expect(xMinInput).toHaveValue('-5');
+  });
+
+  test('Reset View resets range to defaults', async ({ page }) => {
+    const xMinInput = page.getByLabel('X axis minimum');
+    await xMinInput.fill('-5');
+    await xMinInput.press('Tab');
+
+    await page.getByRole('button', { name: 'Reset View' }).click();
+
+    await expect(xMinInput).toHaveValue('-10');
+    await expect(page.getByLabel('X axis maximum')).toHaveValue('10');
+    await expect(page.getByLabel('Y axis minimum')).toHaveValue('-10');
+    await expect(page.getByLabel('Y axis maximum')).toHaveValue('10');
+  });
+
+  test('Grid resolution is editable', async ({ page }) => {
+    const gridInput = page.getByLabel('Grid resolution');
+    await gridInput.fill('80');
+    await gridInput.press('Tab');
+
+    await expect(gridInput).toHaveValue('80');
+  });
 });

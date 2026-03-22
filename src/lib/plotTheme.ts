@@ -2,7 +2,7 @@ import type { Layout } from 'plotly.js-dist-min';
 
 type PlotRelayoutEvent = Record<string, unknown>;
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type AxisConfig = Record<string, unknown>;
 
@@ -111,17 +111,30 @@ const DEFAULT_RANGE: [number, number] = [-10, 10];
  * Hook that keeps axis labels anchored at data-zero when the user
  * pans / pinch-zooms via Plotly's relayout events.
  *
- * When scaleanchor is active, Plotly may adjust the y-range without
- * reporting it in the event. We read the actual range from the plot
- * element via the event target to stay in sync.
+ * Accepts external xRange/yRange that can be set by Range controls.
+ * When the user pans/zooms, live ranges update and are exposed via
+ * the returned state for syncing back to sidebar controls.
  */
-export function useCenteredAxes(initRange: [number, number] = DEFAULT_RANGE) {
-  const [axes, setAxes] = useState({
-    xRange: initRange,
-    yRange: initRange,
-    xAxisPos: 0.5,
-    yAxisPos: 0.5,
-  });
+export function useCenteredAxes(
+  externalXRange: [number, number] = DEFAULT_RANGE,
+  externalYRange: [number, number] = DEFAULT_RANGE,
+) {
+  const [axes, setAxes] = useState(() => ({
+    xRange: externalXRange,
+    yRange: externalYRange,
+    xAxisPos: zeroPosition(externalYRange[0], externalYRange[1]),
+    yAxisPos: zeroPosition(externalXRange[0], externalXRange[1]),
+  }));
+
+  // Sync when external ranges change (user typed into Range controls)
+  useEffect(() => {
+    setAxes({
+      xRange: externalXRange,
+      yRange: externalYRange,
+      xAxisPos: zeroPosition(externalYRange[0], externalYRange[1]),
+      yAxisPos: zeroPosition(externalXRange[0], externalXRange[1]),
+    });
+  }, [externalXRange[0], externalXRange[1], externalYRange[0], externalYRange[1]]);
 
   const onRelayout = useCallback(
     (e: PlotRelayoutEvent) => {
@@ -135,7 +148,6 @@ export function useCenteredAxes(initRange: [number, number] = DEFAULT_RANGE) {
       if (xMin == null && xMax == null && yMin == null && yMax == null && !autoX && !autoY) return;
 
       // When scaleanchor constrains y, Plotly adjusts y-range silently.
-      // Read the actual y-range from the plot's layout if not reported.
       if (yMin == null && yMax == null && !autoY) {
         try {
           // biome-ignore lint/suspicious/noExplicitAny: Plotly stores layout on the DOM element
@@ -151,8 +163,8 @@ export function useCenteredAxes(initRange: [number, number] = DEFAULT_RANGE) {
       }
 
       setAxes((prev) => {
-        const xR: [number, number] = autoX ? initRange : xMin != null && xMax != null ? [xMin, xMax] : prev.xRange;
-        const yR: [number, number] = autoY ? initRange : yMin != null && yMax != null ? [yMin, yMax] : prev.yRange;
+        const xR: [number, number] = autoX ? externalXRange : xMin != null && xMax != null ? [xMin, xMax] : prev.xRange;
+        const yR: [number, number] = autoY ? externalYRange : yMin != null && yMax != null ? [yMin, yMax] : prev.yRange;
         return {
           xRange: xR,
           yRange: yR,
@@ -161,7 +173,7 @@ export function useCenteredAxes(initRange: [number, number] = DEFAULT_RANGE) {
         };
       });
     },
-    [initRange],
+    [externalXRange, externalYRange],
   );
 
   return { ...axes, onRelayout };
