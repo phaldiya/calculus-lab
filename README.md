@@ -6,39 +6,42 @@ A full-featured scientific graphing calculator built with React, TypeScript, and
 
 ## Features
 
-### Scientific Calculator
-- Standard arithmetic (+, -, ×, ÷, %, mod)
-- Trigonometric functions (sin, cos, tan) with RAD/DEG modes
-- Inverse trig (asin, acos, atan)
-- Logarithms (ln, log base 10)
-- Powers (x², x³, xʸ, 10ˣ, eˣ), square root, reciprocal
-- Factorial, absolute value
-- Memory storage (MC, MR, M+, M-)
-- Calculation history via shared History panel
+### Scientific Calculator (iOS-inspired)
+- Standard arithmetic (+, −, ×, ÷, %, mod)
+- Trigonometric functions (sin, cos, tan) with Deg/Rad toggle
+- Inverse trig (sin⁻¹, cos⁻¹, tan⁻¹) via **2nd** toggle
+- Hyperbolic functions (sinh, cosh, tanh) and inverses
+- Logarithms (ln, log₁₀, log₂ via 2nd)
+- Powers (x², x³, xʸ, 10ˣ, eˣ, 2ˣ)
+- Roots (²√x, ³√x, ʸ√x)
+- Factorial, reciprocal, random number
+- Memory storage (mc, mr, m+, m−)
+- **2nd function toggle** — swaps buttons to alternate functions
+- Calculation history panel (click clock icon in header)
 - Constants: π, e
+- Keyboard shortcuts for all operations
 
-### Function Graphing
-- Plot multiple functions simultaneously with automatic color assignment
-- Standard math expressions: `sin(x)`, `x^2 + 1`, `exp(-x^2)`, etc.
-- Implicit equations: `x^2 + y^2 = 25`, `x^2/9 + y^2/4 = 1`
-- Inequality regions: `y > x^2`, `x^2 + y^2 < 25` with semi-transparent shading
-- Interactive zoom (scroll), pan (drag), and hover coordinates
-- Toggle visibility or remove individual equations
+### Unified Graph Tab
+All graphing features in a single tab with **auto-detection** — just type an expression and the correct plot type is selected automatically:
+
+- **2D Functions:** `sin(x)`, `x^2 + 1`, `exp(-x^2)`, etc.
+- **Implicit equations:** `x^2 + y^2 = 25` — auto-detected by `=` sign
+- **Inequality regions:** `y > x^2` — semi-transparent shading
+- **3D Surfaces:** `sin(x) * cos(y)` — auto-detected when both x and y are used
+- **Parametric 2D:** `cos(t); sin(t)` — semicolons separate components
+- **Parametric 3D:** `cos(t); sin(t); t/10` — three semicolon-separated components
+- **Polar:** `1 + cos(theta)` — auto-detected by theta variable
+- **Interactive sliders:** Parameters like `a`, `b` auto-create sliders
+- **Split view:** 2D and 3D equations coexist on the same page
+- **Square grid:** 1:1 aspect ratio with centered axes
 - Plot custom (x, y) coordinate pairs as scatter, line, or both
-- Custom variables usable in expressions
-
-### 3D Graphing
-- Plot 3D surface equations as interactive surfaces (e.g., `sin(x) * cos(y)`)
-- Multiple surfaces with automatic color assignment and toggle visibility
-- Adjustable X/Y range and grid resolution controls
-- Interactive rotate, zoom, and pan via Plotly 3D scene
+- Interactive zoom (scroll), pan (drag), and hover coordinates
 
 ### Calculus
 - **Derivatives:** Symbolic differentiation via math.js (e.g., `x^3` → `3 * x ^ 2`)
 - **Definite Integrals:** Numerical integration using Simpson's rule
 - **Limits:** Numerical limit computation with indeterminate form handling
-- Color-coded sections: indigo (derivatives), emerald (integrals), amber (limits)
-- Visual overlay of original function, derivative, integral area, and limit point — each trace color-matched to its section
+- Color-coded sections with visual overlay of function, derivative, integral area, and limit point
 
 ### Matrix Calculator
 - Matrix operations: add, subtract, multiply, determinant, inverse, transpose
@@ -50,25 +53,13 @@ A full-featured scientific graphing calculator built with React, TypeScript, and
 - **Histogram** visualization
 - **Linear & polynomial regression** with R² and fitted curve overlay
 
-### Parametric & Polar
-- **2D Parametric Curves:** plot x(t), y(t) with configurable parameter range and point count
-- **3D Parametric Curves:** plot x(t), y(t), z(t) in interactive 3D space (helix, trefoil knot, toroidal spiral)
-- **Polar Plots:** plot r(θ) on a polar coordinate grid (cardioid, rose, spiral, lemniscate)
-- Mode toggle to switch between 2D Parametric, 3D Parametric, and Polar
-
-### Interactive Manipulate
-- Dynamic plots with sliders to adjust equation parameters in real time
-- Auto-parameter detection: enter `a * sin(b * x)` and sliders for `a` and `b` are created automatically
-- Configurable slider range, step size, and manual slider creation
-- Supports standard 2D, implicit, and 3D surface plot types
-- Slider variables integrate with global custom variables
-
 ### Cross-Cutting
-- URL-based routing per tab (`/scientific`, `/graphing`, `/3d-graphing`, `/calculus`, `/matrix`, `/statistics`, `/parametric`, `/manipulate`) — survives page reload
+- **5 tabs:** Calc, Graph, Calculus, Matrix, Stats
+- URL-based routing (`/scientific`, `/graph`, `/calculus`, `/matrix`, `/statistics`) — survives page reload
+- Old routes (`/graphing`, `/3d-graphing`, `/parametric`, `/manipulate`) redirect to `/graph`
 - Dark mode with persistent preference
-- Custom variables panel
-- Expression history across all tabs
-- LocalStorage persistence
+- History panel (default closed, click clock icon to open)
+- LocalStorage persistence with automatic migration from old state format
 - Error boundaries per tab
 
 ## Tech Stack
@@ -119,19 +110,17 @@ src/
 ├── main.tsx / App.tsx / index.css
 ├── types/                      # TypeScript types & Plotly declarations
 ├── lib/                        # Engines: expression parser, calculus, matrix, statistics
+│   └── expressionClassifier.ts # Auto-detects expression type (2D, 3D, polar, etc.)
 ├── context/AppContext.tsx       # React Context + useReducer
 └── components/
     ├── DocsPage.tsx            # /docs documentation page
-    ├── layout/                 # Header, Sidebar, TabPanel
-    ├── scientific/             # Scientific calculator
-    ├── graphing/               # Function plotting
-    ├── threeDGraphing/         # 3D surface plotting
+    ├── layout/                 # Header, Sidebar
+    ├── scientific/             # iOS-style scientific calculator with 2nd toggle
+    ├── graph/                  # Unified graph: 2D, 3D, parametric, polar, sliders
     ├── calculus/               # Derivatives, integrals, limits
     ├── matrix/                 # Matrix operations
     ├── statistics/             # Stats & regression
-    ├── parametric/             # Parametric & polar curves
-    ├── manipulate/             # Interactive manipulate with sliders
-    └── shared/                 # History, Variables, ErrorBoundary
+    └── shared/                 # History, ErrorBoundary, Icons, KaTeX
 ```
 
 ## Chrome Extension (Side Panel)
@@ -160,15 +149,16 @@ bun run extension:zip       # produces calculus-lab-extension.zip
 | Feature | Test | Expected |
 |---|---|---|
 | Calculator | `sin(π)` | `0` |
-| Calculator | `2^10` | `1024` |
-| Graph | Plot `sin(x)` | Sine wave |
-| 3D Graph | Plot `sin(x) * cos(y)` | 3D surface |
+| Calculator | `sinh(1)` | `1.1752...` |
+| Calculator | 2nd → `sin⁻¹(1)` | `1.5707...` |
+| Graph | Plot `sin(x)` | Sine wave (2D auto-detected) |
+| Graph | Plot `sin(x)*cos(y)` | 3D surface (auto-detected) |
+| Graph | Plot `cos(t); sin(t)` | Unit circle (parametric auto-detected) |
+| Graph | Plot `1+cos(theta)` | Cardioid (polar auto-detected) |
+| Graph | Plot `a*sin(x)` | Slider for `a` auto-created |
+| Graph | Plot `x^2+y^2=25` | Circle (implicit auto-detected) |
+| Graph | Plot `y > x^2` | Shaded region (inequality auto-detected) |
 | Calculus | d/dx `x^3` | `3 * x ^ 2` |
 | Calculus | ∫ `x^2` from 0 to 1 | `0.333333` |
-| Calculus | lim `sin(x)/x` at 0 | `1.000000` |
-| Graph | Plot `y > x^2` | Shaded region above parabola |
-| Parametric | Plot `x=cos(t), y=sin(t)` | Unit circle |
-| Polar | Plot `r=1+cos(theta)` | Cardioid |
-| Manipulate | Plot `a*sin(b*x)` | Sliders for a and b |
 | Matrix | `det([[1,2],[3,4]])` | `-2.0000` |
 | Stats | `1,2,...,10` | Mean = 5.5 |

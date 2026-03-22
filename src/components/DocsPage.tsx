@@ -256,13 +256,15 @@ export default function DocsPage() {
           <section id="scientific" className="mb-16">
             <h2 className="mb-2 font-bold text-2xl text-slate-800 dark:text-white">Scientific Calculator</h2>
             <p className="mb-6 text-slate-500 dark:text-slate-400">
-              A full-featured scientific calculator for everyday and advanced computations. Supports arithmetic,
-              trigonometry, logarithms, powers, factorials, memory storage, and both radian and degree angle modes.
+              A full-featured scientific calculator inspired by the iPhone calculator. Supports arithmetic, trigonometry
+              (including hyperbolic), logarithms, powers, roots, factorials, memory storage, and both radian and degree
+              angle modes. The <CodeBlock>2nd</CodeBlock> toggle unlocks alternate functions like inverse trig, log base
+              2, and inverse hyperbolic functions.
             </p>
 
             <img
               src={`${base}docs/scientific-tab.png`}
-              alt="Scientific calculator"
+              alt="Scientific calculator with iOS-style layout"
               className="mb-6 w-full rounded-xl border border-slate-200 shadow-lg dark:border-slate-700"
             />
 
@@ -272,36 +274,42 @@ export default function DocsPage() {
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <ExampleCard title="Basic" input="25 × 4 + 10" output="110" />
                   <ExampleCard title="Power" input="2^10" output="1024" />
-                  <ExampleCard title="Square root" input="√(144)" output="12" />
-                  <ExampleCard title="Reciprocal" input="1/(8)" output="0.125" />
+                  <ExampleCard title="Square root" input="²√x(144)" output="12" />
+                  <ExampleCard title="Cube root" input="³√x(27)" output="3" />
+                  <ExampleCard title="Reciprocal" input="¹/x(8)" output="0.125" />
+                  <ExampleCard title="Factorial" input="5!" output="120" />
                 </div>
+              </div>
+
+              <div>
+                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">2nd Function Toggle</h3>
+                <p className="mb-3 text-slate-500 dark:text-slate-400">
+                  Press <CodeBlock>2nd</CodeBlock> to swap button functions. In 2nd mode: <CodeBlock>sin</CodeBlock>{' '}
+                  becomes <CodeBlock>sin⁻¹</CodeBlock>, <CodeBlock>sinh</CodeBlock> becomes{' '}
+                  <CodeBlock>sinh⁻¹</CodeBlock>, <CodeBlock>ln</CodeBlock> becomes <CodeBlock>log₂</CodeBlock>,{' '}
+                  <CodeBlock>xʸ</CodeBlock> becomes <CodeBlock>ʸ√x</CodeBlock>, and more. Press{' '}
+                  <CodeBlock>2nd</CodeBlock> again to return to normal mode.
+                </p>
               </div>
 
               <div>
                 <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Trigonometry</h3>
                 <p className="mb-3 text-slate-500 dark:text-slate-400">
                   Includes <CodeBlock>sin</CodeBlock>, <CodeBlock>cos</CodeBlock>, <CodeBlock>tan</CodeBlock> and their
-                  inverses (<CodeBlock>sin⁻¹</CodeBlock>, <CodeBlock>cos⁻¹</CodeBlock>, <CodeBlock>tan⁻¹</CodeBlock>).
+                  inverses via 2nd mode. Also supports hyperbolic functions: <CodeBlock>sinh</CodeBlock>,{' '}
+                  <CodeBlock>cosh</CodeBlock>, <CodeBlock>tanh</CodeBlock> and their inverses.
                 </p>
 
                 <div className="mb-4 rounded-xl bg-indigo-50 p-4 text-indigo-700 text-sm dark:bg-indigo-950 dark:text-indigo-300">
-                  <strong>RAD vs DEG:</strong> These buttons control how angles are interpreted by trig functions.{' '}
-                  <CodeBlock>RAD</CodeBlock> treats input as radians (full circle = 2π), while{' '}
-                  <CodeBlock>DEG</CodeBlock> treats input as degrees (full circle = 360°). The default is RAD. The
-                  active mode is highlighted — click the other to switch.
+                  <strong>Deg / Rad:</strong> Toggle angle mode with the <CodeBlock>Deg</CodeBlock> button in the grid.
+                  The current mode is shown above the buttons. Default is Rad.
                 </div>
 
                 <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <ExampleCard title="sin(90) in DEG" input="sin(90) [DEG]" output="1" />
-                  <ExampleCard title="sin(90) in RAD" input="sin(90) [RAD]" output="0.8939..." />
-                  <ExampleCard title="cos(60) in DEG" input="cos(60) [DEG]" output="0.5" />
                   <ExampleCard title="cos(π/3) in RAD" input="cos(π/3) [RAD]" output="0.5" />
-                </div>
-
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <ExampleCard title="Sine (radians)" input="sin(π)" output="0" />
-                  <ExampleCard title="Inverse" input="sin⁻¹(1)" output="1.5707... (π/2)" />
-                  <ExampleCard title="Tangent" input="tan(π/4)" output="1" />
+                  <ExampleCard title="Inverse sine" input="sin⁻¹(1) [2nd]" output="1.5707... (π/2)" />
+                  <ExampleCard title="Hyperbolic" input="sinh(1)" output="1.1752..." />
                 </div>
               </div>
 
@@ -309,18 +317,18 @@ export default function DocsPage() {
                 <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Logarithms & Constants</h3>
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <ExampleCard title="Natural log" input="ln(e)" output="1" />
-                  <ExampleCard title="Log base 10" input="log(1000)" output="3" />
-                  <ExampleCard title="Pi" input="π" output="3.1415926536" />
-                  <ExampleCard title="Euler's number" input="e" output="2.7182818285" />
+                  <ExampleCard title="Log base 10" input="log₁₀(1000)" output="3" />
+                  <ExampleCard title="Log base 2 (2nd)" input="log₂(8)" output="3" />
+                  <ExampleCard title="Random" input="Rand" output="0.7291... (varies)" />
                 </div>
               </div>
 
               <div>
-                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Memory & History</h3>
+                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Memory</h3>
                 <p className="mb-2 text-slate-500 dark:text-slate-400">
-                  Use <CodeBlock>M+</CodeBlock>, <CodeBlock>M-</CodeBlock>, <CodeBlock>MR</CodeBlock>, and{' '}
-                  <CodeBlock>MC</CodeBlock> to store and recall values. The <CodeBlock>Ans</CodeBlock> button inserts
-                  the previous result. All calculations are logged in the shared History panel on the right sidebar.
+                  Use <CodeBlock>m+</CodeBlock>, <CodeBlock>m-</CodeBlock>, <CodeBlock>mr</CodeBlock>, and{' '}
+                  <CodeBlock>mc</CodeBlock> to store and recall values. All calculations are logged in the History panel
+                  (click the clock icon in the header).
                 </p>
               </div>
             </div>
