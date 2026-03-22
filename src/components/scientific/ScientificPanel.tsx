@@ -265,7 +265,6 @@ export default function ScientificPanel() {
   const { dispatch } = useAppContext();
   const [expression, setExpression] = useState('');
   const [display, setDisplay] = useState('0');
-  const [prevResult, setPrevResult] = useState('0');
   const [memory, setMemory] = useState(0);
   const [angleMode, setAngleMode] = useState<AngleMode>('rad');
   const [secondMode, setSecondMode] = useState(false);
@@ -319,7 +318,6 @@ export default function ScientificPanel() {
           : String(result);
       const isNewComputation = expression !== resultStr;
       setDisplay(resultStr);
-      setPrevResult(resultStr);
       setExpression(resultStr);
 
       let expressionTex: string | undefined;
