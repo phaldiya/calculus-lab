@@ -1,25 +1,24 @@
 import { test } from '../fixtures/app.fixture';
 
-test.describe('Graphing Visual', () => {
+test.describe('Graph Visual', () => {
   test('empty state, light mode', async ({ calcPage }) => {
-    await calcPage.goToTab('graphing');
+    await calcPage.goToTab('graph');
     await calcPage.ensureLightMode();
     await calcPage.stableScreenshot('graphing-empty-light.png');
   });
 
   test('empty state, dark mode', async ({ calcPage }) => {
-    await calcPage.goToTab('graphing');
+    await calcPage.goToTab('graph');
     await calcPage.enableDarkMode();
     await calcPage.stableScreenshot('graphing-empty-dark.png');
   });
 
   test('populated state, light mode', async ({ calcPage, page }) => {
-    await calcPage.goToTab('graphing');
+    await calcPage.goToTab('graph');
     await calcPage.ensureLightMode();
 
-    const input = page.getByLabel('Function expression');
+    const input = page.getByLabel('Expression');
 
-    // Plot 3 equations
     await input.fill('sin(x)');
     await page.getByRole('button', { name: 'Plot', exact: true }).click();
 
@@ -33,10 +32,10 @@ test.describe('Graphing Visual', () => {
   });
 
   test('populated state, dark mode', async ({ calcPage, page }) => {
-    await calcPage.goToTab('graphing');
+    await calcPage.goToTab('graph');
     await calcPage.enableDarkMode();
 
-    const input = page.getByLabel('Function expression');
+    const input = page.getByLabel('Expression');
 
     await input.fill('sin(x)');
     await page.getByRole('button', { name: 'Plot', exact: true }).click();

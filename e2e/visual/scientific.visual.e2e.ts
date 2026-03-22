@@ -42,4 +42,24 @@ test.describe('Scientific Visual', () => {
 
     await calcPage.stableScreenshot('scientific-populated-dark.png');
   });
+
+  test('2nd mode active, light mode', async ({ calcPage, page }) => {
+    await calcPage.goToTab('scientific');
+    await calcPage.ensureLightMode();
+
+    // Toggle 2nd mode
+    await page.getByRole('button', { name: 'Toggle second functions' }).click();
+
+    await calcPage.stableScreenshot('scientific-2nd-mode-light.png');
+  });
+
+  test('2nd mode active, dark mode', async ({ calcPage, page }) => {
+    await calcPage.goToTab('scientific');
+    await calcPage.enableDarkMode();
+
+    // Toggle 2nd mode
+    await page.getByRole('button', { name: 'Toggle second functions' }).click();
+
+    await calcPage.stableScreenshot('scientific-2nd-mode-dark.png');
+  });
 });

@@ -1,14 +1,6 @@
 import { test as base, expect, type Page } from '@playwright/test';
 
-type Tab =
-  | 'scientific'
-  | 'graphing'
-  | '3d-graphing'
-  | 'calculus'
-  | 'matrix'
-  | 'statistics'
-  | 'parametric'
-  | 'manipulate';
+type Tab = 'scientific' | 'graph' | 'calculus' | 'matrix' | 'statistics';
 
 export class CalcPage {
   private page: Page;
@@ -18,17 +10,12 @@ export class CalcPage {
 
   async goToTab(tab: Tab) {
     await this.page.goto(`/calculus-lab/#/${tab}`, { waitUntil: 'domcontentloaded' });
-    // Hash navigation doesn't trigger network requests, so wait for React to
-    // render tab-specific content instead of relying on networkidle.
     const readyLocators: Record<Tab, import('@playwright/test').Locator> = {
       scientific: this.page.getByRole('button', { name: 'AC' }),
-      graphing: this.page.getByLabel('Function expression'),
-      '3d-graphing': this.page.getByLabel('3D surface expression'),
+      graph: this.page.getByLabel('Expression'),
       calculus: this.page.getByLabel('Derivative expression'),
       matrix: this.page.getByText('Matrix Calculator'),
       statistics: this.page.getByText('Data Input'),
-      parametric: this.page.getByText('Parametric & Polar'),
-      manipulate: this.page.getByText('Interact'),
     };
     await readyLocators[tab].first().waitFor({ state: 'visible', timeout: 15000 });
   }

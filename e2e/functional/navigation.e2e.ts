@@ -2,7 +2,6 @@ import { expect, test } from '../fixtures/app.fixture';
 
 test.describe('Navigation', () => {
   test('redirects / to /#/scientific', async ({ calcPage, page }) => {
-    // The fixture already navigated to /calculus-lab/ which triggers redirect
     await calcPage.goToTab('scientific');
     await expect(page).toHaveURL(/\/#\/scientific/);
   });
@@ -11,13 +10,10 @@ test.describe('Navigation', () => {
     await calcPage.goToTab('scientific');
 
     const tabs = [
-      { label: 'Graph', path: '/graphing', heading: 'Equations' },
-      { label: '3D', path: '/3d-graphing', heading: '3D Surfaces' },
+      { label: 'Graph', path: '/graph', heading: 'Graph' },
       { label: 'Calculus', path: '/calculus', heading: 'Derivative' },
       { label: 'Matrix', path: '/matrix', heading: 'Matrix Calculator' },
       { label: 'Stats', path: '/statistics', heading: 'Data Input' },
-      { label: 'Param', path: '/parametric', heading: 'Parametric & Polar' },
-      { label: 'Interact', path: '/manipulate', heading: 'Interact' },
       { label: 'Calc', path: '/scientific', button: 'AC' },
     ] as const;
 
@@ -44,20 +40,23 @@ test.describe('Navigation', () => {
     await expect(page.locator('html')).not.toHaveClass(/dark/);
   });
 
-  test('right panel toggle shows and hides variables sidebar', async ({ calcPage, page }) => {
+  test('right panel toggle shows and hides history sidebar', async ({ calcPage, page }) => {
     await calcPage.goToTab('scientific');
 
-    // Panel should be visible by default on desktop (1440px >= 1280px)
-    const aside = page.getByLabel('Variables and history');
-    await expect(aside).toBeVisible();
+    // Desktop aside panel defaults to closed (w-0)
+    const aside = page.locator('aside[aria-label="History"]');
+    await expect(aside).toHaveCSS('width', '0px');
+
+    // Click toggle to show
+    await page.getByLabel('Show history').click();
+    await page.waitForTimeout(300);
+    const width = await aside.evaluate((el) => el.getBoundingClientRect().width);
+    expect(width).toBeGreaterThan(0);
 
     // Click toggle to hide
-    await page.getByLabel('Hide variables panel').click();
-    await expect(aside).not.toBeVisible();
-
-    // Click toggle to show again
-    await page.getByLabel('Show variables panel').click();
-    await expect(aside).toBeVisible();
+    await page.getByLabel('Hide history').click();
+    await page.waitForTimeout(300);
+    await expect(aside).toHaveCSS('width', '0px');
   });
 
   test('dark mode persists across tab navigation', async ({ calcPage, page }) => {
@@ -65,11 +64,24 @@ test.describe('Navigation', () => {
     await calcPage.enableDarkMode();
     await expect(page.locator('html')).toHaveClass(/dark/);
 
-    // Navigate to other tabs — dark mode should remain active
     await page.getByRole('tab', { name: 'Graph' }).first().click();
     await expect(page.locator('html')).toHaveClass(/dark/);
 
     await page.getByRole('tab', { name: 'Stats' }).first().click();
     await expect(page.locator('html')).toHaveClass(/dark/);
+  });
+
+  test('old routes redirect to /graph', async ({ page }) => {
+    await page.goto('/calculus-lab/#/graphing');
+    await expect(page).toHaveURL(/\/#\/graph$/);
+
+    await page.goto('/calculus-lab/#/3d-graphing');
+    await expect(page).toHaveURL(/\/#\/graph$/);
+
+    await page.goto('/calculus-lab/#/parametric');
+    await expect(page).toHaveURL(/\/#\/graph$/);
+
+    await page.goto('/calculus-lab/#/manipulate');
+    await expect(page).toHaveURL(/\/#\/graph$/);
   });
 });
