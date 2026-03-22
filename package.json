@@ -16,7 +16,7 @@
     "test:deep": "vitest run tests/deep/",
     "test:coverage": "vitest run --coverage",
     "build:extension": "vite build --config vite.config.extension.ts",
-    "verify": "vitest run && playwright test",
+    "verify": "tsc -b && vite build && vitest run && playwright test",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
     "e2e:functional": "playwright test --project=functional",
