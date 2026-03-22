@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/phaldiya/calculus-lab/compare/v1.7.0...v1.7.1) (2026-03-22)
+
+
+### Bug Fixes
+
+* match iOS 2nd mode button layout and add Apple keyboard shortcuts ([285dd9f](https://github.com/phaldiya/calculus-lab/commit/285dd9f0ad1604398b1bc1c99e98f1a5de26a8ca))
+
 # [1.7.0](https://github.com/phaldiya/calculus-lab/compare/v1.6.0...v1.7.0) (2026-03-22)
 
 
