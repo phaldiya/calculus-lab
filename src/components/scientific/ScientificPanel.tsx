@@ -19,21 +19,19 @@ const SCI_ROWS = [
   ['Rand', 'sinh', 'cosh', 'tanh', 'π', 'Deg'],
 ];
 
-// 2nd mode swaps
+// 2nd mode swaps — matches iOS calculator exactly
 const SECOND_MODE_MAP: Record<string, string> = {
-  'x²': 'x³',
-  'x³': 'x²',
-  xʸ: 'ʸ√x',
+  // Row 1: only eˣ and 10ˣ swap
   eˣ: 'yˣ',
   '10ˣ': '2ˣ',
-  '²√x': '²√x',
-  '³√x': '³√x',
-  'ʸ√x': 'xʸ',
-  ln: 'log₂',
-  'log₁₀': '2ˣ',
+  // Row 2: only ln and log₁₀ swap
+  ln: 'logᵧ',
+  'log₁₀': 'log₂',
+  // Row 3: trig → inverse trig
   sin: 'sin⁻¹',
   cos: 'cos⁻¹',
   tan: 'tan⁻¹',
+  // Row 4: hyp → inverse hyp
   sinh: 'sinh⁻¹',
   cosh: 'cosh⁻¹',
   tanh: 'tanh⁻¹',
@@ -97,6 +95,7 @@ const BUTTON_ARIA_LABELS: Record<string, string> = {
   'tanh⁻¹': 'Inverse hyperbolic tangent',
   'log₁₀': 'Log base 10',
   'log₂': 'Log base 2',
+  logᵧ: 'Log base y',
   '2ˣ': '2 to the power of x',
   yˣ: 'y to the power of x',
   Rand: 'Random number',
@@ -194,6 +193,12 @@ function renderLabel(btn: string): React.ReactNode {
       return (
         <span>
           log<sub>2</sub>
+        </span>
+      );
+    case 'logᵧ':
+      return (
+        <span>
+          log<sub>y</sub>
         </span>
       );
     case 'sin⁻¹':
@@ -427,6 +432,9 @@ export default function ScientificPanel() {
         case 'log₂':
           appendToExpression('log2(');
           break;
+        case 'logᵧ':
+          appendToExpression('log(');
+          break;
         case 'sin⁻¹':
           appendToExpression('asin(');
           break;
@@ -542,7 +550,30 @@ export default function ScientificPanel() {
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.ctrlKey || e.metaKey) return;
+
+      // Apple-style shortcuts with Alt/Option
+      if (e.altKey) {
+        if (e.key === 'v' || e.key === '√') {
+          e.preventDefault();
+          handleButton('²√x');
+          return;
+        }
+        if (e.key === '-') {
+          e.preventDefault();
+          handleButton('±');
+          return;
+        }
+        return;
+      }
+
+      // Shift-E for scientific notation (EE)
+      if (e.shiftKey && e.key === 'E') {
+        e.preventDefault();
+        handleButton('EE');
+        return;
+      }
+
       const mapped = KEY_MAP[e.key];
       if (mapped) {
         e.preventDefault();

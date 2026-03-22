@@ -331,6 +331,46 @@ export default function DocsPage() {
                   (click the clock icon in the header).
                 </p>
               </div>
+
+              <div>
+                <h3 className="mb-3 font-semibold text-lg text-slate-800 dark:text-white">Keyboard Shortcuts</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead>
+                      <tr className="border-slate-200 border-b dark:border-slate-700">
+                        <th className="py-2 pr-4 font-medium text-slate-800 dark:text-white">Key</th>
+                        <th className="py-2 font-medium text-slate-800 dark:text-white">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-slate-500 dark:text-slate-400">
+                      {[
+                        ['0 – 9', 'Number input'],
+                        ['. (dot)', 'Decimal point'],
+                        ['+ − * /', 'Add, subtract, multiply, divide'],
+                        ['%', 'Percent / modulo'],
+                        ['( )', 'Parentheses'],
+                        ['^ (caret)', 'Power (xʸ)'],
+                        ['! (exclamation)', 'Factorial'],
+                        ['Enter or =', 'Equals — compute result'],
+                        ['Backspace', 'Delete last digit'],
+                        ['Escape', 'Clear all (AC)'],
+                        ['p', 'Insert π'],
+                        ['e', "Insert Euler's number"],
+                        ['Shift + E', 'Scientific notation (EE)'],
+                        ['Option + V', 'Square root (²√x)'],
+                        ['Option + −', 'Toggle sign (±)'],
+                      ].map(([key, action]) => (
+                        <tr key={key} className="border-slate-100 border-b dark:border-slate-800">
+                          <td className="py-1.5 pr-4">
+                            <CodeBlock>{key}</CodeBlock>
+                          </td>
+                          <td className="py-1.5">{action}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </section>
 
