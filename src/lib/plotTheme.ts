@@ -108,9 +108,12 @@ function zeroPosition(min: number, max: number): number {
 const DEFAULT_RANGE: [number, number] = [-10, 10];
 
 /**
- * Hook that keeps axis positions anchored to data-zero when the user
+ * Hook that keeps axis labels anchored at data-zero when the user
  * pans / pinch-zooms via Plotly's relayout events.
- * Also tracks live ranges so React re-renders don't reset the user's zoom.
+ *
+ * When scaleanchor is active, Plotly may adjust the y-range without
+ * reporting it in the event. We read the actual range from the plot
+ * element via the event target to stay in sync.
  */
 export function useCenteredAxes(initRange: [number, number] = DEFAULT_RANGE) {
   const [axes, setAxes] = useState({
@@ -124,12 +127,28 @@ export function useCenteredAxes(initRange: [number, number] = DEFAULT_RANGE) {
     (e: PlotRelayoutEvent) => {
       const xMin = e['xaxis.range[0]'] as number | undefined;
       const xMax = e['xaxis.range[1]'] as number | undefined;
-      const yMin = e['yaxis.range[0]'] as number | undefined;
-      const yMax = e['yaxis.range[1]'] as number | undefined;
+      let yMin = e['yaxis.range[0]'] as number | undefined;
+      let yMax = e['yaxis.range[1]'] as number | undefined;
       const autoX = e['xaxis.autorange'] as boolean | undefined;
       const autoY = e['yaxis.autorange'] as boolean | undefined;
 
       if (xMin == null && xMax == null && yMin == null && yMax == null && !autoX && !autoY) return;
+
+      // When scaleanchor constrains y, Plotly adjusts y-range silently.
+      // Read the actual y-range from the plot's layout if not reported.
+      if (yMin == null && yMax == null && !autoY) {
+        try {
+          // biome-ignore lint/suspicious/noExplicitAny: Plotly stores layout on the DOM element
+          const plotEl = document.querySelector('.js-plotly-plot') as any;
+          if (plotEl?.layout?.yaxis?.range) {
+            const actualY = plotEl.layout.yaxis.range as [number, number];
+            yMin = actualY[0];
+            yMax = actualY[1];
+          }
+        } catch {
+          // fallback: keep previous
+        }
+      }
 
       setAxes((prev) => {
         const xR: [number, number] = autoX ? initRange : xMin != null && xMax != null ? [xMin, xMax] : prev.xRange;
