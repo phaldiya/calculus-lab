@@ -1,3 +1,18 @@
+# [1.7.0](https://github.com/phaldiya/calculus-lab/compare/v1.6.0...v1.7.0) (2026-03-22)
+
+
+### Bug Fixes
+
+* prevent axis label misalignment when panning with scaleanchor ([1e575ed](https://github.com/phaldiya/calculus-lab/commit/1e575edf41afb5d7725c0e8026461848e99683a0))
+* remove dead TabPanel.tsx and unused prevResult to fix CI build ([2e8b7a0](https://github.com/phaldiya/calculus-lab/commit/2e8b7a0a5470e3f559b4083ab753f270926ae0fd))
+
+
+### Features
+
+* fix and enhance Range & Grid controls ([e116b3e](https://github.com/phaldiya/calculus-lab/commit/e116b3e1c2b84dc0748752debc569e3c486a246d))
+* iOS-style scientific calculator with 2nd toggle and hyperbolic functions ([ed0735b](https://github.com/phaldiya/calculus-lab/commit/ed0735b351600d416956e70770d91204ddd6d4c8))
+* merge 4 plotting tabs into unified Graph tab with auto-detection ([b6530b7](https://github.com/phaldiya/calculus-lab/commit/b6530b77bc0e5e1a903b921db4976550e15053bd))
+
 # [1.6.0](https://github.com/phaldiya/calculus-lab/compare/v1.5.0...v1.6.0) (2026-03-08)
 
 
