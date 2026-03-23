@@ -1,3 +1,10 @@
+## [1.7.2](https://github.com/phaldiya/calculus-lab/compare/v1.7.1...v1.7.2) (2026-03-23)
+
+
+### Bug Fixes
+
+* use class-based dark mode instead of prefers-color-scheme ([7fb9134](https://github.com/phaldiya/calculus-lab/commit/7fb91348a2c8879e75ef62f5a67387783fa0d68e))
+
 ## [1.7.1](https://github.com/phaldiya/calculus-lab/compare/v1.7.0...v1.7.1) (2026-03-22)
 
 
