@@ -12,9 +12,16 @@ try {
   process.exit(0);
 }
 
+// Known upstream vulnerabilities that cannot be fixed (bundled transitive deps)
+const IGNORED_ADVISORIES = [
+  'GHSA-f886-m6hf-6m8v', // brace-expansion <5.0.5 bundled in npm (via @semantic-release/npm)
+];
+
 const rows = [];
 for (const [pkg, advisories] of Object.entries(data)) {
   for (const a of advisories) {
+    const ghsaId = a.url ? a.url.split('/').pop() : '';
+    if (IGNORED_ADVISORIES.includes(ghsaId)) continue;
     rows.push({
       package: pkg,
       severity: a.severity,
