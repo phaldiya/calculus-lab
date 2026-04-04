@@ -4,7 +4,12 @@ type PlotRelayoutEvent = Record<string, unknown>;
 
 import { lazy, Suspense } from 'react';
 
-const Plot = lazy(() => import('react-plotly.js'));
+const Plot = lazy(async () => {
+  const mod = await import('react-plotly.js');
+  // Vite 8 (Rolldown) may double-wrap CJS default exports
+  const resolved = mod as { default: typeof mod.default & { default?: typeof mod.default } };
+  return { default: resolved.default?.default ?? resolved.default };
+});
 
 interface PlotlyWrapperProps {
   data: Data[];
