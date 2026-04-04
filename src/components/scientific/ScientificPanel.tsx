@@ -296,8 +296,6 @@ export default function ScientificPanel() {
       .replace(/−/g, '-')
       .replace(/π/g, 'pi')
       .replace(/mod/g, '%')
-      .replace(/\blog10\(/g, 'log10(')
-      .replace(/\blog2\(/g, 'log2(')
       .replace(/\bln\(/g, 'log(');
 
     if (angleMode === 'deg') {
