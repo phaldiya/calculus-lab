@@ -1,3 +1,10 @@
+## [1.7.5](https://github.com/phaldiya/calculus-lab/compare/v1.7.4...v1.7.5) (2026-04-04)
+
+
+### Bug Fixes
+
+* handle Vite 8 CJS interop for react-plotly.js lazy import ([c442f94](https://github.com/phaldiya/calculus-lab/commit/c442f94b64c7c15b86fe541c267a01a5af29323b))
+
 ## [1.7.4](https://github.com/phaldiya/calculus-lab/compare/v1.7.3...v1.7.4) (2026-04-04)
 
 
