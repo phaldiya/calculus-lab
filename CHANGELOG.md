@@ -1,3 +1,10 @@
+## [1.7.4](https://github.com/phaldiya/calculus-lab/compare/v1.7.3...v1.7.4) (2026-04-04)
+
+
+### Bug Fixes
+
+* remove no-op string replacements flagged by CodeQL ([6479762](https://github.com/phaldiya/calculus-lab/commit/64797620b1131619a9e27eeaffe594a22e2e083a)), closes [#1](https://github.com/phaldiya/calculus-lab/issues/1)
+
 ## [1.7.3](https://github.com/phaldiya/calculus-lab/compare/v1.7.2...v1.7.3) (2026-04-03)
 
 
