@@ -2,8 +2,11 @@ import { test as base, expect, type Page } from '@playwright/test';
 
 type Tab = 'scientific' | 'graph' | 'calculus' | 'matrix' | 'statistics';
 
+const TABS_WITH_PLOTLY: ReadonlySet<Tab> = new Set(['graph', 'calculus', 'statistics']);
+
 export class CalcPage {
   private page: Page;
+  private currentTab: Tab | null = null;
   constructor(page: Page) {
     this.page = page;
   }
@@ -18,15 +21,22 @@ export class CalcPage {
       statistics: this.page.getByText('Data Input'),
     };
     await readyLocators[tab].first().waitFor({ state: 'visible', timeout: 15000 });
+    this.currentTab = tab;
   }
 
   async waitForPlotly() {
-    // Wait for Suspense "Loading graph..." to disappear (if present)
+    // Race the Suspense fallback and the plot container — whichever appears
+    // first proves the lazy chunk is in-flight / resolved, so the subsequent
+    // waits are meaningful. Under cold-start load either can win.
     const loading = this.page.getByText('Loading graph...');
-    if (await loading.isVisible({ timeout: 500 }).catch(() => false)) {
-      await loading.waitFor({ state: 'detached', timeout: 10000 });
+    const plotContainer = this.page.locator('.js-plotly-plot').first();
+    await Promise.race([
+      loading.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}),
+      plotContainer.waitFor({ state: 'attached', timeout: 5000 }).catch(() => {}),
+    ]);
+    if (await loading.isVisible().catch(() => false)) {
+      await loading.waitFor({ state: 'detached', timeout: 15000 });
     }
-    // Wait for Plotly container to appear
     await this.page.locator('.js-plotly-plot .plot-container').first().waitFor({ state: 'attached', timeout: 10000 });
     // For 2D charts, wait for gridlines to render (Plotly draws axes asynchronously)
     // 3D charts use WebGL and don't have SVG gridlayer elements
@@ -64,9 +74,7 @@ export class CalcPage {
         }
       `,
     });
-    // Wait for Plotly if a plot is present
-    const hasPlotly = await this.page.locator('.js-plotly-plot').count();
-    if (hasPlotly > 0) {
+    if (this.currentTab !== null && TABS_WITH_PLOTLY.has(this.currentTab)) {
       await this.waitForPlotly();
     }
     await expect(this.page).toHaveScreenshot(name);
