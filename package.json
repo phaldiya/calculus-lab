@@ -26,6 +26,7 @@
     "e2e:docker:update-snapshots": "docker compose -f docker-compose.playwright.yml run --rm e2e-update-snapshots",
     "extension:icons": "bun run scripts/generate-icons.ts",
     "extension:zip": "bun run scripts/package-extension.ts",
+    "install-browse": "bunx playwright install chromium --with-deps",
     "setup-hooks": "sh ./scripts/setup-hooks.sh all"
   },
   "dependencies": {
