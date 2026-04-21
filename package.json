@@ -29,14 +29,14 @@
     "setup-hooks": "sh ./scripts/setup-hooks.sh all"
   },
   "dependencies": {
-    "dompurify": "^3.3.3",
-    "katex": "^0.16.40",
-    "mathjs": "^15.1.1",
-    "plotly.js-dist-min": "^3.4.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
+    "dompurify": "^3.4.1",
+    "katex": "^0.16.45",
+    "mathjs": "^15.2.0",
+    "plotly.js-dist-min": "^3.5.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "react-plotly.js": "^2.6.0",
-    "react-router-dom": "^7.13.1"
+    "react-router-dom": "^7.14.2"
   },
   "overrides": {
     "tar": ">=7.5.11",
@@ -52,26 +52,26 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.12",
-    "@playwright/test": "^1.58.2",
+    "@playwright/test": "^1.59.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@tailwindcss/vite": "^4.2.2",
+    "@tailwindcss/vite": "^4.2.4",
     "@types/dompurify": "^3.2.0",
     "@types/katex": "^0.16.8",
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/react-router-dom": "^5.3.3",
     "@types/sharp": "^0.32.0",
     "@vitejs/plugin-react-swc": "^4.3.0",
-    "@vitest/coverage-v8": "^4.1.0",
-    "jsdom": "^29.0.1",
-    "puppeteer-core": "^24.40.0",
+    "@vitest/coverage-v8": "^4.1.5",
+    "jsdom": "^29.0.2",
+    "puppeteer-core": "^24.42.0",
     "semantic-release": "^25.0.3",
     "sharp": "^0.34.5",
-    "tailwindcss": "^4.2.2",
-    "typescript": "~6.0.2",
-    "vite": "^8.0.3",
-    "vitest": "^4.1.0"
+    "tailwindcss": "^4.2.4",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.9",
+    "vitest": "^4.1.5"
   }
 }
