@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "dompurify": "^3.4.1",
-    "katex": "^0.16.45",
+    "katex": "^0.17.0",
     "mathjs": "^15.2.0",
     "plotly.js-dist-min": "^3.5.0",
     "react": "^19.2.5",
